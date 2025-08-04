@@ -2,7 +2,7 @@
 set -e
 
 echo "🔹 Linting React app..."
-cd frontend
+cd client
 npm run lint
 
 echo "🔹 Checking Prettier formatting..."

@@ -1,9 +1,14 @@
 import { useState } from "react";
 
+interface Scenario {
+  id: string;
+  label: string;
+  price: number;
+}
 
 function App() {
   const [input, setInput] = useState("");
-  const [scenarios, setScenarios] = useState<any[]>([]);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [loading, setLoading] = useState(false);
 
   async function send() {
