@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.models.models import QuoteResponse, UserIntent, Scenario
+from models.models import QuoteResponse, UserIntent, Scenario
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
 
