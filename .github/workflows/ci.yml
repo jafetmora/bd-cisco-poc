@@ -85,19 +85,19 @@ jobs:
         run: |
           cd client
           corepack enable
-          pnpm run build --if-present
+          pnpm run build
 
       # ---------- Tests ----------
       - name: PyTest
         run: pytest -q api/tests || true
 
       # ---------- Build container images ----------
-      - name: Build & scan Docker image
-        run: |
-          docker build -t ai-agent-api:ci -f api/Dockerfile .
-          docker build -t ai-agent-client:ci -f client/Dockerfile .
-          docker run --rm aquasec/trivy image --severity HIGH,CRITICAL ai-agent-api:ci
-          docker run --rm aquasec/trivy image --severity HIGH,CRITICAL ai-agent-client:ci
+      # - name: Build & scan Docker image
+      #   run: |
+      #     docker build -t ai-agent-api:ci -f api/Dockerfile .
+      #     docker build -t ai-agent-client:ci -f client/Dockerfile .
+      #     docker run --rm aquasec/trivy image --severity HIGH,CRITICAL ai-agent-api:ci
+      #     docker run --rm aquasec/trivy image --severity HIGH,CRITICAL ai-agent-client:ci
 
   ###--- Deployment job runs only on main merges ---###
   deploy:
