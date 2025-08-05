@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api:
+    networks:
+      - cisco-agent-network
+    build:
+      context: ./api
+      target: ${API_ENV:-dev}
+    container_name: cisco-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - ENV=${API_ENV:-development}
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    restart: unless-stopped
+
+  client:
+    networks:
+      - cisco-agent-network
+    build:
+      context: ./client
+      target: ${CLIENT_ENV:-dev}
+    container_name: cisco-client
+    ports:
+      - "5173:5173"
+
+    environment:
+      - NODE_ENV=${CLIENT_ENV:-development}
+
+    restart: unless-stopped
+
+networks:
+  cisco-agent-network:
+    name: ${DOCKER_NETWORK_NAME:-cisco-agent-net}
+    driver: bridge

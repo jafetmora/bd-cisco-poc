@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./api
+      target: prod
+    container_name: cisco-api
+    networks:
+      - cisco-agent-network
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      target: prod
+    container_name: cisco-client
+    networks:
+      - cisco-agent-network
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+networks:
+  cisco-agent-network:
+    name: ${DOCKER_NETWORK_NAME:-cisco-agent-net}
+    driver: bridge
