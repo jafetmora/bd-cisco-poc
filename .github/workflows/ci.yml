@@ -44,7 +44,7 @@ jobs:
         run: black --check api
 
       - name: Mypy typing check
-        run: mypy api
+        run: MYPYPATH=api mypy api
 
       - name: Bandit security scan
         run: bandit -r api -ll

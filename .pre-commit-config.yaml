@@ -12,7 +12,11 @@ repos:
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.10.0
-    hooks: [ { id: mypy, language_version: python3.9, files: api/ } ]
+    hooks:
+      - id: mypy
+        language_version: python3.9
+        args: [--config-file=mypy.ini]
+        files: ^api/
 
   - repo: https://github.com/pycqa/bandit
     rev: 1.7.7
