@@ -1,5 +1,5 @@
-import Logo from './Logo';
-import NavMenu from './NavMenu';
+import Logo from "./Logo";
+import NavMenu from "./NavMenu";
 
 export default function NavBar() {
   return (
