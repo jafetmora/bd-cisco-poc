@@ -52,20 +52,21 @@ const chatHistoryData = [
   },
 ];
 
+type TabType = 'history' | 'chat';
+
 export default function ChatContainer() {
   const [messages, setMessages] = useState(chatData);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('chat');
 
   // Optional: ref for click outside (not required for fixed overlay)
   const historyPanelRef = useRef<HTMLDivElement>(null);
 
   const handleSelectHistory = (id: number) => {
-    setIsHistoryOpen(false);
     // Could load the selected chat here
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#F8FAFB] rounded-xl shadow border border-gray-200 overflow-hidden relative">
+    <div className="flex flex-col h-full w-full bg-[#F8FAFB] shadow border border-gray-200 overflow-hidden relative">
       {/* Chat header */}
       <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-[187px]">
@@ -74,64 +75,62 @@ export default function ChatContainer() {
             <span className="font-light text-white text-lg">CC</span>
           </div>
           <span className="font-segoe text-primary text-lg leading-8 tracking-[-0.6px]">
-            AI Assitant
+            AI Assistant
           </span>
         </div>
+        {/* Tab bar with icons */}
         <div className="flex gap-3">
           <button
-            title="View History"
-            className="text-gray-600 hover:text-blue-600"
-            onClick={() => setIsHistoryOpen(true)}
+            title="Chat History"
+            className={`p-2 rounded-full transition ${activeTab === 'history' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+            onClick={() => setActiveTab('history')}
+            aria-selected={activeTab === 'history'}
           >
             <FaHistory className="w-6 h-6" />
           </button>
           <button
-            title="New Chat"
-            className="text-gray-600 font-bold hover:text-blue-600"
+            title="Chat"
+            className={`p-2 rounded-full transition ${activeTab === 'chat' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+            onClick={() => setActiveTab('chat')}
+            aria-selected={activeTab === 'chat'}
           >
             <BsPencilSquare className="w-6 h-6" />
           </button>
         </div>
-      </div>
+      </div> 
 
-      {/* Chat History Dropdown */}
-      <div className="relative">
-        {isHistoryOpen && (
-          <div
-            className="absolute right-0 mt-2 z-50"
-            style={{ minWidth: '320px' }}
-            tabIndex={-1}
-            onBlur={() => setIsHistoryOpen(false)}
-          >
-            <ChatHistory previousChats={chatHistoryData} onSelect={(id) => {
-              setIsHistoryOpen(false);
-              handleSelectHistory(id);
-            }} />
-          </div>
+      {/* Tab content */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+        {activeTab === 'history' && (
+          <ChatHistory previousChats={chatHistoryData} onSelect={handleSelectHistory} />
+        )}
+        {activeTab === 'chat' && (
+          <>
+            {messages.map((msg, index) => (
+              <MessageBubble key={index} {...msg} />
+            ))}
+          </>
         )}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
-        {messages.map((msg, index) => (
-          <MessageBubble key={index} {...msg} />
-        ))}
-      </div>
-
-      <div className="flex justify-evenly gap-3 mb-4">
-        <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
-          <MdNoteAdd className="w-6 h-6" /> Create Order
-        </button>
-        <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
-          <MdEditNote className="w-6 h-6" /> Engage with AM
-        </button>
-        <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
-          <MdEmail className="w-6 h-6" /> Draft Email
-        </button>
-      </div>
-
-      {/* Input and quick actions */}
-      <ChatInputBar onSend={(msg) => setMessages([...messages, msg])} />
+      {/* Chat actions and input only for Chat tab */}
+      {activeTab === 'chat' && (
+        <>
+          <div className="flex justify-evenly gap-3 mb-4">
+            <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
+              <MdNoteAdd className="w-6 h-6" /> Create Order
+            </button>
+            <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
+              <MdEditNote className="w-6 h-6" /> Engage with AM
+            </button>
+            <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
+              <MdEmail className="w-6 h-6" /> Draft Email
+            </button>
+          </div>
+          {/* Input and quick actions */}
+          <ChatInputBar onSend={(msg) => setMessages([...messages, msg])} />
+        </>
+      )}
     </div>
   );
 }
