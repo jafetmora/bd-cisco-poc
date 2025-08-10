@@ -15,7 +15,7 @@ export default function ChatHistory({
   onSelect?: (id: number) => void;
 }) {
   return (
-    <div className="w-80 bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+    <div className="w-full bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-2 bg-gray-50">
         <FaRegCommentDots className="w-5 h-5 text-primary" />
         <span className="font-segoe text-primary text-lg">Chat History</span>
