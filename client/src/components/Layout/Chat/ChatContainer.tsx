@@ -57,7 +57,8 @@ export default function ChatContainer() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Optional: ref for click outside (not required for fixed overlay)
-  const handleSelectHistory = () => {
+  const handleSelectHistory = (id: number) => {
+    console.log("Selected history item:", id);
     setIsHistoryOpen(false);
     // Could load the selected chat here
   };
@@ -103,9 +104,9 @@ export default function ChatContainer() {
           >
             <ChatHistory
               previousChats={chatHistoryData}
-              onSelect={() => {
+              onSelect={(id) => {
                 setIsHistoryOpen(false);
-                handleSelectHistory();
+                handleSelectHistory(id);
               }}
             />
           </div>
