@@ -1,7 +1,7 @@
 export default function Logo() {
   return (
     <div className="flex items-center gap-2 min-w-[187px]">
-      {/* Logo gráfico (placeholder) */}
+      {/* Logo (placeholder) */}
       <span className="font-segoe text-primary text-2xl leading-8 tracking-[-0.6px]">
         <svg
           width="54"

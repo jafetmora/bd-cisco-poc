@@ -4,6 +4,7 @@ import { BsPencilSquare } from "react-icons/bs";
 import MessageBubble from "./MessageBubble";
 import ChatInputBar from "./ChatInputBar";
 import { MdNoteAdd, MdEditNote, MdEmail } from "react-icons/md";
+import ChatHistory from "./ChatHistory";
 
 const initialChatData = [
   {
@@ -30,11 +31,39 @@ const initialChatData = [
   },
 ];
 
+const chatHistoryData = [
+  {
+    id: 1,
+    title: "Cisco Duo Subscription for 100 users",
+    lastMessage: "Sure! Here's a quote for Cisco Duo Subscription...",
+    time: "Today, 10:15 AM",
+  },
+  {
+    id: 2,
+    title: "Renewal: Secure Endpoint",
+    lastMessage: "Renewal details sent to your email.",
+    time: "Yesterday, 4:37 PM",
+  },
+  {
+    id: 3,
+    title: "General Inquiry",
+    lastMessage: "Can you send me the updated price list?",
+    time: "2 days ago",
+  },
+];
+
 export default function ChatContainer() {
   const [messages, setMessages] = useState(initialChatData);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  // Optional: ref for click outside (not required for fixed overlay)
+  const handleSelectHistory = () => {
+    setIsHistoryOpen(false);
+    // Could load the selected chat here
+  };
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#F8FAFB] rounded-xl shadow border border-gray-200 overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-[#F8FAFB] rounded-xl shadow border border-gray-200 overflow-hidden relative">
       {/* Chat header */}
       <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-[187px]">
@@ -49,6 +78,7 @@ export default function ChatContainer() {
           <button
             title="View History"
             className="text-gray-600 hover:text-blue-600"
+            onClick={() => setIsHistoryOpen(true)}
           >
             <FaHistory className="w-6 h-6" />
           </button>
@@ -60,6 +90,26 @@ export default function ChatContainer() {
             <BsPencilSquare className="w-6 h-6" />
           </button>
         </div>
+      </div>
+
+      {/* Chat History Dropdown */}
+      <div className="relative">
+        {isHistoryOpen && (
+          <div
+            className="absolute right-0 mt-2 z-50"
+            style={{ minWidth: "320px" }}
+            tabIndex={-1}
+            onBlur={() => setIsHistoryOpen(false)}
+          >
+            <ChatHistory
+              previousChats={chatHistoryData}
+              onSelect={() => {
+                setIsHistoryOpen(false);
+                handleSelectHistory();
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Messages */}
