@@ -1,97 +1,125 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaChevronDown, FaChevronRight, FaSearch } from "react-icons/fa";
+import type { QuoteLineItem, QuotePricingSummary } from "../../../types/Quotes";
 
-type QuoteItem = {
-  category: string;
-  product: string;
-  leadTime: string;
-  unitPrice: number;
-  quantity: number;
+type Props = {
+  items: QuoteLineItem[];
+  summary?: QuotePricingSummary;
 };
 
-const sampleData: QuoteItem[] = [
-  {
-    category: "Hardware Wireless",
-    product: "AIR-AP2802E-S-K9 802.11ac W2 AP",
-    leadTime: "7 days",
-    unitPrice: 1716.0,
-    quantity: 1,
-  },
-  {
-    category: "Hardware Wireless",
-    product: "CAB-SS-RJ45 RJ45 Cable to Smart Serial, 10 Feet",
-    leadTime: "5 days",
-    unitPrice: 55.0,
-    quantity: 2,
-  },
-  {
-    category: "Software Wireless",
-    product: "WIC-1B-S/T-V3 1-Port ISDN WAN Interface Card",
-    leadTime: "N/A",
-    unitPrice: 600.0,
-    quantity: 1,
-  },
-  {
-    category: "Software Wireless",
-    product: "EDU-DNA-A-3Y DNA Advantage Term License - 3Y",
-    leadTime: "Instant",
-    unitPrice: 540.0,
-    quantity: 3,
-  },
-  {
-    category: "Hardware Wireless",
-    product: "PS-SWITCH-AC-3P Power Supply Switch",
-    leadTime: "10 days",
-    unitPrice: 50.0,
-    quantity: 5,
-  },
-  {
-    category: "Software Wireless",
-    product: "EDU-DNA-E-7Y DNA Essential Term License - 7Y",
-    leadTime: "Instant",
-    unitPrice: 473.0,
-    quantity: 2,
-  },
-];
-
-export default function QuotationTable() {
+export default function QuotationTable({ items, summary }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<
     Record<string, boolean>
   >({});
   const [search, setSearch] = useState("");
+  const [showSweep, setShowSweep] = useState(false);
+  const prevItemsRef = useRef<QuoteLineItem[] | null>(null);
+  const prevSummaryRef = useRef<QuotePricingSummary | null>(null);
+  const [changedRowIds, setChangedRowIds] = useState<Set<string>>(new Set());
+  const [changedCells, setChangedCells] = useState<
+    Record<string, { price?: boolean; qty?: boolean }>
+  >({});
+  const [totalFlash, setTotalFlash] = useState(false);
 
-  const grouped = sampleData.reduce(
-    (acc, item) => {
-      if (!acc[item.category]) acc[item.category] = [];
-      acc[item.category].push(item);
-      return acc;
-    },
-    {} as Record<string, QuoteItem[]>,
-  );
+  useEffect(() => {
+    const prev = prevItemsRef.current;
+    if (prev) {
+      const byIdPrev = new Map(prev.map((i) => [i.id, i]));
+      const changedRows = new Set<string>();
+      const cellChanges: Record<string, { price?: boolean; qty?: boolean }> =
+        {};
 
-  const toggleCategory = (category: string) => {
-    setExpandedCategories((prev) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
-  };
+      for (const it of items) {
+        const p = byIdPrev.get(it.id);
+        if (!p) {
+          changedRows.add(it.id);
+          cellChanges[it.id] = { price: true, qty: true };
+          continue;
+        }
+        const priceChanged =
+          p.unitPrice !== it.unitPrice || p.currency !== it.currency;
+        const qtyChanged = p.quantity !== it.quantity;
+        if (priceChanged || qtyChanged) {
+          changedRows.add(it.id);
+          cellChanges[it.id] = {
+            price: priceChanged || undefined,
+            qty: qtyChanged || undefined,
+          };
+        }
+      }
+      setChangedRowIds(changedRows);
+      setChangedCells(cellChanges);
+
+      if (changedRows.size > 0) {
+        setShowSweep(true);
+        const t = setTimeout(() => setShowSweep(false), 850);
+        return () => clearTimeout(t);
+      }
+    }
+    prevItemsRef.current = items;
+  }, [items]);
+
+  useEffect(() => {
+    prevItemsRef.current = items;
+  }, [showSweep, items]);
+
+  useEffect(() => {
+    const prev = prevSummaryRef.current;
+    const totalNow = summary?.total;
+    const totalPrev = prev?.total;
+    if (
+      typeof totalNow === "number" &&
+      typeof totalPrev === "number" &&
+      totalNow !== totalPrev
+    ) {
+      setTotalFlash(true);
+      const t = setTimeout(() => setTotalFlash(false), 1200);
+      return () => clearTimeout(t);
+    }
+    prevSummaryRef.current = summary ?? null;
+  }, [summary]);
+
+  const grouped = useMemo(() => {
+    const g: Record<string, QuoteLineItem[]> = {};
+    for (const it of items) {
+      if (!g[it.category]) g[it.category] = [];
+      g[it.category].push(it);
+    }
+    return g;
+  }, [items]);
+
+  const toggleCategory = (c: string) =>
+    setExpandedCategories((prev) => ({ ...prev, [c]: !prev[c] }));
 
   const filteredGrouped = Object.entries(grouped)
-    .map(([category, items]) => {
-      const filteredItems = items.filter((item) =>
-        item.product.toLowerCase().includes(search.toLowerCase()),
-      );
-      return [category, filteredItems] as [string, QuoteItem[]];
+    .map(([category, its]) => {
+      const q = search.trim().toLowerCase();
+      const filtered = q
+        ? its.filter((i) =>
+            `${i.product} ${i.productCode ?? ""}`.toLowerCase().includes(q),
+          )
+        : its;
+      return [category, filtered] as [string, QuoteLineItem[]];
     })
-    .filter(([, items]) => items.length > 0);
+    .filter(([, its]) => its.length > 0);
 
-  const total = filteredGrouped
-    .flatMap(([, items]) => items)
-    .reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
+  const currency = summary?.currency ?? items[0]?.currency ?? "USD";
+  const computedTotal = filteredGrouped
+    .flatMap(([, its]) => its)
+    .reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+
+  const displayLead = (lt: QuoteLineItem["leadTime"]) =>
+    lt.kind === "instant"
+      ? "Instant"
+      : lt.kind === "na"
+        ? "N/A"
+        : `${lt.value} days`;
 
   return (
-    <div className="bg-white mx-8 mt-4 rounded-xl shadow border border-gray-200">
+    <div className="relative bg-white mx-8 mt-4 rounded-xl shadow border border-gray-200">
+      {showSweep && <div className="sweep-overlay" />}
+
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
@@ -108,7 +136,7 @@ export default function QuotationTable() {
           <button>Validate</button>
           <div className="relative">
             <button
-              onClick={() => setShowMenu((prev) => !prev)}
+              onClick={() => setShowMenu((p) => !p)}
               className="flex items-center gap-1"
             >
               More Action <FaChevronDown className="w-3 h-3" />
@@ -129,7 +157,7 @@ export default function QuotationTable() {
 
       {/* Table */}
       <div className="px-4 py-2">
-        {filteredGrouped.map(([category, items]) => (
+        {filteredGrouped.map(([category, its]) => (
           <div
             key={category}
             className="mb-4 border rounded-md border-gray-200"
@@ -145,6 +173,7 @@ export default function QuotationTable() {
                 <FaChevronRight />
               )}
             </button>
+
             {expandedCategories[category] && (
               <table className="w-full text-sm text-left border-t border-gray-100">
                 <thead className="text-gray-500 bg-white">
@@ -154,7 +183,7 @@ export default function QuotationTable() {
                       Estimated Lead Time
                     </th>
                     <th className="px-4 py-2 font-medium">
-                      Unit List Price (USD)
+                      Unit List Price ({currency})
                     </th>
                     <th className="px-4 py-2 font-medium">Quantity</th>
                     <th className="px-4 py-2 font-medium">
@@ -163,19 +192,46 @@ export default function QuotationTable() {
                   </tr>
                 </thead>
                 <tbody className="text-gray-700">
-                  {items.map((item, idx) => (
-                    <tr key={idx} className="border-t border-gray-100">
-                      <td className="px-4 py-2">{item.product}</td>
-                      <td className="px-4 py-2">{item.leadTime}</td>
-                      <td className="px-4 py-2">
-                        ${item.unitPrice.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-2">{item.quantity}</td>
-                      <td className="px-4 py-2">
-                        ${(item.unitPrice * item.quantity).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
+                  {its.map((it) => {
+                    const rowChanged = changedRowIds.has(it.id);
+                    const cell = changedCells[it.id] ?? {};
+                    return (
+                      <tr
+                        key={it.id}
+                        className={`border-t border-gray-100 ${rowChanged ? "flash-once" : ""}`}
+                      >
+                        <td className="px-4 py-2">
+                          {it.product}
+                          {it.productCode ? (
+                            <span className="text-gray-400 ml-1">
+                              ({it.productCode})
+                            </span>
+                          ) : null}
+                        </td>
+                        <td className="px-4 py-2">
+                          {displayLead(it.leadTime)}
+                        </td>
+                        <td
+                          className={`px-4 py-2 ${cell.price ? "flash-once" : ""}`}
+                        >
+                          {it.unitPrice.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td
+                          className={`px-4 py-2 ${cell.qty ? "flash-once" : ""}`}
+                        >
+                          {it.quantity}
+                        </td>
+                        <td className="px-4 py-2">
+                          {(it.unitPrice * it.quantity).toLocaleString(
+                            undefined,
+                            { minimumFractionDigits: 2 },
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}
@@ -185,10 +241,12 @@ export default function QuotationTable() {
 
       {/* Total */}
       <div className="flex justify-end px-4 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl">
-        <div className="text-right">
+        <div className={`text-right ${totalFlash ? "flash-once" : ""}`}>
           <div className="text-gray-500 text-sm">Total</div>
           <div className="text-blue-700 text-2xl font-bold">
-            ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            {(summary?.total ?? computedTotal).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+            })}
           </div>
         </div>
       </div>
