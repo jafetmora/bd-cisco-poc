@@ -2,57 +2,17 @@ import { useState } from "react";
 import { FiSend, FiPaperclip } from "react-icons/fi";
 
 interface ChatInputBarProps {
-  onSend: (msg: { avatar: string; message: string; time: string }) => void;
+  onSendText: (text: string) => void | Promise<void>;
 }
 
-export default function ChatInputBar({ onSend }: ChatInputBarProps) {
+export default function ChatInputBar({ onSendText }: ChatInputBarProps) {
   const [text, setText] = useState("");
 
-  const handleSend = () => {
-    if (!text.trim()) return;
-
-    const userMessage = {
-      avatar: "RM",
-      message: text,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-
-    onSend(userMessage);
+  const handleSend = async () => {
+    const value = text.trim();
+    if (!value) return;
     setText("");
-
-    setTimeout(() => {
-      const assistantReply = {
-        avatar: "CC",
-        message: generateMockReply(text),
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        align: "right" as const,
-      };
-      onSend(assistantReply);
-    }, 500);
-  };
-
-  const generateMockReply = (text: string): string => {
-    const lower = text.toLowerCase();
-
-    if (lower.includes("change") || lower.includes("update")) {
-      return "Sure, updating the quote as requested.";
-    }
-
-    if (lower.includes("add") || lower.includes("include")) {
-      return "Got it! Adding that to your quote.";
-    }
-
-    if (lower.includes("remove") || lower.includes("delete")) {
-      return "Okay, I'll remove that from the quote.";
-    }
-
-    return "Thanks! I'll update the quote accordingly.";
+    await onSendText(value);
   };
 
   return (
