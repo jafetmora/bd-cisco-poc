@@ -8,7 +8,7 @@ import { useQuote } from "../../../store/useQuote";
 
 export default function QuoteMainView() {
   const [activeTab, setActiveTab] = useState("Items");
-  const { quote, loading, error } = useQuote();
+  const { quoteSession, loading, error } = useQuote();
 
   if (error) {
     return (
@@ -19,7 +19,7 @@ export default function QuoteMainView() {
     );
   }
 
-  if (loading || !quote) {
+  if (loading || !quoteSession) {
     return (
       <main className="bg-[#F9FAFB] w-[80%] py-6">
         <StepHeader currentStep={1} />
@@ -28,15 +28,16 @@ export default function QuoteMainView() {
     );
   }
 
+  const quote = quoteSession.scenarios[0].quote;
   return (
     <main className="bg-[#F9FAFB] w-[80%] py-6">
       <StepHeader currentStep={1} />
-      <QuoteHeaderBar data={quote.header} />
+      {quote?.header && <QuoteHeaderBar data={quote.header} />}
       <TabSection activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === "Items" && (
         <>
           <ItemSearchHeader />
-          <QuotationTable items={quote.items} summary={quote.summary} />
+          <QuotationTable items={quote?.items ?? []} summary={quote?.summary} />
         </>
       )}
     </main>

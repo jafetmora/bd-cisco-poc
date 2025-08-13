@@ -47,7 +47,28 @@ export interface QuotePricingSummary {
   total: number;
 }
 
-export interface QuotePayload {
+export interface ChatMessage {
+  timestamp: string;
+  id: string;
+  sessionId: string;
+  role: string;
+  content: string;
+}
+
+export interface Scenario {
+  id: string;
+  label: string;
+  quote: Quote | null;
+}
+
+export interface QuoteSession {
+  id: string;
+  userId: string;
+  chatMessages: ChatMessage[];
+  scenarios: Scenario[];
+}
+
+export interface Quote {
   header: QuoteHeaderData;
   items: QuoteLineItem[];
   summary?: QuotePricingSummary;

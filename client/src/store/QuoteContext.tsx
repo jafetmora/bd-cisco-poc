@@ -1,14 +1,15 @@
 import { createContext } from "react";
-import type { QuotePayload } from "../types/Quotes";
+import type { QuoteSession } from "../types/Quotes";
 
 export type QuoteContextValue = {
-  quote: QuotePayload | null;
+  quoteSession: QuoteSession | null;
   loading: boolean;
   error: string | null;
-  loadInitialQuote: () => Promise<void>;
+  loadInitialQuoteSession: () => Promise<void>;
   connectSocket: () => void;
   disconnectSocket: () => void;
-  applyQuoteUpdate: (payload: QuotePayload) => void;
+  applyQuoteUpdate: (payload: QuoteSession) => void;
+  sendQuoteUpdate: (payload: QuoteSession) => void;
 };
 
 export const QuoteContext = createContext<QuoteContextValue | undefined>(

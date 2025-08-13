@@ -1,17 +1,11 @@
 import { useState } from "react";
+import { useQuote } from "../../../store/useQuote";
 import { FaHistory } from "react-icons/fa";
 import { BsPencilSquare } from "react-icons/bs";
 import MessageBubble from "./MessageBubble";
 import ChatInputBar from "./ChatInputBar";
 import { MdNoteAdd, MdEditNote, MdEmail } from "react-icons/md";
 import ChatHistory from "./ChatHistory";
-import { sendNlpMessage } from "../../../services/mockApi";
-
-type ChatMessage = {
-  avatar: string;
-  message: string;
-  time: string;
-};
 
 const chatHistoryData = [
   {
@@ -37,8 +31,8 @@ const chatHistoryData = [
 type TabType = "history" | "chat";
 
 export default function ChatContainer() {
+  const { quoteSession, sendQuoteUpdate } = useQuote();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("chat");
 
   const handleSelectHistory = (id: number) => {
@@ -47,20 +41,22 @@ export default function ChatContainer() {
     console.log("isHistoryOpen:", isHistoryOpen);
   };
 
-  const now = () =>
-    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
   const handleSendText = async (text: string) => {
-    const userMsg: ChatMessage = { avatar: "RM", message: text, time: now() };
-    setMessages((prev) => [...prev, userMsg]);
+    if (!quoteSession) return;
 
-    const { chatReply } = await sendNlpMessage(text);
-    const agentMsg: ChatMessage = {
-      avatar: "CC",
-      message: chatReply,
-      time: now(),
+    const userMsg = {
+      id: crypto.randomUUID(),
+      sessionId: quoteSession.id,
+      role: "user",
+      content: text,
+      timestamp: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, agentMsg]);
+
+    const updatedSession = {
+      ...quoteSession,
+      chatMessages: [...(quoteSession.chatMessages || []), userMsg],
+    };
+    sendQuoteUpdate(updatedSession);
   };
 
   return (
@@ -111,12 +107,27 @@ export default function ChatContainer() {
         )}
 
         {activeTab === "chat" &&
-          (messages.length === 0 ? (
+          (quoteSession?.chatMessages?.length ? (
+            quoteSession.chatMessages.map((msg, index) => (
+              <MessageBubble
+                key={msg.id || index}
+                avatar={msg.role === "assistant" ? "CC" : "RM"}
+                message={msg.content}
+                time={
+                  msg.timestamp
+                    ? new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : ""
+                }
+                align={msg.role === "assistant" ? "left" : "right"}
+              />
+            ))
+          ) : (
             <div className="h-full w-full flex items-center justify-center text-gray-400 text-sm">
               Start typing to generate a quote…
             </div>
-          ) : (
-            messages.map((msg, index) => <MessageBubble key={index} {...msg} />)
           ))}
       </div>
 
