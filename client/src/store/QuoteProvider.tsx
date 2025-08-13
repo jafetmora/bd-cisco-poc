@@ -5,9 +5,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { QuotePayload } from "../types/Quotes";
-import { getMockQuote } from "../services/mockApi";
-import { mockSocket } from "../services/mockSocket";
+import type { QuoteSession } from "../types/Quotes";
+import { getQuote } from "../services/api";
+import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
 
 function getErrorMessage(err: unknown): string {
@@ -20,21 +20,29 @@ function getErrorMessage(err: unknown): string {
 }
 
 export function QuoteProvider({ children }: { children: ReactNode }) {
-  const [quote, setQuote] = useState<QuotePayload | null>(null);
+  const [quoteSession, setQuoteSession] = useState<QuoteSession | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const applyQuoteUpdate = useCallback<QuoteContextValue["applyQuoteUpdate"]>(
-    (payload) => setQuote(payload),
+    (payload) => setQuoteSession(payload),
     [],
   );
 
-  const loadInitialQuote = useCallback(async () => {
+  const sendQuoteUpdate = useCallback<QuoteContextValue["sendQuoteUpdate"]>(
+    (payload) => {
+      setQuoteSession(payload);
+      socket.emit("QUOTE_UPDATED_CLIENT", payload);
+    },
+    [],
+  );
+
+  const loadInitialQuoteSession = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const payload = await getMockQuote();
-      setQuote(payload);
+      const payload = await getQuote();
+      setQuoteSession(payload);
     } catch (e: unknown) {
       setError(getErrorMessage(e) ?? "Failed to load initial quote");
     } finally {
@@ -43,44 +51,46 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const onSocketMessage = useCallback(
-    (payload: QuotePayload) => {
+    (payload: QuoteSession) => {
       applyQuoteUpdate(payload);
     },
     [applyQuoteUpdate],
   );
 
   const connectSocket = useCallback(() => {
-    mockSocket.on("QUOTE_UPDATED", onSocketMessage);
+    socket.on("QUOTE_UPDATED", onSocketMessage);
   }, [onSocketMessage]);
 
   const disconnectSocket = useCallback(() => {
-    mockSocket.off("QUOTE_UPDATED", onSocketMessage);
+    socket.off("QUOTE_UPDATED", onSocketMessage);
   }, [onSocketMessage]);
 
   useEffect(() => {
-    loadInitialQuote();
+    loadInitialQuoteSession();
     connectSocket();
     return () => disconnectSocket();
-  }, [loadInitialQuote, connectSocket, disconnectSocket]);
+  }, [loadInitialQuoteSession, connectSocket, disconnectSocket]);
 
   const value = useMemo<QuoteContextValue>(
     () => ({
-      quote,
+      quoteSession,
       loading,
       error,
-      loadInitialQuote,
+      loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,
       applyQuoteUpdate,
+      sendQuoteUpdate,
     }),
     [
-      quote,
+      quoteSession,
       loading,
       error,
-      loadInitialQuote,
+      loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,
       applyQuoteUpdate,
+      sendQuoteUpdate,
     ],
   );
 
