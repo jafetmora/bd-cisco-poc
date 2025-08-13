@@ -1,0 +1,44 @@
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^api/
+
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks: [ { id: black, language_version: python3.9, files: api/ } ]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+        language_version: python3.9
+        additional_dependencies:
+        - types-redis
+        - redis>=5
+        args: [--config-file=mypy.ini, --install-types, --non-interactive]
+        files: ^api/
+
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.7
+    hooks: [ { id: bandit, args: [ "-ll", "api" ] } ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks: [ { id: check-added-large-files } ]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        files: client/.*\\.(js|jsx|ts|tsx|json|css|md)$
+
+  - repo: local
+    hooks:
+      - id: frontend-validation
+        name: Frontend lint & build
+        entry: bash scripts/pre-commit-frontend.sh
+        language: system
+        pass_filenames: false

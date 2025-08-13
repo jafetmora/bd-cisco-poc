@@ -53,7 +53,7 @@ Local endpoints:
 
 ```text
 main   ← protected, demo deploys
- test    ← integration, staging deploys
+ dev    ← integration, staging deploys
  feature/*  ← short-lived work branches
  infra/*    ← Infra changes only
 ```
