@@ -15,7 +15,10 @@ repos:
     hooks:
       - id: mypy
         language_version: python3.9
-        args: [--config-file=mypy.ini]
+        additional_dependencies:
+        - types-redis
+        - redis>=5
+        args: [--config-file=mypy.ini, --install-types, --non-interactive]
         files: ^api/
 
   - repo: https://github.com/pycqa/bandit

@@ -1,11 +1,24 @@
 from fastapi import FastAPI
-from models.models import QuoteResponse, UserIntent, Scenario
 from fastapi.middleware.cors import CORSMiddleware
-from uuid import uuid4
+
+from services.redis_manager import redis_manager
+from routers import health, quote
 
 app = FastAPI(title="IA-Agent API", version="0.1.0")
 
 
+# Startup/Shutdown Events
+@app.on_event("startup")
+async def on_startup() -> None:
+    await redis_manager.connect()
+
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    await redis_manager.close()
+
+
+# Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -14,19 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# health-check for App Runner / load-balancer
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
-
-
-# mock endpoint wired to “MockAgent” (we’ll swap later)
-@app.post("/quote", response_model=QuoteResponse)
-def quote(req: UserIntent) -> QuoteResponse:
-    scenarios = [
-        Scenario(id="cost", label="Cost-Optimized", price=1_000),
-        Scenario(id="balanced", label="Balanced", price=1_200),
-        Scenario(id="feature", label="Feature-Rich", price=1_400),
-    ]
-    return QuoteResponse(scenarios=scenarios, traceId=str(uuid4()))
+# Routers
+app.include_router(health.router, prefix="/health", tags=["health"])
+app.include_router(quote.router, prefix="/quote", tags=["quote"])
