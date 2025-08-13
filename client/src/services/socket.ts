@@ -2,7 +2,7 @@ import type { QuoteSession } from "../types/Quotes";
 
 type Handler<T> = (data: T) => void;
 
-const WS_URL = "ws://localhost:8000/ws";
+const WS_URL = `${import.meta.env.VITE_WS_URL || "ws://localhost:8000/ws"}`;
 
 export type QuoteSocketEvents = {
   QUOTE_UPDATED: QuoteSession;

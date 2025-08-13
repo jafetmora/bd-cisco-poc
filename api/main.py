@@ -1,9 +1,10 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import json
 from pydantic import ValidationError
-from models.models import (
+from models.user import Role
+from models.chat import ChatMessage
+from models.quote import (
     QuoteSession,
-    ChatMessage,
     Scenario,
     Quote,
     QuoteHeaderData,
@@ -13,11 +14,15 @@ from models.models import (
     CurrencyCode,
     QuoteStatus,
     LeadTimeInstant,
-    Role,
 )
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="IA-Agent API", version="0.1.0")
 
@@ -75,7 +80,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     json.dumps({"event": "ERROR", "data": str(e)})
                 )
     except WebSocketDisconnect:
-        print("WebSocket disconnected")
+        logger.info("WebSocket disconnected")
 
 
 app.add_middleware(
@@ -93,7 +98,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-# mock endpoint wired to “MockAgent” (ajustado para receber e retornar QuoteSession)
+# mock endpoint wired to “MockAgent”
 @app.post("/quote", response_model=QuoteSession)
 def quote(session: QuoteSession) -> QuoteSession:
     return session

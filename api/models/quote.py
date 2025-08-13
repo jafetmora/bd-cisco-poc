@@ -1,19 +1,7 @@
 from typing import Optional, List, Union, Literal
 from enum import Enum
 from pydantic import BaseModel
-
-
-class Role(str, Enum):
-    USER = "user"
-    ASSISTANT = "assistant"
-
-
-class ChatMessage(BaseModel):
-    id: Optional[str] = None
-    sessionId: str
-    role: Role
-    content: str
-    timestamp: Optional[str] = None
+from .chat import ChatMessage
 
 
 class CurrencyCode(str, Enum):
