@@ -55,11 +55,11 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const emptySession = {
-        id: '',
-        userId: '',
+        id: "",
+        userId: "",
         chatMessages: [],
         scenarios: [],
-        title: '',
+        title: "",
       };
       setQuoteSession(emptySession);
     } catch (e: unknown) {

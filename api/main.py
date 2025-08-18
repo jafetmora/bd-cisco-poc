@@ -13,8 +13,7 @@ from models.quote import (
     PriceList,
     CurrencyCode,
     QuoteStatus,
-    LeadTimeInstant,
-    LeadTimeDays
+    LeadTimeDays,
 )
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
@@ -108,18 +107,6 @@ def quote(session: QuoteSession) -> QuoteSession:
 @app.get("/quote", response_model=QuoteSession)
 def get_quote() -> QuoteSession:
     # First, create scenarios (quotes)
-    items = [
-        QuoteLineItem(
-            id="item-1",
-            category="Hardware",
-            productCode="CISCO-123",
-            product="Cisco Router",
-            leadTime=LeadTimeInstant(kind="instant"),
-            unitPrice=1000.0,
-            quantity=1,
-            currency=CurrencyCode.USD,
-        )
-    ]
     header = QuoteHeaderData(
         title="Sample Quote",
         dealId="D12345",
@@ -128,11 +115,6 @@ def get_quote() -> QuoteSession:
         expiryDate="2025-12-31",
         priceProtectionExpiry=None,
         priceList=PriceList(name="Standard", region="NA", currency=CurrencyCode.USD),
-        currency=CurrencyCode.USD,
-        subtotal=1000.0,
-        tax=100.0,
-        discount=50.0,
-        total=1050.0,
     )
     quote_cost = Quote(
         header=header.copy(update={"title": "Cost-Optimized Deal"}),
@@ -245,5 +227,9 @@ def get_quote() -> QuoteSession:
         ),
     ]
     return QuoteSession(
-        id="sess-1", userId="user-123", chatMessages=chat_messages, scenarios=scenarios, title="Acme Quote for DUO"
+        id="sess-1",
+        userId="user-123",
+        chatMessages=chat_messages,
+        scenarios=scenarios,
+        title="Acme Quote for DUO",
     )

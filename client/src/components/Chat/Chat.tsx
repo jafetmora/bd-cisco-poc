@@ -4,7 +4,8 @@ import { MdNoteAdd, MdEditNote } from "react-icons/md";
 import type { DisplayMode } from "../../store/DisplayModeContext";
 
 import QuoteDraft from "./QuoteDraft";
-import type { Scenario } from "../../types/Quotes";
+import type { Scenario, Quote } from "../../types/Quotes";
+import NewEmptyChat from "./NewEmptyChat";
 
 interface ChatProps {
   setMode?: (mode: DisplayMode) => void;
@@ -20,65 +21,74 @@ interface ChatProps {
   mode?: DisplayMode;
 }
 
-export default function Chat({ chatMessages, onSendText, mode, scenarios, setMode }: ChatProps) {
-  console.log('[Chat] Rendered with mode:', mode, '| chatMessages:', chatMessages.length, '| scenarios:', scenarios?.length ?? 0);
-
+export default function Chat({
+  chatMessages,
+  onSendText,
+  mode,
+  scenarios,
+  setMode,
+}: ChatProps) {
+  const hasQuote = (s: Scenario): s is Scenario & { quote: Quote } =>
+    s.quote !== null;
   return (
     <div className="flex flex-col h-full w-full">
       <main className="flex-1 bg-[#F9FAFB] w-full h-full px-8 overflow-y-auto pb-20">
-        {/* Display mode for demonstration */}
-        <div className="text-xs text-gray-400 text-right pr-2 pb-1">Mode: {mode}</div>
+        <div className="text-xs text-gray-400 text-right pr-2 pb-1"></div>
         <div className="flex flex-col gap-4">
           {/* Render chat messages normally */}
-          {chatMessages.length > 0 && chatMessages.map((msg, index) => (
-            <MessageBubble
-              key={msg.id || index}
-              avatar={msg.role === "assistant" ? "CC" : "RM"}
-              message={msg.content}
-              time={
-                msg.timestamp
-                  ? new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : ""
-              }
-              align={msg.role === "assistant" ? "left" : "right"}
-            />
-          ))}
-          {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
-          {mode === 'draft' && Array.isArray(scenarios) && (() => {
-            const scenarioWithQuote = scenarios.find(s => s.quote);
-            if (!scenarioWithQuote) return null;
-            return (
-              <QuoteDraft
-                key={"quote-draft-main"}
-                quote={scenarioWithQuote.quote}
-                scenarioLabel={scenarioWithQuote.label}
-                setMode={setMode}
+          {chatMessages.length > 0 &&
+            chatMessages.map((msg, index) => (
+              <MessageBubble
+                key={msg.id || index}
+                avatar={msg.role === "assistant" ? "CC" : "RM"}
+                message={msg.content}
+                time={
+                  msg.timestamp
+                    ? new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : ""
+                }
+                align={msg.role === "assistant" ? "left" : "right"}
               />
-            );
-          })()}
-
+            ))}
+          {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
+          {mode === "draft" &&
+            Array.isArray(scenarios) &&
+            (() => {
+              const scenarioWithQuote = scenarios.find(hasQuote);
+              if (!scenarioWithQuote) return null;
+              return (
+                <QuoteDraft
+                  key={"quote-draft-main"}
+                  quote={scenarioWithQuote.quote}
+                  scenarioLabel={scenarioWithQuote.label}
+                  setMode={setMode}
+                />
+              );
+            })()}
 
           {chatMessages.length === 0 && (
-            <div className="h-full w-full flex items-center justify-center text-gray-400 text-sm">
-              Start typing to generate a quote…
-            </div>
+            <NewEmptyChat onSendText={onSendText ?? (() => {})} />
           )}
         </div>
       </main>
-      <div className="flex justify-evenly gap-3 mt-4 pb-3">
-        <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
-          <MdNoteAdd className="w-6 h-6" /> Create Order
-        </button>
-        <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
-          <MdEditNote className="w-6 h-6" /> Engage with AM
-        </button>
-      </div>
-      <div className="w-full bg-[#E0F2FE] border-t border-[#BAE6FD]/70 px-8">
-        <ChatInputBar onSendText={onSendText ?? (() => {})} />
-      </div>
+      {chatMessages.length > 0 && (
+        <>
+          <div className="flex justify-evenly gap-3 mt-4 pb-3">
+            <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
+              <MdNoteAdd className="w-6 h-6" /> Create Order
+            </button>
+            <button className="bg-white text-[#0369A1] border border-[#BAE6FD] rounded-full px-4 py-2 text-sm shadow-sm hover:bg-[#F0F9FF] transition flex items-center gap-2">
+              <MdEditNote className="w-6 h-6" /> Engage with AM
+            </button>
+          </div>
+          <div className="w-full bg-[#E0F2FE] border-t border-[#BAE6FD]/70 px-8">
+            <ChatInputBar onSendText={onSendText ?? (() => {})} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

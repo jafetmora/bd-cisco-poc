@@ -8,9 +8,9 @@ import {
   FaTrash,
   FaPen,
 } from "react-icons/fa";
-import type { QuoteHeaderData } from "../../../types/Quotes";
+import type { QuoteHeaderData, QuoteStatus } from "../../types/Quotes";
 
-type Props = { data: QuoteHeaderData; title?: string };
+type Props = { data: QuoteHeaderData; title?: string; noMargins?: boolean };
 
 function headerSignature(d: QuoteHeaderData) {
   return [
@@ -26,7 +26,17 @@ function headerSignature(d: QuoteHeaderData) {
   ].join("|");
 }
 
-export default function QuoteHeaderBar({ data, title }: Props) {
+const STATUS_BADGES: Record<QuoteStatus, { text: string; className: string }> =
+  {
+    NOT_SUBMITTED: { text: "⚠ Not Submitted", className: "text-yellow-600" },
+    DRAFT: { text: "Draft", className: "text-gray-600" },
+    SUBMITTED: { text: "Submitted", className: "text-blue-600" },
+    APPROVED: { text: "Approved", className: "text-green-600" },
+    REJECTED: { text: "Rejected", className: "text-red-600" },
+    EXPIRED: { text: "Expired", className: "text-red-500" },
+  };
+
+export default function QuoteHeaderBar({ data, title, noMargins }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const sig = useMemo(() => headerSignature(data), [data]);
   const [sweep, setSweep] = useState(false);
@@ -42,14 +52,7 @@ export default function QuoteHeaderBar({ data, title }: Props) {
     return () => clearTimeout(t);
   }, [sig]);
 
-  const statusBadge = {
-    NOT_SUBMITTED: { text: "⚠ Not Submitted", className: "text-yellow-600" },
-    DRAFT: { text: "Draft", className: "text-gray-600" },
-    SUBMITTED: { text: "Submitted", className: "text-blue-600" },
-    APPROVED: { text: "Approved", className: "text-green-600" },
-    REJECTED: { text: "Rejected", className: "text-red-600" },
-    EXPIRED: { text: "Expired", className: "text-red-500" },
-  }[data.status];
+  const statusBadge = STATUS_BADGES[data.status];
 
   const fmtDate = (iso?: string | null) =>
     iso
@@ -61,7 +64,13 @@ export default function QuoteHeaderBar({ data, title }: Props) {
       : "—";
 
   return (
-    <div className="relative bg-white shadow rounded-xl mx-8 p-6 border border-gray-200 overflow-hidden">
+    <div
+      className={
+        "relative bg-white shadow rounded-xl " +
+        (noMargins ? "mx-0" : "mx-8") +
+        " p-6 border border-gray-200 overflow-hidden"
+      }
+    >
       <AnimatePresence>
         {sweep && (
           <motion.div
