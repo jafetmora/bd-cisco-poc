@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import type { QuoteHeaderData } from "../../../types/Quotes";
 
-type Props = { data: QuoteHeaderData };
+type Props = { data: QuoteHeaderData; title?: string };
 
 function headerSignature(d: QuoteHeaderData) {
   return [
@@ -26,7 +26,7 @@ function headerSignature(d: QuoteHeaderData) {
   ].join("|");
 }
 
-export default function QuoteHeaderBar({ data }: Props) {
+export default function QuoteHeaderBar({ data, title }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const sig = useMemo(() => headerSignature(data), [data]);
   const [sweep, setSweep] = useState(false);
@@ -87,7 +87,7 @@ export default function QuoteHeaderBar({ data }: Props) {
         >
           <div>
             <div className="flex space-x-3">
-              <h2 className="text-xl font-semibold mb-2">{data.title}</h2>
+              <h2 className="text-xl font-semibold mb-2">{title}</h2>
               <FaPen className="cursor-pointer w-3 h-3" />
             </div>
 

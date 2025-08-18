@@ -1,0 +1,81 @@
+import { useState } from "react";
+import { useQuote } from "../../store/useQuote";
+import { useDisplayMode } from "../../store/DisplayModeContext";
+import Chat from "../Chat/Chat";
+import ChatHistory from "./ChatHistory";
+
+const chatHistoryData = [
+  {
+    id: "1",
+    title: "Cisco Duo Subscription for 100 users",
+    lastMessage: "Sure! Here's a quote for Cisco Duo Subscription...",
+    time: "Today, 10:15 AM",
+  },
+  {
+    id: "2",
+    title: "Renewal: Secure Endpoint",
+    lastMessage: "Renewal details sent to your email.",
+    time: "Yesterday, 4:37 PM",
+  },
+  {
+    id: "3",
+    title: "General Inquiry",
+    lastMessage: "Can you send me the updated price list?",
+    time: "2 days ago",
+  },
+];
+
+export default function AIAssistantContainer() {
+  const { quoteSession, sendQuoteUpdate, loadExistingQuoteSession, loadInitialQuoteSession } = useQuote();
+  const { mode, setMode } = useDisplayMode();
+
+  const handleSendText = (text: string) => {
+    if (!quoteSession) return;
+    const userMsg = {
+      id: Date.now().toString(),
+      sessionId: quoteSession.id,
+      role: "user",
+      content: text,
+      timestamp: new Date().toISOString(),
+    };
+    const updatedSession = {
+      ...quoteSession,
+      chatMessages: [...(quoteSession.chatMessages || []), userMsg],
+    };
+    sendQuoteUpdate(updatedSession);
+  };
+
+  const toggleMode = () => setMode(mode === "draft" ? "detailed" : "draft");
+
+  return (
+    <aside className="w-[20%] bg-gray-100 border-r border-gray-200 flex flex-col">
+      <div className="grid h-full min-h-0 w-full grid-rows-[auto,1fr,auto] bg-[#F8FAFB] shadow border border-gray-200 overflow-hidden">
+        {/* Header */}
+        <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-[187px]">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-primary flex items-center justify-center p-4">
+              <span className="font-light text-white text-lg">CC</span>
+            </div>
+            <span className="font-segoe text-primary text-lg leading-8 tracking-[-0.6px]">
+              AI Assistant
+            </span>
+          </div>
+          <button
+            className="ml-4 px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+            onClick={toggleMode}
+          >
+            Mode: {mode === "draft" ? "Draft" : "Detailed"}
+          </button>
+        </div>
+        {/* Content */}
+        <div className="overflow-y-auto space-y-6 min-h-0">
+          {mode === "detailed" ? (
+            <Chat chatMessages={quoteSession?.chatMessages || []} onSendText={handleSendText} mode={mode} />
+          ) : (
+            <ChatHistory previousChats={chatHistoryData} onSelect={(sessionId) => loadExistingQuoteSession(sessionId)} onNew={loadInitialQuoteSession} />
+          )}
+        </div>
+      </div>
+    </aside>
+  );
+}

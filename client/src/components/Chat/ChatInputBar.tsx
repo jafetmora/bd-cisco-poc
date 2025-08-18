@@ -16,10 +16,10 @@ export default function ChatInputBar({ onSendText }: ChatInputBarProps) {
   };
 
   return (
-    <div className="bg-[#E0F2FE] p-5">
+    <div className="bg-[#E0F2FE] pt-5 px-5 pb-5">
       <div className="bg-white rounded-full shadow flex justify-center items-center px-4 py-2">
         <input
-          className="flex-1 bg-transparent text-sm placeholder-gray-400 focus:outline-none"
+          className="flex-1 min-w-0 w-full bg-transparent text-sm placeholder-gray-400 focus:outline-none"
           placeholder="Type..."
           value={text}
           onChange={(e) => setText(e.target.value)}

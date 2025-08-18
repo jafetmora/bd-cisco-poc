@@ -6,9 +6,9 @@ import {
   type ReactNode,
 } from "react";
 import type { QuoteSession } from "../types/Quotes";
-import { getQuote } from "../services/api";
 import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
+import { getQuote } from "../services/api";
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -37,12 +37,31 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const loadExistingQuoteSession = useCallback(async (sessionId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const quoteSession = await getQuote(sessionId);
+      setQuoteSession(quoteSession);
+    } catch (e: unknown) {
+      setError(getErrorMessage(e) ?? "Failed to load initial quote");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const loadInitialQuoteSession = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const payload = await getQuote();
-      setQuoteSession(payload);
+      const emptySession = {
+        id: '',
+        userId: '',
+        chatMessages: [],
+        scenarios: [],
+        title: '',
+      };
+      setQuoteSession(emptySession);
     } catch (e: unknown) {
       setError(getErrorMessage(e) ?? "Failed to load initial quote");
     } finally {
@@ -76,6 +95,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       quoteSession,
       loading,
       error,
+      loadExistingQuoteSession,
       loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,
@@ -86,6 +106,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       quoteSession,
       loading,
       error,
+      loadExistingQuoteSession,
       loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,

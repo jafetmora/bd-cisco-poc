@@ -5,6 +5,7 @@ export type QuoteContextValue = {
   quoteSession: QuoteSession | null;
   loading: boolean;
   error: string | null;
+  loadExistingQuoteSession: (sessionId: string) => Promise<void>;
   loadInitialQuoteSession: () => Promise<void>;
   connectSocket: () => void;
   disconnectSocket: () => void;

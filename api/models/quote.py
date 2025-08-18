@@ -88,3 +88,4 @@ class QuoteSession(BaseModel):
     userId: str
     chatMessages: List[ChatMessage]
     scenarios: List[Scenario]
+    title: str

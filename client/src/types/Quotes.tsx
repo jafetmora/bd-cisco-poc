@@ -66,6 +66,7 @@ export interface QuoteSession {
   userId: string;
   chatMessages: ChatMessage[];
   scenarios: Scenario[];
+  title: string;
 }
 
 export interface Quote {

@@ -11,7 +11,11 @@ export default api;
 
 import type { QuoteSession } from "../types/Quotes";
 
-export async function getQuote(): Promise<QuoteSession> {
-  const response = await api.get("/quote");
+export async function getQuote(sessionId?: string): Promise<QuoteSession> {
+  const response = await api.get("/quote", {
+    params: {
+      sessionId,
+    },
+  });
   return response.data;
 }
