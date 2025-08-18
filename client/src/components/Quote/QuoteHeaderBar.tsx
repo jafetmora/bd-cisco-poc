@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import type { QuoteHeaderData } from "../../../types/Quotes";
 
-type Props = { data: QuoteHeaderData; title?: string };
+type Props = { data: QuoteHeaderData; title?: string; noMargins?: boolean };
 
 function headerSignature(d: QuoteHeaderData) {
   return [
@@ -26,7 +26,7 @@ function headerSignature(d: QuoteHeaderData) {
   ].join("|");
 }
 
-export default function QuoteHeaderBar({ data, title }: Props) {
+export default function QuoteHeaderBar({ data, title, noMargins }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const sig = useMemo(() => headerSignature(data), [data]);
   const [sweep, setSweep] = useState(false);
@@ -61,7 +61,7 @@ export default function QuoteHeaderBar({ data, title }: Props) {
       : "—";
 
   return (
-    <div className="relative bg-white shadow rounded-xl mx-8 p-6 border border-gray-200 overflow-hidden">
+    <div className={"relative bg-white shadow rounded-xl " + (noMargins ? "mx-0" : "mx-8") + " p-6 border border-gray-200 overflow-hidden"}>
       <AnimatePresence>
         {sweep && (
           <motion.div

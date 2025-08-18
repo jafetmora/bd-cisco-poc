@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FiSidebar } from "react-icons/fi";
 import { useQuote } from "../../store/useQuote";
 import { useDisplayMode } from "../../store/DisplayModeContext";
 import Chat from "../Chat/Chat";
@@ -45,7 +46,11 @@ export default function AIAssistantContainer() {
     sendQuoteUpdate(updatedSession);
   };
 
-  const toggleMode = () => setMode(mode === "draft" ? "detailed" : "draft");
+  const hasScenarios = (quoteSession?.scenarios?.length ?? 0) > 0;
+  const toggleMode = () => {
+    if (mode === "draft" && !hasScenarios) return;
+    setMode(mode === "draft" ? "detailed" : "draft");
+  };
 
   return (
     <aside className="w-[20%] bg-gray-100 border-r border-gray-200 flex flex-col">
@@ -53,18 +58,23 @@ export default function AIAssistantContainer() {
         {/* Header */}
         <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-[187px]">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-primary flex items-center justify-center p-4">
-              <span className="font-light text-white text-lg">CC</span>
-            </div>
+            <img src="/image-icon.png" alt="Assistant" className="block" />
             <span className="font-segoe text-primary text-lg leading-8 tracking-[-0.6px]">
               AI Assistant
             </span>
           </div>
           <button
-            className="ml-4 px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+            className="ml-4 p-2 rounded bg-transparent hover:bg-sky-50 text-gray-700"
             onClick={toggleMode}
+            aria-label="Toggle sidebar / mode"
+            type="button"
+            title={
+              mode === "draft" && !hasScenarios
+                ? "Add scenarios to enable Detailed view"
+                : `Mode: ${mode === "draft" ? "Draft" : "Detailed"}`
+            }
           >
-            Mode: {mode === "draft" ? "Draft" : "Detailed"}
+            <FiSidebar className="w-[30px] h-[30px]" />
           </button>
         </div>
         {/* Content */}
