@@ -1,0 +1,90 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-EK9",
+  "commercial_name": "3602E AP with 802.11ac Module for E Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-30",
+    "last_support_date": "2030-06-30"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 300.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 300.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Contract",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 285.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 15,
+            "discount_pct": 7
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless LAN Controller",
+      "PoE Injector"
+    ],
+    "compatible_with": [
+      "Cisco DNA Center",
+      "Cisco Prime Infrastructure"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "CE",
+      "FCC",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-Type"
+      },
+      "power": "PoE (802.3af)",
+      "mounting": "Ceiling or Wall Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

@@ -1,0 +1,821 @@
+[
+  {
+    "cisco_product_id": "WAAS-RTU-1300U2500",
+    "commercial_name": "Upgrade 1300 WAAS connection RTU to 2500 connection RTU",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 7200.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "WAAS-RTU-2500U6K",
+    "commercial_name": "Upgrade 2500 WAAS connection RTU to 6000 connection RTU",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 12000.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "SF-I44-NPE-5.4",
+    "commercial_name": "Cisco ISRWAAS NPE Software Release 5.4 for ISR 4400 Series",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM100N-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 100 Nodes",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM2KN-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 2000 Nodes",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM500N-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 500 Nodes",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM100NNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-100 Nodes on DVD",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM2KNNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-2000 Nodes on DVD",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM500NNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-500 Nodes on DVD",
+    "product_type": "software",
+    "category": "Sw Support License",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": null,
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [],
+      "required_hardware_skus": [],
+      "incompatible_with": []
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": []
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "support",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "device",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    },
+    "notes": "",
+    "attributes": {
+      "support": {
+        "service_level": "Standard",
+        "sla": {
+          "tac_response_hours": 1,
+          "adv_replacement": "NBD"
+        },
+        "includes_software_updates": true,
+        "includes_hardware_replacement": false,
+        "scope": "software_only",
+        "link_to_contract": null
+      }
+    }
+  }
+]

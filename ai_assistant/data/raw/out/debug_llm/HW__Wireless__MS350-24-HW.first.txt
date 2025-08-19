@@ -1,0 +1,85 @@
+{
+  "cisco_product_id": "MS350-24-HW",
+  "commercial_name": "Meraki MS350-24 L3 Stck Cld-Mngd 24x GigE Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Switch",
+  "lifecycle": {
+    "status": "Available",
+    "eos_announced": "2025-12-01",
+    "last_support_date": "2030-12-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 5675.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 5675.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 5400.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Power supply",
+      "Rack mount kit"
+    ],
+    "compatible_with": [
+      "Meraki MR Series APs",
+      "Meraki MX Security Appliances"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "CE",
+      "FCC",
+      "UL"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP50"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Switch",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.5,
+      "antenna": {
+        "type": "Internal",
+        "connectors": "None"
+      },
+      "power": "150W",
+      "mounting": "Rack Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

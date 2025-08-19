@@ -1,0 +1,104 @@
+{
+  "cisco_product_id": "MR30H-HW",
+  "commercial_name": "Meraki MR30H Cloud Managed AP",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Available",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 599.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 599.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5.0
+          },
+          {
+            "type": "Promotional Discount",
+            "threshold": 5,
+            "discount_pct": 3.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 569.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Licensing"
+    ],
+    "compatible_with": [
+      "Meraki Dashboard",
+      "Cisco Umbrella",
+      "Cisco Identity Services Engine",
+      "Cisco DNA Center"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67",
+      "humidity": {
+        "min": 10,
+        "max": 90
+      }
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "Wi-Fi 6",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 2.5,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "RP-SMA"
+      },
+      "power": "802.3at PoE+",
+      "mounting": "Ceiling/Wall",
+      "controller_capacity_aps": 200,
+      "ssid_capacity": 16
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "protocols_supported": [
+      "802.11a",
+      "802.11b",
+      "802.11g",
+      "802.11n",
+      "802.11ac",
+      "802.11ax"
+    ],
+    "security_features": [
+      "WPA3",
+      "WPA2",
+      "MAC Filtering"
+    ]
+  }
+}

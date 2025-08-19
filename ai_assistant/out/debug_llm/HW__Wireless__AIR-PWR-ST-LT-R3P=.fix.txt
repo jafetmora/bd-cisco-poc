@@ -1,0 +1,98 @@
+{
+  "cisco_product_id": "AIR-PWR-ST-LT-R3P=",
+  "commercial_name": "1520 Series Street Light Power Tap, 4 ft.",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Outdoor Power Solutions",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-12-31",
+    "last_support_date": "2030-12-31"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 406.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 406.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Contract",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 396.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 20,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Power Supply Unit",
+      "Mounting Kit"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1815",
+      "Cisco Catalyst 9100",
+      "Cisco Catalyst 9200"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "ETSI",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point Power Tap",
+      "wifi_standard": "802.11ax",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 4.8,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-Type"
+      },
+      "power": "PoE+",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "protocols_supported": [
+      "IPv4",
+      "IPv6"
+    ],
+    "max_power_consumption_watts": 30,
+    "enclosure_material": "Weather-resistant Polycarbonate"
+  }
+}

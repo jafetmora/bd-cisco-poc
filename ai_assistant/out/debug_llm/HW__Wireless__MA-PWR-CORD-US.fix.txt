@@ -1,0 +1,85 @@
+{
+  "cisco_product_id": "MA-PWR-CORD-US",
+  "commercial_name": "Meraki AC Power Cord for MX and MS (US Plug)",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Power Accessories",
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "standard",
+    "currency": "USD",
+    "base_price": 23.75,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 23.75,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "bundle",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 20.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "MX series appliances",
+      "MS series switches"
+    ],
+    "compatible_with": [
+      "MX67",
+      "MX68",
+      "MS120",
+      "MS210"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "UL Listed",
+      "FCC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP20"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Power Cord",
+      "wifi_standard": "N/A",
+      "radios": "N/A",
+      "mimo": "N/A",
+      "max_phy_throughput_gbps": "N/A",
+      "antenna": {
+        "type": "none",
+        "connectors": "N/A"
+      },
+      "power": "AC",
+      "mounting": "none",
+      "controller_capacity_aps": "N/A"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

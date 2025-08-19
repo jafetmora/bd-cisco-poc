@@ -1,0 +1,92 @@
+{
+  "cisco_product_id": "AIR-ANT2480V-N=",
+  "commercial_name": "2.4 GHz, 8 dBi Omni with N Connector",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-12-01",
+    "last_support_date": "2030-12-31"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 459.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 459.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Reseller",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 435.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 20,
+            "discount_pct": 8
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Cisco Access Points"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1800 Series",
+      "Cisco Catalyst 9100 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Omnidirectional Antenna",
+      "wifi_standard": "802.11n",
+      "radios": 1,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 0.54,
+      "antenna": {
+        "type": "Omni",
+        "connectors": [
+          "N-Type"
+        ]
+      },
+      "power": "23 dBm",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

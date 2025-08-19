@@ -1,0 +1,93 @@
+{
+  "cisco_product_id": "MR33-HW",
+  "commercial_name": "Meraki MR33 Cloud Managed AP",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 649.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 649.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 25,
+        "price": 619.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 25,
+            "discount_pct": 8
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Meraki Licensing"
+    ],
+    "compatible_with": [
+      "MR34-HW",
+      "MR42-HW",
+      "MS120-24P",
+      "MS110-16"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "RoHS",
+      "WEEE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -5,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Indoor Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "External",
+        "connectors": "2 x RP-SMA"
+      },
+      "power": "802.3af PoE",
+      "mounting": "Ceiling or Wall",
+      "controller_capacity_aps": 200
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

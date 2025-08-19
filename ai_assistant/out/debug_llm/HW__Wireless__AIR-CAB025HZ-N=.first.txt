@@ -1,0 +1,85 @@
+{
+  "cisco_product_id": "AIR-CAB025HZ-N=",
+  "commercial_name": "25 ft Low Loss Cable Assembly w/N Connectors, Haz Loc",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Cables",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2028-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 348.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 348.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 330.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Cisco Access Point"
+    ],
+    "compatible_with": [
+      "Cisco AIR-AP2802I",
+      "Cisco AIR-AP3802I"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Cable Assembly",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Directional",
+        "connectors": "N-type"
+      },
+      "power": "50W",
+      "mounting": "Pole mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

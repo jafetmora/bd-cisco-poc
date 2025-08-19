@@ -1,0 +1,103 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-EK910",
+  "commercial_name": "3602E AP with 802.11ac Module Eco Pack for E Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 3000.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 3000.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 5.0
+          },
+          {
+            "type": "Promotion",
+            "threshold": 10,
+            "discount_pct": 10.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 2700.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Tiered",
+            "threshold": 20,
+            "discount_pct": 3.0
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power over Ethernet (PoE) Switch"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco DNA Center",
+      "Cisco Identity Services Engine"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "UL"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 55,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.7,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "RP-SMA"
+      },
+      "power": "802.3af/802.3at",
+      "mounting": "Wall/Ceiling",
+      "controller_capacity_aps": 50,
+      "frequency_bands": [
+        "2.4 GHz",
+        "5 GHz"
+      ],
+      "security": [
+        "WPA2",
+        "WPA3",
+        "802.1X"
+      ]
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "network_interface": "Ethernet",
+    "form_factor": "Compact"
+  }
+}

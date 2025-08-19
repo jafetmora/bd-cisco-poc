@@ -1,0 +1,13 @@
+{
+  "num_pdfs": 3,
+  "pdf_files": [
+    "Cisco Switches Data Sheet.pdf",
+    "Cisco Wireless Data Sheet.pdf",
+    "Duo_Subscription_DataSheet.pdf"
+  ],
+  "num_chunks": 104,
+  "num_table_facts": 0,
+  "num_all_docs": 104,
+  "chunk_size": 1200,
+  "chunk_overlap": 150
+}

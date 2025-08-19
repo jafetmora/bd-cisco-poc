@@ -1,0 +1,86 @@
+{
+  "cisco_product_id": "AIR-ANT2544V4M-R8=",
+  "commercial_name": "2.4GHz 3 dBi/5GHz 2 dBi Ant., 4-port,RP-TNC, 8ft cable",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1108.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1108.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Loyalty",
+            "threshold": 100,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 1000.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Access Point",
+      "Cisco Wireless Controller"
+    ],
+    "compatible_with": [
+      "Cisco 9800 Series",
+      "Cisco 3504 Wireless Controller"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 4,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "RP-TNC"
+        ]
+      },
+      "power": "12 V",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

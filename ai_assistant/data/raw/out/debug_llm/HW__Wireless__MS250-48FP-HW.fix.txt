@@ -1,0 +1,103 @@
+{
+  "cisco_product_id": "MS250-48FP-HW",
+  "commercial_name": "Meraki MS250-48FP L3 Stck Cld-Mngd 48x GigE 740W PoE Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Switch",
+  "lifecycle": {
+    "status": "current",
+    "eos_announced": "2025-12-31",
+    "last_support_date": "2030-12-31"
+  },
+  "pricing_model": {
+    "type": "one-time purchase",
+    "currency": "USD",
+    "base_price": 10420.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 10420.0,
+        "effective": "2023-11-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "loyalty",
+            "threshold": 0,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 9900.0,
+        "effective": "2023-11-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 5
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Cloud Management License",
+      "Power Supply Module"
+    ],
+    "compatible_with": [
+      "Meraki MR Series Access Points",
+      "Meraki MX Series Security Appliances",
+      "Third-party VLAN-enabled devices",
+      "Meraki MV Series Cameras"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Switch",
+      "wifi_standard": "802.11ax",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 10,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-Type"
+      },
+      "power": "740W PoE",
+      "mounting": "Rack Mountable",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "features": [
+      "Advanced Security",
+      "Traffic Analytics",
+      "Cloud Management"
+    ],
+    "dimensions": {
+      "height_mm": 44,
+      "width_mm": 440,
+      "depth_mm": 300
+    }
+  }
+}

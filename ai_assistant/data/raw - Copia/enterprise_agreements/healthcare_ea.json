@@ -1,0 +1,15 @@
+{
+    "agreement_name": "Healthcare Kickstart EA",
+    "target_segment": "Healthcare",
+    "minimum_user_count": 50,
+    "included_product_families": [
+        "Catalyst 9300 Series",
+        "Meraki MR Series",
+        "Firepower 1000 Series"
+    ],
+    "default_discount_percentage": {
+        "hardware": 45,
+        "software": 30
+    },
+    "included_support_tier": "Solution Support"
+}

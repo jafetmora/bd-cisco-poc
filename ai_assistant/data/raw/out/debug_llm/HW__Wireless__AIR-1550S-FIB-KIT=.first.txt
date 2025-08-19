@@ -1,0 +1,88 @@
+{
+  "cisco_product_id": "AIR-1550S-FIB-KIT=",
+  "commercial_name": "1550S Fiber Cable Take-up Reel Kit",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-01",
+    "last_support_date": "2030-05-01"
+  },
+  "pricing_model": {
+    "type": "List Price",
+    "currency": "USD",
+    "base_price": 198.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 198.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 180.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk Purchase",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-1550S",
+      "AIR-ANT2544V4M-Z"
+    ],
+    "compatible_with": [
+      "AIR-AP1552I",
+      "AIR-AP1552E"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 65,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Outdoor Accessory",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.73,
+      "antenna": {
+        "type": "Omni-directional",
+        "connectors": [
+          "N-Type",
+          "RP-SMA"
+        ]
+      },
+      "power": "12V DC",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

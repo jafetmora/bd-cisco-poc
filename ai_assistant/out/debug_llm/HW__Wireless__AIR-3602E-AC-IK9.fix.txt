@@ -1,0 +1,94 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-IK9",
+  "commercial_name": "3602E AP with 802.11ac Module for I Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2023-01-15",
+    "last_support_date": "2026-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1826.19,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1826.19,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Loyalty",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 1750.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power over Ethernet Injector"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco DNA Center",
+      "Cisco Mobility Express"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP65"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.75,
+      "antenna": {
+        "type": "Omni-directional",
+        "connectors": "N-type"
+      },
+      "power": "PoE (802.3at)",
+      "mounting": "Wall/Ceiling",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "max_power_consumption_watts": 20,
+    "form_factor": "Compact",
+    "enclosure_material": "Metal",
+    "dimensions_mm": {
+      "width": 200,
+      "depth": 200,
+      "height": 50
+    }
+  }
+}

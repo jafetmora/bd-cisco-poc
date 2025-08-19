@@ -1,0 +1,92 @@
+{
+  "cisco_product_id": "AIR-CAB002-DART-R=",
+  "commercial_name": "2 ft Smart Antenna Connector to RP-TNC connectors",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna Connectors",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2030-01-01",
+    "last_support_date": "2035-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 411.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 411.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 385.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 20,
+            "discount_pct": 8
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-CAB005-DART",
+      "AIR-AP1815I"
+    ],
+    "compatible_with": [
+      "AIR-AP1800",
+      "AIR-AP2800"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna Connector",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "RP-TNC",
+          "N-Type"
+        ]
+      },
+      "power": "20 dBm",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

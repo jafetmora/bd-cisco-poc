@@ -1,0 +1,96 @@
+{
+  "cisco_product_id": "MS210-48LP-HW",
+  "commercial_name": "Meraki MS210-48LP 1G L2 Cld-Mngd 48x GigE 370W PoE Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Switch",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 5720.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 5720.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5.0
+          },
+          {
+            "type": "Promotional",
+            "threshold": 5,
+            "discount_pct": 3.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 5474.0,
+        "effective": "2023-01-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Cloud Management License"
+    ],
+    "compatible_with": [
+      "Meraki MR Series Access Points",
+      "Meraki MX Security Appliances",
+      "Meraki MV Security Cameras",
+      "Meraki MS Series Switches"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "UL"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Switch",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.0,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-type"
+      },
+      "power": "370W PoE",
+      "mounting": "Rackmount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "features": [
+      "Layer 2 Switching",
+      "Cloud Management",
+      "Built-in Security Features"
+    ],
+    "interface_ports": {
+      "total_ports": 48,
+      "uplink_ports": 4,
+      "poe_ports": 48
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "cisco_product_id": "AIR-ACCAMK-1=",
+  "commercial_name": "1550 Directional Antenna Mount Kit",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna Mounts",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "Fixed",
+    "currency": "USD",
+    "base_price": 369.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 369.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 5
+          },
+          {
+            "type": "Loyalty",
+            "threshold": 10,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 349.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 20,
+            "discount_pct": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Aironet Access Point",
+      "Cisco Wireless Controller"
+    ],
+    "compatible_with": [
+      "Cisco 1550 Series",
+      "Cisco 2500 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna Mount",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Directional",
+        "connectors": [
+          "N-Type",
+          "RP-SMA"
+        ]
+      },
+      "power": "PoE",
+      "mounting": "Wall or Pole Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

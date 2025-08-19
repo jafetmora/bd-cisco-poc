@@ -65,7 +65,7 @@ const QuoteDraft: React.FC<QuoteDraftProps> = ({ quote, scenarioLabel, setMode }
           {expanded && (
             <div id={`quote-details-${header.quoteNumber}`}> 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 mb-4 text-xs text-neutral">
-                <div><span className="font-semibold text-light">Deal ID:</span> {header.dealId}</div>
+                <div><span className="font-semibold text-light">Deal IDs:</span> {header.dealId}</div>
                 <div><span className="font-semibold text-light">Quote #:</span> {header.quoteNumber}</div>
                 <div><span className="font-semibold text-light">Expiry:</span> {header.expiryDate}</div>
                 <div><span className="font-semibold text-light">Price List:</span> {header.priceList.name}</div>

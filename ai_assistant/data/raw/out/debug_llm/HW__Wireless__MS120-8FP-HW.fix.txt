@@ -1,0 +1,78 @@
+{
+  "cisco_product_id": "MS120-8FP-HW",
+  "commercial_name": "Meraki MS120-8FP 1G L2 Cloud Managed 8x GigE 127W PoE Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Switches",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "List Price",
+    "currency": "USD",
+    "base_price": 1322.5,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1322.5,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Seasonal Promotion",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Dashboard License",
+      "Power Supply Unit (PSU)"
+    ],
+    "compatible_with": [
+      "Meraki MR Access Points",
+      "Meraki MX Security Appliances"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP40"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Layer 2 Switch",
+      "wifi_standard": "N/A",
+      "radios": 0,
+      "mimo": "N/A",
+      "max_phy_throughput_gbps": 1,
+      "antenna": {
+        "type": "N/A",
+        "connectors": "N/A"
+      },
+      "power": "127W PoE",
+      "mounting": "Rack Mountable",
+      "controller_capacity_aps": 0
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

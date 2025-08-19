@@ -1,0 +1,99 @@
+{
+  "cisco_product_id": "AIR-ANT2588P3M-N=",
+  "commercial_name": "2.4 GHz 8 dBi/5 GHz 8 dBi Directional Ant., 3 port, N conn.",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Current",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1049.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1049.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 10
+          },
+          {
+            "type": "Promotional",
+            "threshold": 10,
+            "discount_pct": 15
+          }
+        ]
+      },
+      {
+        "min_quantity": 10,
+        "price": 974.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Controller",
+      "WLAN Access Point"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1800 Series",
+      "Cisco Catalyst 9100 Series",
+      "Cisco Meraki MR Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67",
+      "humidity": "up to 95%",
+      "altitude": "2000 meters"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 3,
+      "mimo": "3x3",
+      "max_phy_throughput_gbps": 3.46,
+      "antenna": {
+        "type": "Directional",
+        "connectors": "N-Type"
+      },
+      "power": "10W",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 50,
+      "frequency_bands": [
+        "2.4 GHz",
+        "5 GHz"
+      ],
+      "beamwidth": "45 degrees"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "dimensions": {
+      "height": "25 cm",
+      "width": "10 cm",
+      "weight": "1.5 kg"
+    },
+    "warranty": "Limited Lifetime"
+  }
+}

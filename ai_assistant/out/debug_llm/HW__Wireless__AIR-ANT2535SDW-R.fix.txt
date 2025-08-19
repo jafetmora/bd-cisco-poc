@@ -1,0 +1,99 @@
+{
+  "cisco_product_id": "AIR-ANT2535SDW-R",
+  "commercial_name": "2.4 GHz 3dBi/5 GHz 5dBi Low Profile Antenna, White, RP- TNC",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 69.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 69.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 5,
+            "discount_pct": 2
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 64.5,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Access Point"
+    ],
+    "compatible_with": [
+      "Cisco Catalyst 9800 Series",
+      "Cisco Aironet 1800 Series",
+      "Cisco Meraki MR Series",
+      "Cisco Aironet 3600 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "RP-TNC"
+        ]
+      },
+      "power": "10W",
+      "mounting": "Wall Mount",
+      "controller_capacity_aps": 100
+    },
+    "physical": {
+      "dimensions": "13 x 7 x 3 cm",
+      "weight": "0.5 kg",
+      "color": "White"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "support_protocols": [
+      "SNMP",
+      "CLI",
+      "Web Interface"
+    ],
+    "max_clients": 200
+  }
+}

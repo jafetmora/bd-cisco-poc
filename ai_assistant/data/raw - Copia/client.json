@@ -1,0 +1,181 @@
+{
+  "customer_id": "CUST-78910",
+  "company_name": "General Hospital Corp",
+  "segment": "Enterprise",
+  "industry": "Healthcare",
+  "region": "North America",
+
+  "partner_tier": "Gold",
+  "support_level": "Premium",
+
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 0.0,
+    "tax_rate_pct": 0.0,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/New_York",
+    "quote_format": {
+      "show_list_price": true,
+      "show_discount": true,
+      "group_by": "site",
+      "validity_days": 30,
+      "output": ["pdf", "xlsx"]
+    }
+  },
+
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "DAP",
+    "shipping_preferences": {
+      "allowed_days": ["Mon","Tue","Wed","Thu","Fri"],
+      "delivery_window_local": ["09:00","17:00"],
+      "backorder_tolerance_days": 10,
+      "partial_shipments_allowed": true,
+      "accepts_refurbished": false
+    },
+    "billing": {
+      "company_legal_name": "General Hospital Corp",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "12-3456789" },
+      "po_required": true
+    },
+    "finance": {
+      "capex_vs_opex_preference": "opex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 0,
+      "budget_opex_monthly_usd": 0
+    }
+  },
+
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Main Campus",
+      "line1": "100 Health Ave",
+      "line2": null,
+      "city": "Boston",
+      "state": "MA",
+      "postal_code": "02115",
+      "country": "US"
+    }
+  ],
+
+  "contacts": [
+    {
+      "name": "Alice Smith",
+      "role": "IT Manager",
+      "email": "alice@ghc.com",
+      "phone": "+1-617-555-0100",
+      "is_approver": true,
+      "notes": "Prefere reuniões às terças."
+    }
+  ],
+
+  "sites": [
+    {
+      "site_id": "SITE-BOS-01",
+      "name": "Main Campus",
+      "address_ref": "Main Campus",
+      "site_type": "Campus",
+      "users_estimate": 1200,
+      "wifi_clients_peak": 2500,
+      "poe_endpoints_estimate": 600,
+      "uplink": { "type": "fiber", "capacity_mbps": 2000, "redundant": true },
+      "power": { "standard": "110VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 1000, "free_u": 24 },
+      "environment": "indoor",
+      "compliance": ["HIPAA"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9300"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": ["Refurbished"]
+    }
+  ],
+
+  "installed_base": [
+    {
+      "asset_id": "ASSET-112233",
+      "cisco_product_id": "MR42E-HW",
+      "quantity": 12,
+      "serial_numbers": ["Q2XX-0001", "Q2XX-0002"],
+      "purchase_date": "2022-08-15",
+      "end_of_support_date": "2027-08-14",
+      "location": "Main Campus",
+      "status": "active",
+      "notes": null
+    }
+  ],
+
+  "contracts": [
+    {
+      "contract_id": "CTR-456",
+      "contract_type": "Subscription",
+      "start_date": "2022-08-15",
+      "end_date": "2025-08-14",
+      "support_level": "Premium",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-112233"],
+      "status": "active"
+    }
+  ],
+
+  "deals": [
+    {
+      "deal_id": "DEAL-001",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR42E-HW", "quantity": 12, "unit_price": 1099.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 12, "unit_price": 300.0, "currency": "USD" },
+        { "sku": "MX68-HW", "quantity": 1, "unit_price": 1299.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 28,
+      "sales_notes": "Cliente muito focado em segurança e TCO.",
+      "closed_date": "2023-05-20"
+    }
+  ],
+
+  "price_agreements": [
+    {
+      "sku": "MR42E-HW",
+      "net_discount_pct": 20.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 5,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2025-08-14",
+      "seats": 12,
+      "devices": 12,
+      "notes": "Ativo no Meraki Dashboard"
+    }
+  ],
+
+  "risk_compliance": {
+    "frameworks": ["HIPAA", "GDPR"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+
+  "tags": ["healthcare", "security-first"],
+  "notes": "Crescimento previsto de 10%/ano."
+}

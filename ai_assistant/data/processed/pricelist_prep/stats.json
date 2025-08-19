@@ -1,0 +1,42 @@
+{
+  "workbooks": [
+    "data\\_raw\\excel_files\\Cisco Switches MS.xlsx",
+    "data\\_raw\\excel_files\\Cisco Wireless Product List.xlsx",
+    "data\\_raw\\excel_files\\Duo_New_SaaS.xlsx"
+  ],
+  "rows_catalog": 1678,
+  "rows_rag_facts": 1678,
+  "unique_skus": 1017,
+  "families_counts": {
+    "Switches": 1493,
+    "Wireless": 97,
+    "duo": 88
+  },
+  "sample_columns": [
+    "sku",
+    "description",
+    "list_price_usd",
+    "duration",
+    "orderability",
+    "item_identifier",
+    "category_discount_name",
+    "eos_date",
+    "product_family",
+    "product_dimension",
+    "sheet",
+    "workbook",
+    "family",
+    "product_line",
+    "dimension",
+    "subscription_type",
+    "offer_type",
+    "service_program",
+    "qty_from",
+    "qty_to",
+    "pricing_term",
+    "qty_uom",
+    "price_uom",
+    "rate_table_name",
+    "rate_table_url"
+  ]
+}

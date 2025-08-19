@@ -1,0 +1,77 @@
+{
+  "cisco_product_id": "800G2-POE-2=",
+  "commercial_name": "2 Port 802.3af compatible PoE module for 880 Series",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-15",
+    "last_support_date": "2030-05-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 267.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 267.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Seasonal Promotion",
+            "threshold": 5,
+            "discount_pct": 2
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco 880 Series Router"
+    ],
+    "compatible_with": [
+      "Cisco Wireless LAN Controller",
+      "Cisco Catalyst 9800 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP54"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "PoE Module",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.0,
+      "antenna": {
+        "type": "Omni",
+        "connectors": "RP-SMA"
+      },
+      "power": "Power over Ethernet (PoE)",
+      "mounting": "Internal",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

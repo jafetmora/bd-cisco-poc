@@ -60,7 +60,7 @@ export default function QuoteMessage({
           {/* Quote details */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 mb-4 text-xs text-neutral">
             <div>
-              <span className="font-semibold text-light">Deal ID:</span>{" "}
+              <span className="font-semibold text-light">Deal IDss:</span>{" "}
               {dealId}
             </div>
             <div>

@@ -1,0 +1,402 @@
+[
+  {
+    "cisco_product_id": "DVDVCM100NNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-100 Nodes on DVD",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM2KNNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-2000 Nodes on DVD",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM500NNPE-5.5",
+    "commercial_name": "VCM Release 5.5 NO PAYLOAD ENCRYPTION-500 Nodes on DVD",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "C9200-NW-A-24-EDU",
+    "commercial_name": "C9200 Network Advantage, 24-port license K12",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 1330.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "C9200-NW-A-48-EDU",
+    "commercial_name": "C9200 Network Advantage, 48-port license K12",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 2650.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "C9200L-NW-A-24-EDU",
+    "commercial_name": "C9200L Network Advantage, 24-port license K12",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 1330.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "C9200L-NW-A-48-EDU",
+    "commercial_name": "C9200L Network Advantage, 48-port license K12",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 2650.0,
+      "elig_pct": 1.0
+    }
+  },
+  {
+    "cisco_product_id": "WAAS-RTU-1300U2500",
+    "commercial_name": "Upgrade 1300 WAAS connection RTU to 2500 connection RTU",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 7200.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "WAAS-RTU-2500U6K",
+    "commercial_name": "Upgrade 2500 WAAS connection RTU to 6000 connection RTU",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 12000.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "SF-I44-NPE-5.4",
+    "commercial_name": "Cisco ISRWAAS NPE Software Release 5.4 for ISR 4400 Series",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM100N-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 100 Nodes",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM2KN-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 2000 Nodes",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "DVDVCM500N-5.5-K9",
+    "commercial_name": "Cisco vCM Software Release 5.5 on DVD - 500 Nodes",
+    "product_type": "software",
+    "category": "Licenses",
+    "pricing_model": {
+      "base_price": 0.0,
+      "elig_pct": 1.0,
+      "currency": "USD",
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "C1-C3650-24-L-E",
+    "commercial_name": "Cisco ONE C3650-24 IP Base to IP Services RTU License",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 4030.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {}
+  },
+  {
+    "cisco_product_id": "C1-C3650-24-L-S",
+    "commercial_name": "Cisco ONE C3650-24 LAN Base to IP Base RTU License",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 1040.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {}
+  },
+  {
+    "cisco_product_id": "C1-C3650-48-L-E",
+    "commercial_name": "Cisco ONE C3650-48 IP Base to IP Services RTU License",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 8050.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {}
+  },
+  {
+    "cisco_product_id": "C1-C3650-48-L-S",
+    "commercial_name": "Cisco ONE C3650-48 LAN Base to IP Base RTU License",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 2070.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {}
+  },
+  {
+    "cisco_product_id": "C1-C3850-12-S-E",
+    "commercial_name": "Cisco ONE C3850-12 IP Base to IP Services Paper RTU License",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 2350.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {}
+  }
+]

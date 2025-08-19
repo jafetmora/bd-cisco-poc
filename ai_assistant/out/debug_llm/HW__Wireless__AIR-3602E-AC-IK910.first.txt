@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-IK910",
+  "commercial_name": "3602E AP with 802.11ac Module Eco Pack for I Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-12-01",
+    "last_support_date": "2030-12-31"
+  },
+  "pricing_model": {
+    "type": "List Price",
+    "currency": "USD",
+    "base_price": 18261.91,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 18261.91,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional Discount",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 17300.0,
+        "effective": "2023-01-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless LAN Controller",
+      "Ethernet Switch"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco DNA Center"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.75,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "RP-TNC"
+      },
+      "power": "PoE",
+      "mounting": "Ceiling Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

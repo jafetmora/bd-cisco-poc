@@ -1,0 +1,5 @@
+quote_id,customer_segment,total_list_price,final_discount_pct,products_sku,won
+Q1-2023-001,Healthcare,8500,42,C9300-24P;FPR1120-ASA-K9,Yes
+Q1-2023-002,Retail,3500,35,MER-MR46-HW;LIC-MR-ENT-1Y,Yes
+Q1-2023-003,Healthcare,9500,50,C9300-24P;FPR1120-ASA-K9,No
+Q2-2023-004,Finance,15000,40,C9300-24P;C9300-DNA-A-3Y;CP-8841-K9,Yes

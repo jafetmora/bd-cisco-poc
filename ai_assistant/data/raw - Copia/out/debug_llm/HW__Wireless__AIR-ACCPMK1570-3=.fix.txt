@@ -1,0 +1,96 @@
+{
+  "cisco_product_id": "AIR-ACCPMK1570-3=",
+  "commercial_name": "1570 Series Pole-Mount Kit (Type-3)",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Mounting Kits",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-01",
+    "last_support_date": "2030-05-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 544.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 544.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 10,
+            "discount_pct": 5.0
+          },
+          {
+            "type": "Seasonal",
+            "threshold": 5,
+            "discount_pct": 3.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 100,
+        "price": 500.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Cisco Access Points"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1570 Series AP",
+      "Cisco Catalyst 9100 Series",
+      "Cisco Prime Infrastructure"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "UL",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Mounting Kit",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.733,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "RP-SMA"
+      },
+      "power": "PoE",
+      "mounting": "Pole",
+      "controller_capacity_aps": 32,
+      "frequency_bands": [
+        "2.4 GHz",
+        "5 GHz"
+      ]
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "dimensions": {
+      "height_mm": 300,
+      "width_mm": 200,
+      "depth_mm": 150
+    },
+    "weight_kg": 1.2
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "cisco_product_id": "AIR-1520-BATT-6AH=",
+  "commercial_name": "1520 Series Battery Backup",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Power Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "One-time purchase",
+    "currency": "USD",
+    "base_price": 999.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 999.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Educational",
+            "threshold": 1,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-1520",
+      "AIR-ANT2544V4M-Z"
+    ],
+    "compatible_with": [
+      "Cisco Wireless Controller 5508",
+      "Cisco Catalyst 9800 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Battery Backup",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omni-directional",
+        "connectors": "RP-TNC"
+      },
+      "power": "12V DC",
+      "mounting": "Wall-mounted",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

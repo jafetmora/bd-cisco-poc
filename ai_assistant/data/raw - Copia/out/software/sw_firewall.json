@@ -1,0 +1,404 @@
+[
+  {
+    "cisco_product_id": "SSM-BLANK=",
+    "commercial_name": "ASA 5500 SSM Blank Slot Cover",
+    "product_type": "software",
+    "category": "Firewall",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": "N/A",
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [
+        "N/A"
+      ],
+      "required_hardware_skus": [
+        "N/A"
+      ],
+      "incompatible_with": [
+        "N/A"
+      ]
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": [
+        "N/A"
+      ]
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "subscription",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "firewall",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 50.0,
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "notes": "N/A",
+    "attributes": {
+      "firewall_license": {
+        "bundle": "ThreatDefense-Advanced",
+        "features": [
+          "IPS",
+          "Malware",
+          "URL Filtering",
+          "App Control"
+        ],
+        "max_throughput_gbps": 5.0,
+        "ipsec_vpn_gbps": 2.0,
+        "device_model_compatibility": [
+          "ASA5506-X",
+          "FTD2140",
+          "MS250-48FP-HW"
+        ],
+        "ha_supported": true
+      }
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": 0,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      },
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ]
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1Y",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "tier": "Base",
+      "features": [
+        "Basic feature set"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "L-ASA5505-10-50=",
+    "commercial_name": "ASA 5505 10-to-50 User Upgrade License",
+    "product_type": "software",
+    "category": "Firewall",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": "N/A",
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [
+        "N/A"
+      ],
+      "required_hardware_skus": [
+        "N/A"
+      ],
+      "incompatible_with": [
+        "N/A"
+      ]
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": [
+        "N/A"
+      ]
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "subscription",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "firewall",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 350.0,
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "notes": "N/A",
+    "attributes": {
+      "firewall_license": {
+        "bundle": "ThreatDefense-Advanced",
+        "features": [
+          "IPS",
+          "Malware",
+          "URL Filtering",
+          "App Control"
+        ],
+        "max_throughput_gbps": 5.0,
+        "ipsec_vpn_gbps": 2.0,
+        "device_model_compatibility": [
+          "ASA5506-X",
+          "FTD2140",
+          "MS250-48FP-HW"
+        ],
+        "ha_supported": true
+      }
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": 0,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      },
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ]
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1Y",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "tier": "Base",
+      "features": [
+        "Basic feature set"
+      ]
+    }
+  },
+  {
+    "cisco_product_id": "L-ASA5505-10-UL=",
+    "commercial_name": "ASA 5505 10-to-Unlimited User Upgrade License",
+    "product_type": "software",
+    "category": "Firewall",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "entitlement": {
+      "smart_account_required": true,
+      "virtual_account": "N/A",
+      "activation_type": "cloud",
+      "grace_period_days": 30
+    },
+    "dependencies": {
+      "required_hardware_categories": [
+        "N/A"
+      ],
+      "required_hardware_skus": [
+        "N/A"
+      ],
+      "incompatible_with": [
+        "N/A"
+      ]
+    },
+    "region_restrictions": {
+      "allowed_regions": [
+        "global"
+      ],
+      "blocked_countries": [
+        "N/A"
+      ]
+    },
+    "renewal": {
+      "auto_renew": true,
+      "renewal_window_days": 90,
+      "late_renewal_policy": "prorate_on_reactivation"
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "billing_model": "subscription",
+      "billing_frequency": "annual",
+      "msrp_per_unit": 0.0,
+      "unit_of_measure": "firewall",
+      "term_months": 12,
+      "billing_anchor": "co-term",
+      "proration_rules": {
+        "enabled": true,
+        "rounding": "ceil_month"
+      },
+      "pricing_tiers": [
+        {
+          "min_qty": 1,
+          "price": 0.0
+        },
+        {
+          "min_qty": 10,
+          "price": 0.0,
+          "discount_pct": 10.0
+        },
+        {
+          "min_qty": 50,
+          "price": 0.0,
+          "discount_pct": 18.0
+        }
+      ],
+      "partner_tier_discounts": {
+        "None": 0.0,
+        "Bronze": 2.0,
+        "Silver": 5.0,
+        "Gold": 8.0,
+        "Platinum": 12.0
+      },
+      "support_level_multipliers": {
+        "None": 1.0,
+        "Standard": 1.05,
+        "Premium": 1.12
+      },
+      "base_price": 500.0,
+      "type": "subscription",
+      "billing_cycle": "yearly"
+    },
+    "notes": "N/A",
+    "attributes": {
+      "firewall_license": {
+        "bundle": "ThreatDefense-Advanced",
+        "features": [
+          "IPS",
+          "Malware",
+          "URL Filtering",
+          "App Control"
+        ],
+        "max_throughput_gbps": 5.0,
+        "ipsec_vpn_gbps": 2.0,
+        "device_model_compatibility": [
+          "ASA5506-X",
+          "FTD2140",
+          "MS250-48FP-HW"
+        ],
+        "ha_supported": true
+      }
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": 0,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      },
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ]
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1Y",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "tier": "Base",
+      "features": [
+        "Basic feature set"
+      ]
+    }
+  }
+]

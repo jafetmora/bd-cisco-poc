@@ -1,0 +1,188 @@
+[
+  {
+    "cisco_product_id": "CAB-E1-BNC",
+    "commercial_name": "E1 Cable BNC 75ohm/Unbal 5m",
+    "product_type": "hardware",
+    "category": "Cabling",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 100.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "cable": {
+        "category": "Cat6a",
+        "length_m": 5,
+        "conductor": "copper",
+        "connector_ends": [
+          "RJ45",
+          "RJ45"
+        ],
+        "shielding": "S/FTP",
+        "jacket": "LSZH",
+        "poe_compliant": true
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CAB-E1-DB15",
+    "commercial_name": "E1 Cable DB15 120 ohm/Balanced, 5 Meters",
+    "product_type": "hardware",
+    "category": "Cabling",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 100.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "cable": {
+        "category": "Cat6a",
+        "length_m": 5,
+        "conductor": "copper",
+        "connector_ends": [
+          "RJ45",
+          "RJ45"
+        ],
+        "shielding": "S/FTP",
+        "jacket": "LSZH",
+        "poe_compliant": true
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CAB-7KCT1DB15=",
+    "commercial_name": "MIP-CT1: DSX1 to CSU DB-15 Thru Cable",
+    "product_type": "hardware",
+    "category": "Cabling",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 100.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "cable": {
+        "category": "Cat6a",
+        "length_m": 5,
+        "conductor": "copper",
+        "connector_ends": [
+          "RJ45",
+          "RJ45"
+        ],
+        "shielding": "S/FTP",
+        "jacket": "LSZH",
+        "poe_compliant": true
+      }
+    }
+  }
+]

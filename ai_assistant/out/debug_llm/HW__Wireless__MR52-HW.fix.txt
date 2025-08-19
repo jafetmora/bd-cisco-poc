@@ -1,0 +1,109 @@
+{
+  "cisco_product_id": "MR52-HW",
+  "commercial_name": "Meraki MR52 Cloud Managed AP",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point",
+  "lifecycle": {
+    "status": "Current",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1399.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1399.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Seasonal Promotion",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 1299.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk Purchase Discount",
+            "threshold": 50,
+            "discount_pct": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Cloud Management License",
+      "Power over Ethernet (PoE) Injector"
+    ],
+    "compatible_with": [
+      "Meraki MS Series Switches",
+      "Meraki MX Series Security Appliances",
+      "Meraki MV Series Cameras"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "Wi-Fi Alliance",
+      "WISA"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Indoor Access Point",
+      "wifi_standard": "802.11ac Wave 2",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.0,
+      "antenna": {
+        "type": "Integrated",
+        "connectors": "N/A"
+      },
+      "power": "802.3at PoE",
+      "mounting": "Ceiling or Wall Mount",
+      "controller_capacity_aps": 200
+    },
+    "physical": {
+      "dimensions": {
+        "height_cm": 3.4,
+        "width_cm": 19.5,
+        "depth_cm": 19.5
+      },
+      "weight_kg": 1.2,
+      "color": "White"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "max_clients": 200,
+    "network_management": "Cloud-based Management",
+    "security_features": [
+      "WPA2-Enterprise",
+      "802.1X Authentication",
+      "Guest Access"
+    ]
+  }
+}

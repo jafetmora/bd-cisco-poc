@@ -80,7 +80,11 @@ export default function AIAssistantContainer() {
         {/* Content */}
         <div className="overflow-y-auto space-y-6 min-h-0">
           {mode === "detailed" ? (
-            <Chat chatMessages={quoteSession?.chatMessages || []} onSendText={handleSendText} mode={mode} />
+            <Chat 
+              chatMessages={quoteSession?.chatMessages || []}
+              onSendText={handleSendText} mode={mode} 
+              scenarios={quoteSession?.scenarios || []}
+            />
           ) : (
             <ChatHistory previousChats={chatHistoryData} onSelect={(sessionId) => loadExistingQuoteSession(sessionId)} onNew={loadInitialQuoteSession} />
           )}

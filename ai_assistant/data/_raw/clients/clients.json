@@ -1,0 +1,1013 @@
+[{
+  "customer_id": "CUST-78910",
+  "company_name": "General Hospital Corp",
+  "segment": "Enterprise",
+  "industry": "Healthcare",
+  "region": "North America",
+
+  "partner_tier": "Gold",
+  "support_level": "Premium",
+
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 0.0,
+    "tax_rate_pct": 0.0,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/New_York",
+    "quote_format": {
+      "show_list_price": true,
+      "show_discount": true,
+      "group_by": "site",
+      "validity_days": 30,
+      "output": ["pdf", "xlsx"]
+    }
+  },
+
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "DAP",
+    "shipping_preferences": {
+      "allowed_days": ["Mon","Tue","Wed","Thu","Fri"],
+      "delivery_window_local": ["09:00","17:00"],
+      "backorder_tolerance_days": 10,
+      "partial_shipments_allowed": true,
+      "accepts_refurbished": false
+    },
+    "billing": {
+      "company_legal_name": "General Hospital Corp",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "12-3456789" },
+      "po_required": true
+    },
+    "finance": {
+      "capex_vs_opex_preference": "opex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 0,
+      "budget_opex_monthly_usd": 0
+    }
+  },
+
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Main Campus",
+      "line1": "100 Health Ave",
+      "line2": null,
+      "city": "Boston",
+      "state": "MA",
+      "postal_code": "02115",
+      "country": "US"
+    }
+  ],
+
+  "contacts": [
+    {
+      "name": "Alice Smith",
+      "role": "IT Manager",
+      "email": "alice@ghc.com",
+      "phone": "+1-617-555-0100",
+      "is_approver": true,
+      "notes": "Prefere reuniões às terças."
+    }
+  ],
+
+  "sites": [
+    {
+      "site_id": "SITE-BOS-01",
+      "name": "Main Campus",
+      "address_ref": "Main Campus",
+      "site_type": "Campus",
+      "users_estimate": 1200,
+      "wifi_clients_peak": 2500,
+      "poe_endpoints_estimate": 600,
+      "uplink": { "type": "fiber", "capacity_mbps": 2000, "redundant": true },
+      "power": { "standard": "110VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 1000, "free_u": 24 },
+      "environment": "indoor",
+      "compliance": ["HIPAA"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9300"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": ["Refurbished"]
+    }
+  ],
+
+  "installed_base": [
+    {
+      "asset_id": "ASSET-112233",
+      "cisco_product_id": "MR42E-HW",
+      "quantity": 12,
+      "serial_numbers": ["Q2XX-0001", "Q2XX-0002"],
+      "purchase_date": "2022-08-15",
+      "end_of_support_date": "2027-08-14",
+      "location": "Main Campus",
+      "status": "active",
+      "notes": null
+    }
+  ],
+
+  "contracts": [
+    {
+      "contract_id": "CTR-456",
+      "contract_type": "Subscription",
+      "start_date": "2022-08-15",
+      "end_date": "2025-08-14",
+      "support_level": "Premium",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-112233"],
+      "status": "active"
+    }
+  ],
+
+  "deals": [
+    {
+      "deal_id": "DEAL-001",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR42E-HW", "quantity": 12, "unit_price": 1099.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 12, "unit_price": 300.0, "currency": "USD" },
+        { "sku": "MX68-HW", "quantity": 1, "unit_price": 1299.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 28,
+      "sales_notes": "Cliente muito focado em segurança e TCO.",
+      "closed_date": "2023-05-20"
+    }
+  ],
+
+  "price_agreements": [
+    {
+      "sku": "MR42E-HW",
+      "net_discount_pct": 20.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 5,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2025-08-14",
+      "seats": 12,
+      "devices": 12,
+      "notes": "Ativo no Meraki Dashboard"
+    }
+  ],
+
+  "risk_compliance": {
+    "frameworks": ["HIPAA", "GDPR"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+
+  "tags": ["healthcare", "security-first"],
+  "notes": "Crescimento previsto de 10%/ano."
+},
+{
+  "customer_id": "CUST-78911",
+  "company_name": "Tech Innovations Inc.",
+  "segment": "SMB",
+  "industry": "Technology",
+  "region": "North America",
+  "partner_tier": "Silver",
+  "support_level": "Standard",
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 5.0,
+    "tax_rate_pct": 8.25,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/Chicago",
+    "quote_format": {
+      "show_list_price": false,
+      "show_discount": true,
+      "group_by": "department",
+      "validity_days": 60,
+      "output": ["pdf"]
+    }
+  },
+  "commercial_terms": {
+    "payment_terms": "Net45",
+    "incoterms": "CIF",
+    "shipping_preferences": {
+      "allowed_days": ["Mon", "Wed", "Fri"],
+      "delivery_window_local": ["10:00", "16:00"],
+      "backorder_tolerance_days": 5,
+      "partial_shipments_allowed": false,
+      "accepts_refurbished": true
+    },
+    "billing": {
+      "company_legal_name": "Tech Innovations Inc.",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "45-6789012" },
+      "po_required": false
+    },
+    "finance": {
+      "capex_vs_opex_preference": "capex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 50000,
+      "budget_opex_monthly_usd": 0
+    }
+  },
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Innovation Park",
+      "line1": "200 Innovation Drive",
+      "line2": null,
+      "city": "Austin",
+      "state": "TX",
+      "postal_code": "73301",
+      "country": "US"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "John Doe",
+      "role": "IT Director",
+      "email": "john@techinnovations.com",
+      "phone": "+1-512-555-0123",
+      "is_approver": true,
+      "notes": "Prefers monthly check-ins."
+    }
+  ],
+  "sites": [
+    {
+      "site_id": "SITE-AUS-01",
+      "name": "Innovation Park",
+      "address_ref": "Innovation Park",
+      "site_type": "Office",
+      "users_estimate": 500,
+      "wifi_clients_peak": 1000,
+      "poe_endpoints_estimate": 200,
+      "uplink": { "type": "fiber", "capacity_mbps": 1000, "redundant": true },
+      "power": { "standard": "120VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 800, "free_u": 40 },
+      "environment": "indoor",
+      "compliance": ["ISO 27001"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9500"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": []
+    }
+  ],
+  "installed_base": [
+    {
+      "asset_id": "ASSET-223344",
+      "cisco_product_id": "MR36-HW",
+      "quantity": 10,
+      "serial_numbers": ["X2YY-1234", "X2YY-1235"],
+      "purchase_date": "2023-05-10",
+      "end_of_support_date": "2028-05-10",
+      "location": "Innovation Park",
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "contracts": [
+    {
+      "contract_id": "CTR-457",
+      "contract_type": "Subscription",
+      "start_date": "2023-05-10",
+      "end_date": "2026-05-09",
+      "support_level": "Standard",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-223344"],
+      "status": "active"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-002",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR36-HW", "quantity": 10, "unit_price": 699.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 10, "unit_price": 250.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 15,
+      "sales_notes": "Prioritize service uptime and monitoring.",
+      "closed_date": "2023-05-12"
+    }
+  ],
+  "price_agreements": [
+    {
+      "sku": "MR36-HW",
+      "net_discount_pct": 10.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 5,
+      "valid_from": "2024-06-01",
+      "valid_until": "2026-06-01"
+    }
+  ],
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2026-05-09",
+      "seats": 10,
+      "devices": 10,
+      "notes": "Active on Meraki Dashboard"
+    }
+  ],
+  "risk_compliance": {
+    "frameworks": ["ISO 27001"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+  "tags": ["technology", "innovation", "security"],
+  "notes": "Expanding into new markets next year."
+},
+{
+  "customer_id": "CUST-78912",
+  "company_name": "Citywide Logistics",
+  "segment": "Enterprise",
+  "industry": "Transportation",
+  "region": "North America",
+  "partner_tier": "Platinum",
+  "support_level": "Premium",
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 12.0,
+    "tax_rate_pct": 6.0,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/Chicago",
+    "quote_format": {
+      "show_list_price": true,
+      "show_discount": true,
+      "group_by": "region",
+      "validity_days": 30,
+      "output": ["pdf", "xlsx"]
+    }
+  },
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "EXW",
+    "shipping_preferences": {
+      "allowed_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "delivery_window_local": ["08:00", "17:00"],
+      "backorder_tolerance_days": 10,
+      "partial_shipments_allowed": false,
+      "accepts_refurbished": false
+    },
+    "billing": {
+      "company_legal_name": "Citywide Logistics",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "21-2345678" },
+      "po_required": true
+    },
+    "finance": {
+      "capex_vs_opex_preference": "capex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 200000,
+      "budget_opex_monthly_usd": 0
+    }
+  },
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "City Logistics Center",
+      "line1": "500 Industrial Rd",
+      "line2": null,
+      "city": "Chicago",
+      "state": "IL",
+      "postal_code": "60601",
+      "country": "US"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Jane Doe",
+      "role": "Procurement Manager",
+      "email": "jane@citywidelogistics.com",
+      "phone": "+1-312-555-0155",
+      "is_approver": true,
+      "notes": "Needs weekly updates."
+    }
+  ],
+  "sites": [
+    {
+      "site_id": "SITE-CHI-01",
+      "name": "Logistics Center",
+      "address_ref": "City Logistics Center",
+      "site_type": "Warehouse",
+      "users_estimate": 300,
+      "wifi_clients_peak": 500,
+      "poe_endpoints_estimate": 100,
+      "uplink": { "type": "fiber", "capacity_mbps": 1500, "redundant": true },
+      "power": { "standard": "120VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 800, "free_u": 60 },
+      "environment": "indoor",
+      "compliance": ["ISO 9001"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9300"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": []
+    }
+  ],
+  "installed_base": [
+    {
+      "asset_id": "ASSET-223445",
+      "cisco_product_id": "MR36-HW",
+      "quantity": 8,
+      "serial_numbers": ["Y2ZZ-4567", "Y2ZZ-4568"],
+      "purchase_date": "2022-04-18",
+      "end_of_support_date": "2027-04-18",
+      "location": "Logistics Center",
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "contracts": [
+    {
+      "contract_id": "CTR-458",
+      "contract_type": "Subscription",
+      "start_date": "2022-04-18",
+      "end_date": "2025-04-17",
+      "support_level": "Premium",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-223445"],
+      "status": "active"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-003",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR42E-HW", "quantity": 10, "unit_price": 800.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 10, "unit_price": 350.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 20,
+      "sales_notes": "Focus on network stability and reliability.",
+      "closed_date": "2023-02-15"
+    }
+  ],
+  "price_agreements": [
+    {
+      "sku": "MR42E-HW",
+      "net_discount_pct": 18.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 5,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2025-04-17",
+      "seats": 10,
+      "devices": 10,
+      "notes": "Active on Meraki Dashboard"
+    }
+  ],
+  "risk_compliance": {
+    "frameworks": ["ISO 9001"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+  "tags": ["logistics", "networking"],
+  "notes": "Expansion into new cities expected in Q3."
+},
+{
+  "customer_id": "CUST-78913",
+  "company_name": "Global Health Solutions",
+  "segment": "Enterprise",
+  "industry": "Healthcare",
+  "region": "North America",
+  "partner_tier": "Gold",
+  "support_level": "Premium",
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 10.0,
+    "tax_rate_pct": 7.5,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/New_York",
+    "quote_format": {
+      "show_list_price": true,
+      "show_discount": true,
+      "group_by": "region",
+      "validity_days": 30,
+      "output": ["pdf", "xlsx"]
+    }
+  },
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "FOB",
+    "shipping_preferences": {
+      "allowed_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "delivery_window_local": ["08:00", "16:00"],
+      "backorder_tolerance_days": 7,
+      "partial_shipments_allowed": false,
+      "accepts_refurbished": true
+    },
+    "billing": {
+      "company_legal_name": "Global Health Solutions",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "34-5678901" },
+      "po_required": true
+    },
+    "finance": {
+      "capex_vs_opex_preference": "opex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 0,
+      "budget_opex_monthly_usd": 100000
+    }
+  },
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Global Health HQ",
+      "line1": "600 Health Blvd",
+      "line2": null,
+      "city": "New York",
+      "state": "NY",
+      "postal_code": "10001",
+      "country": "US"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "David Wilson",
+      "role": "Chief Technology Officer",
+      "email": "david@globalhealthsolutions.com",
+      "phone": "+1-212-555-0190",
+      "is_approver": true,
+      "notes": "Prefers quarterly meetings."
+    }
+  ],
+  "sites": [
+    {
+      "site_id": "SITE-NYC-01",
+      "name": "Global Health HQ",
+      "address_ref": "Global Health HQ",
+      "site_type": "Headquarters",
+      "users_estimate": 2000,
+      "wifi_clients_peak": 4000,
+      "poe_endpoints_estimate": 1000,
+      "uplink": { "type": "fiber", "capacity_mbps": 5000, "redundant": true },
+      "power": { "standard": "120VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 900, "free_u": 50 },
+      "environment": "indoor",
+      "compliance": ["HIPAA", "GDPR"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9400"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": ["Refurbished"]
+    }
+  ],
+  "installed_base": [
+    {
+      "asset_id": "ASSET-334455",
+      "cisco_product_id": "MR84-HW",
+      "quantity": 20,
+      "serial_numbers": ["Z3YY-1001", "Z3YY-1002"],
+      "purchase_date": "2021-10-25",
+      "end_of_support_date": "2026-10-24",
+      "location": "Global Health HQ",
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "contracts": [
+    {
+      "contract_id": "CTR-459",
+      "contract_type": "Subscription",
+      "start_date": "2021-10-25",
+      "end_date": "2024-10-24",
+      "support_level": "Premium",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-334455"],
+      "status": "active"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-004",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR84-HW", "quantity": 20, "unit_price": 1200.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 20, "unit_price": 400.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 25,
+      "sales_notes": "High emphasis on data security and privacy.",
+      "closed_date": "2021-10-28"
+    }
+  ],
+  "price_agreements": [
+    {
+      "sku": "MR84-HW",
+      "net_discount_pct": 18.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 10,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2024-10-24",
+      "seats": 20,
+      "devices": 20,
+      "notes": "Active on Meraki Dashboard"
+    }
+  ],
+  "risk_compliance": {
+    "frameworks": ["HIPAA", "GDPR"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+  "tags": ["healthcare", "data security"],
+  "notes": "Looking to expand into Europe next year."
+},
+{
+  "customer_id": "CUST-78914",
+  "company_name": "Foodies Delight Inc.",
+  "segment": "SMB",
+  "industry": "Food & Beverage",
+  "region": "North America",
+  "partner_tier": "Bronze",
+  "support_level": "Standard",
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 8.0,
+    "tax_rate_pct": 6.5,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/Los_Angeles",
+    "quote_format": {
+      "show_list_price": false,
+      "show_discount": true,
+      "group_by": "product",
+      "validity_days": 45,
+      "output": ["pdf"]
+    }
+  },
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "CIF",
+    "shipping_preferences": {
+      "allowed_days": ["Mon", "Wed", "Fri"],
+      "delivery_window_local": ["09:00", "15:00"],
+      "backorder_tolerance_days": 5,
+      "partial_shipments_allowed": true,
+      "accepts_refurbished": true
+    },
+    "billing": {
+      "company_legal_name": "Foodies Delight Inc.",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "98-7654321" },
+      "po_required": false
+    },
+    "finance": {
+      "capex_vs_opex_preference": "opex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 0,
+      "budget_opex_monthly_usd": 50000
+    }
+  },
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Foodies HQ",
+      "line1": "300 Gourmet Blvd",
+      "line2": null,
+      "city": "Los Angeles",
+      "state": "CA",
+      "postal_code": "90015",
+      "country": "US"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Eve Brown",
+      "role": "Operations Manager",
+      "email": "eve@foodiesdelight.com",
+      "phone": "+1-323-555-0100",
+      "is_approver": true,
+      "notes": "Monthly reviews requested."
+    }
+  ],
+  "sites": [
+    {
+      "site_id": "SITE-LA-01",
+      "name": "Foodies HQ",
+      "address_ref": "Foodies HQ",
+      "site_type": "Office",
+      "users_estimate": 150,
+      "wifi_clients_peak": 300,
+      "poe_endpoints_estimate": 100,
+      "uplink": { "type": "fiber", "capacity_mbps": 500, "redundant": false },
+      "power": { "standard": "110VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 800, "free_u": 40 },
+      "environment": "indoor",
+      "compliance": ["ISO 22000"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9200"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": []
+    }
+  ],
+  "installed_base": [
+    {
+      "asset_id": "ASSET-445566",
+      "cisco_product_id": "MR33-HW",
+      "quantity": 5,
+      "serial_numbers": ["T3ZZ-1011", "T3ZZ-1012"],
+      "purchase_date": "2022-02-20",
+      "end_of_support_date": "2027-02-19",
+      "location": "Foodies HQ",
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "contracts": [
+    {
+      "contract_id": "CTR-460",
+      "contract_type": "Subscription",
+      "start_date": "2022-02-20",
+      "end_date": "2025-02-19",
+      "support_level": "Standard",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-445566"],
+      "status": "active"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-005",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR33-HW", "quantity": 5, "unit_price": 399.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 5, "unit_price": 150.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 12,
+      "sales_notes": "Focus on ease of management and cost-effectiveness.",
+      "closed_date": "2022-02-22"
+    }
+  ],
+  "price_agreements": [
+    {
+      "sku": "MR33-HW",
+      "net_discount_pct": 15.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 3,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2025-02-19",
+      "seats": 5,
+      "devices": 5,
+      "notes": "Active on Meraki Dashboard"
+    }
+  ],
+  "risk_compliance": {
+    "frameworks": ["ISO 22000"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+  "tags": ["food and beverage", "cost-effective"],
+  "notes": "Expanding to new locations in 2024."
+},
+{
+  "customer_id": "CUST-78915",
+  "company_name": "Green Earth Energy",
+  "segment": "Enterprise",
+  "industry": "Energy",
+  "region": "North America",
+  "partner_tier": "Gold",
+  "support_level": "Premium",
+  "preferences": {
+    "currency": "USD",
+    "default_discount_pct": 15.0,
+    "tax_rate_pct": 5.0,
+    "locale": "en-US",
+    "language": "en",
+    "timezone": "America/Denver",
+    "quote_format": {
+      "show_list_price": true,
+      "show_discount": true,
+      "group_by": "site",
+      "validity_days": 30,
+      "output": ["pdf", "xlsx"]
+    }
+  },
+  "commercial_terms": {
+    "payment_terms": "Net30",
+    "incoterms": "FOB",
+    "shipping_preferences": {
+      "allowed_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "delivery_window_local": ["08:00", "18:00"],
+      "backorder_tolerance_days": 10,
+      "partial_shipments_allowed": false,
+      "accepts_refurbished": false
+    },
+    "billing": {
+      "company_legal_name": "Green Earth Energy",
+      "tax_exempt": false,
+      "tax_ids": { "vat": null, "ein": "12-3456789" },
+      "po_required": true
+    },
+    "finance": {
+      "capex_vs_opex_preference": "capex",
+      "leasing_preference": "none",
+      "budget_capex_usd": 500000,
+      "budget_opex_monthly_usd": 0
+    }
+  },
+  "addresses": [
+    {
+      "type": "HQ",
+      "name": "Green Earth HQ",
+      "line1": "100 Renewable Rd",
+      "line2": null,
+      "city": "Denver",
+      "state": "CO",
+      "postal_code": "80202",
+      "country": "US"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Robert Green",
+      "role": "CEO",
+      "email": "robert@greenearth.com",
+      "phone": "+1-303-555-0200",
+      "is_approver": true,
+      "notes": "Focuses on sustainability."
+    }
+  ],
+  "sites": [
+    {
+      "site_id": "SITE-DEN-01",
+      "name": "Green Earth HQ",
+      "address_ref": "Green Earth HQ",
+      "site_type": "Headquarters",
+      "users_estimate": 150,
+      "wifi_clients_peak": 300,
+      "poe_endpoints_estimate": 80,
+      "uplink": { "type": "fiber", "capacity_mbps": 1000, "redundant": true },
+      "power": { "standard": "120VAC", "ups_available": true },
+      "racks": { "rack_depth_mm": 850, "free_u": 30 },
+      "environment": "indoor",
+      "compliance": ["ISO 14001"],
+      "standard_platforms": {
+        "switches": ["Catalyst 9300"],
+        "wireless": ["Meraki MR"],
+        "security": ["Meraki MX"]
+      },
+      "ban_list": []
+    }
+  ],
+  "installed_base": [
+    {
+      "asset_id": "ASSET-556677",
+      "cisco_product_id": "MR36-HW",
+      "quantity": 10,
+      "serial_numbers": ["A2YY-1234", "A2YY-1235"],
+      "purchase_date": "2023-01-15",
+      "end_of_support_date": "2028-01-14",
+      "location": "Green Earth HQ",
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "contracts": [
+    {
+      "contract_id": "CTR-461",
+      "contract_type": "Subscription",
+      "start_date": "2023-01-15",
+      "end_date": "2026-01-14",
+      "support_level": "Premium",
+      "skus": ["LIC-ENT-3Y"],
+      "covered_assets": ["ASSET-556677"],
+      "status": "active"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-006",
+      "status": "Won",
+      "stage": "Closed",
+      "quoted_products": [
+        { "sku": "MR36-HW", "quantity": 10, "unit_price": 899.0, "currency": "USD" },
+        { "sku": "LIC-ENT-3Y", "quantity": 10, "unit_price": 350.0, "currency": "USD" }
+      ],
+      "final_discount_percentage": 20,
+      "sales_notes": "Emphasis on sustainability and energy efficiency.",
+      "closed_date": "2023-01-18"
+    }
+  ],
+  "price_agreements": [
+    {
+      "sku": "MR36-HW",
+      "net_discount_pct": 15.0,
+      "fixed_net_price": 0.0,
+      "min_quantity": 5,
+      "valid_from": "2024-01-01",
+      "valid_until": "2026-12-31"
+    }
+  ],
+  "entitlements": [
+    {
+      "sku": "LIC-ENT-3Y",
+      "term_end_date": "2026-01-14",
+      "seats": 10,
+      "devices": 10,
+      "notes": "Active on Meraki Dashboard"
+    }
+  ],
+  "risk_compliance": {
+    "frameworks": ["ISO 14001"],
+    "data_residency": "US",
+    "cloud_allowed": true,
+    "vendor_restrictions": []
+  },
+  "quoting_rules": {
+    "attach_services_default": {
+      "smartnet": { "level": "SNT", "term_years": 3 },
+      "subscriptions": { "term_years": 3 }
+    },
+    "rounding": { "price_precision": 2, "total_precision": 2 },
+    "bundle_preference": "minimize_sku_count",
+    "brand_preference_order": ["Cisco Meraki", "Cisco Catalyst"]
+  },
+  "tags": ["energy", "sustainability"],
+  "notes": "Expanding to international markets in 2025."
+}
+]
+

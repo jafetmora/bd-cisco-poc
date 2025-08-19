@@ -1,0 +1,93 @@
+{
+  "cisco_product_id": "AIR-ANT2547VG-N=",
+  "commercial_name": "2.4 GHz 4dBi/5 GHz 7dBi Dual Band Omni Ant., Gray, N conn.",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antennas",
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "standard",
+    "currency": "USD",
+    "base_price": 409.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 409.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "seasonal",
+            "threshold": 0,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 390.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless LAN Controller",
+      "Cisco Access Point"
+    ],
+    "compatible_with": [
+      "Cisco 3504 Wireless Controller",
+      "Cisco 5520 Wireless Controller"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "ROHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.9,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "N-Type",
+          "RP-TNC"
+        ]
+      },
+      "power": "30W",
+      "mounting": "Pole mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

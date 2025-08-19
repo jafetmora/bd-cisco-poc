@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-SK910",
+  "commercial_name": "3602E AP with 802.11ac Module Eco Pack for S Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-01",
+    "last_support_date": "2030-05-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 18261.91,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 18261.91,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 17349.81,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power over Ethernet Injector"
+    ],
+    "compatible_with": [
+      "Cisco DNA Center",
+      "Cisco Prime Infrastructure"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.9,
+      "antenna": {
+        "type": "Dual Band",
+        "connectors": "RP-TNC"
+      },
+      "power": "802.3af/802.3at",
+      "mounting": "Wall/Ceiling",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

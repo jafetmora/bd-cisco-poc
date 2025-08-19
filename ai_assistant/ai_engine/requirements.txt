@@ -1,0 +1,24 @@
+# ---- Web Service Core ----
+# Para criar a API e rodar o servidor
+fastapi
+uvicorn[standard]
+python-dotenv
+
+# ---- LangChain - Orquestração de LLMs ----
+# Pacotes principais do ecossistema LangChain
+langchain
+langchain_community
+langchain_openai
+
+# ---- Busca Híbrida (Hybrid Search) ----
+# Para busca vetorial (semântica)
+faiss-cpu
+# Para busca por palavra-chave (dependência do BM25Retriever)
+rank_bm25
+
+# ---- Dependências de Modelos e Dados ----
+# Tokenizer usado pelos modelos da OpenAI
+tiktoken
+# Manipulação de dados e validação (usado pelo FastAPI e LangChain)
+pydantic
+numpy

@@ -1,0 +1,78 @@
+{
+  "cisco_product_id": "MA-PWR-30WAC",
+  "commercial_name": "Meraki MX64 Replacement Power Adapter (30 WAC)",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Power Supplies",
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": "2025-09-01",
+    "last_support_date": "2030-09-01"
+  },
+  "pricing_model": {
+    "type": "standard",
+    "currency": "USD",
+    "base_price": 81.25,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 81.25,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "volume",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki MX64",
+      "Meraki MX65"
+    ],
+    "compatible_with": [
+      "Meraki MX67",
+      "Meraki MX84"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "UL 60950-1",
+      "CE",
+      "FCC Part 15"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP20"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Power Adapter",
+      "wifi_standard": "N/A",
+      "radios": 0,
+      "mimo": "N/A",
+      "max_phy_throughput_gbps": 0,
+      "antenna": {
+        "type": "N/A",
+        "connectors": "N/A"
+      },
+      "power": "30W",
+      "mounting": "Wall Mount",
+      "controller_capacity_aps": 0
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

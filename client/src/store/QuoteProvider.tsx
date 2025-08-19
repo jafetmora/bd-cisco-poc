@@ -9,6 +9,7 @@ import type { QuoteSession } from "../types/Quotes";
 import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
 import { getQuote } from "../services/api";
+import { v4 as uuidv4 } from "uuid";
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -55,11 +56,11 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const emptySession = {
-        id: '',
-        userId: '',
+        id: uuidv4(),
+        userId: 'user-local',
         chatMessages: [],
         scenarios: [],
-        title: '',
+        title: 'New Session',
       };
       setQuoteSession(emptySession);
     } catch (e: unknown) {

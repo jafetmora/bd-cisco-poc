@@ -1,0 +1,87 @@
+{
+  "cisco_product_id": "AIR-CAB005LL-N=",
+  "commercial_name": "5 ft LOW LOSS CABLE ASSEMBLY W/N CONNECTORS",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Cables",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 166.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 166.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 150.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Router",
+      "Wireless Access Point"
+    ],
+    "compatible_with": [
+      " Cisco Wireless LAN Controller",
+      "Cisco Aironet Access Points"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Cable Assembly",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Directional",
+        "connectors": [
+          "N-Type",
+          "RP-TNC"
+        ]
+      },
+      "power": "Power over Ethernet (PoE)",
+      "mounting": "Wall Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

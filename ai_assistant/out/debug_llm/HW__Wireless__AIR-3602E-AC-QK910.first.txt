@@ -1,0 +1,92 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-QK910",
+  "commercial_name": "3602E AP with 802.11ac Module Eco Pack for Q Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-01",
+    "last_support_date": "2030-05-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 18261.91,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 18261.91,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Seasonal",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 17300.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 100,
+            "discount_pct": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power Supply",
+      "Mounting Kit"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco DNA Center",
+      "Cisco Identity Services Engine"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -5,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.5,
+      "antenna": {
+        "type": "External",
+        "connectors": "N-Type"
+      },
+      "power": "PoE+",
+      "mounting": "Wall/Ceiling",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

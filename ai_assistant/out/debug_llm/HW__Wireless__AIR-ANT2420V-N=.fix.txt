@@ -1,0 +1,99 @@
+{
+  "cisco_product_id": "AIR-ANT2420V-N=",
+  "commercial_name": "2400-2483.5 MHz, 2.0 dBi Omni Ant. with N Connect, 5 inches",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antennas",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 188.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 188.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Tiered",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 178.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 50,
+            "discount_pct": 7
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Cisco Access Point"
+    ],
+    "compatible_with": [
+      "Cisco AIR-AP3502I",
+      "Cisco AIR-AP2602I",
+      "Cisco AIR-AP3802I"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP65",
+      "humidity_range": "0 to 95% non-condensing"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11n",
+      "radios": 1,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 0.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "N-Type"
+        ]
+      },
+      "power": "15 dBm",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 20,
+      "frequency_range_mhz": "2400-2483.5"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "form_factor": "Omni-Directional",
+    "gain_db": 2.0,
+    "radiation_pattern": "Omnidirectional"
+  }
+}

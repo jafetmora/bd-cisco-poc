@@ -1,0 +1,80 @@
+{
+  "cisco_product_id": "AIR-ANT2450V-N-HZ",
+  "commercial_name": "2.4 GHz 5 dBi Omni Antenna, N conn, HazLoc",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 175.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 175.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Access Point"
+    ],
+    "compatible_with": [
+      "Cisco AIR-AP3502I",
+      "Cisco AIR-AP2602I",
+      "Cisco AIR-AP1815I"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 65,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11n",
+      "radios": 1,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 0.6,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "N-Type"
+        ]
+      },
+      "power": "5W",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

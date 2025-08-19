@@ -1,0 +1,79 @@
+{
+  "cisco_product_id": "AIR-SD240GBKS4-EV=",
+  "commercial_name": "Spare SSD for Cisco Wireless Controller 5520 and 8540",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Storage",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-12-01",
+    "last_support_date": "2030-12-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 875.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 875.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 5,
+            "discount_pct": 2
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller 5520",
+      "Cisco Wireless Controller 8540"
+    ],
+    "compatible_with": [
+      "Cisco Catalyst 9100 Series",
+      "Cisco Aironet 2800 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "UL",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "SSD",
+      "wifi_standard": "802.11ax",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 5,
+      "antenna": {
+        "type": "Directional",
+        "connectors": "Dual-SMA"
+      },
+      "power": "5V DC",
+      "mounting": "Internal",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

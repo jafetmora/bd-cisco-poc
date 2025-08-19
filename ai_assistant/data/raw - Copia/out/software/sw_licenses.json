@@ -1,0 +1,179 @@
+[
+  {
+    "cisco_product_id": "WAAS-RTU-1300U2500",
+    "commercial_name": "Upgrade 1300 WAAS connection RTU to 2500 connection RTU",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1Y",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "features": [
+        "Basic feature set"
+      ],
+      "tier": "Base",
+      "usage_limits": {}
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 7200.0,
+      "billing_cycle": "one_time",
+      "pricing_tiers": [
+        "N/A"
+      ],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "requires": [
+        "N/A"
+      ],
+      "compatibility": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ],
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    },
+    "metadata": {
+      "vendor_sku_aliases": [
+        "N/A"
+      ],
+      "notes": "N/A"
+    }
+  },
+  {
+    "cisco_product_id": "WAAS-RTU-2500U6K",
+    "commercial_name": "Upgrade 2500 WAAS connection RTU to 6000 connection RTU",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1Y",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "features": [
+        "Basic feature set"
+      ],
+      "tier": "Base",
+      "usage_limits": {}
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 12000.0,
+      "billing_cycle": "one_time",
+      "pricing_tiers": [
+        "N/A"
+      ],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "requires": [
+        "N/A"
+      ],
+      "compatibility": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ],
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    },
+    "metadata": {
+      "vendor_sku_aliases": [
+        "N/A"
+      ],
+      "notes": "N/A"
+    }
+  },
+  {
+    "cisco_product_id": "SF-I44-NPE-5.4",
+    "commercial_name": "Cisco ISRWAAS NPE Software Release 5.4 for ISR 4400 Series",
+    "product_type": "software",
+    "category": "Licenses",
+    "subcategory": "feature_license",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "license_model": {
+      "type": "subscription",
+      "term": "1 year",
+      "seats_or_nodes": 1,
+      "includes_support": true
+    },
+    "entitlements": {
+      "features": [
+        "Basic feature set"
+      ],
+      "tier": "Base",
+      "usage_limits": {}
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 0.0,
+      "billing_cycle": "one_time",
+      "pricing_tiers": [
+        "N/A"
+      ],
+      "type": "subscription"
+    },
+    "dependencies": {
+      "requires": [
+        "N/A"
+      ],
+      "compatibility": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "compliance": [
+        "ISO/IEC 27001",
+        "SOC 2"
+      ],
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ]
+    },
+    "metadata": {
+      "vendor_sku_aliases": [
+        "N/A"
+      ],
+      "notes": "N/A"
+    }
+  }
+]

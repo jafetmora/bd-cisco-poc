@@ -1,0 +1,78 @@
+{
+  "cisco_product_id": "MA-MNT-MID-1",
+  "commercial_name": "Meraki MS225 and MS250 Mid-Mount Kit",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Mounting Kit",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 75.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 75.0,
+        "effective": "2023-10-20",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Bundle",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki MS225 Switch",
+      "Meraki MS250 Switch"
+    ],
+    "compatible_with": [
+      "Meraki MS220",
+      "Meraki MS210"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "CE",
+      "FCC",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Mounting Kit",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.9,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-Type"
+      },
+      "power": "PoE",
+      "mounting": "Wall-Mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}
