@@ -7,9 +7,13 @@ interface DisplayModeContextType {
   setMode: (mode: DisplayMode) => void;
 }
 
-const DisplayModeContext = createContext<DisplayModeContextType | undefined>(undefined);
+const DisplayModeContext = createContext<DisplayModeContextType | undefined>(
+  undefined,
+);
 
-export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [mode, setMode] = useState<DisplayMode>("draft");
   return (
     <DisplayModeContext.Provider value={{ mode, setMode }}>
@@ -18,6 +22,7 @@ export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useDisplayMode() {
   const context = useContext(DisplayModeContext);
   if (!context) {

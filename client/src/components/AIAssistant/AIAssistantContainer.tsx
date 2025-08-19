@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FiSidebar } from "react-icons/fi";
 import { useQuote } from "../../store/useQuote";
@@ -27,7 +28,12 @@ const chatHistoryData = [
 ];
 
 export default function AIAssistantContainer() {
-  const { quoteSession, sendQuoteUpdate, loadExistingQuoteSession, loadInitialQuoteSession } = useQuote();
+  const {
+    quoteSession,
+    sendQuoteUpdate,
+    loadExistingQuoteSession,
+    loadInitialQuoteSession,
+  } = useQuote();
   const { mode, setMode } = useDisplayMode();
 
   const handleSendText = (text: string) => {
@@ -80,13 +86,18 @@ export default function AIAssistantContainer() {
         {/* Content */}
         <div className="overflow-y-auto space-y-6 min-h-0">
           {mode === "detailed" ? (
-            <Chat 
+            <Chat
               chatMessages={quoteSession?.chatMessages || []}
-              onSendText={handleSendText} mode={mode} 
               scenarios={quoteSession?.scenarios || []}
+              onSendText={handleSendText}
+              mode={mode}
             />
           ) : (
-            <ChatHistory previousChats={chatHistoryData} onSelect={(sessionId) => loadExistingQuoteSession(sessionId)} onNew={loadInitialQuoteSession} />
+            <ChatHistory
+              previousChats={chatHistoryData}
+              onSelect={(sessionId) => loadExistingQuoteSession(sessionId)}
+              onNew={loadInitialQuoteSession}
+            />
           )}
         </div>
       </div>

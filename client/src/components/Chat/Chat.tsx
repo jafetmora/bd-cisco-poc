@@ -4,7 +4,7 @@ import { MdNoteAdd, MdEditNote } from "react-icons/md";
 import type { DisplayMode } from "../../store/DisplayModeContext";
 
 import QuoteDraft from "./QuoteDraft";
-import type { Scenario } from "../../types/Quotes";
+import type { Scenario, Quote } from "../../types/Quotes";
 import NewEmptyChat from "./NewEmptyChat";
 
 interface ChatProps {
@@ -21,44 +21,53 @@ interface ChatProps {
   mode?: DisplayMode;
 }
 
-export default function Chat({ chatMessages, onSendText, mode, scenarios, setMode }: ChatProps) {
-
+export default function Chat({
+  chatMessages,
+  onSendText,
+  mode,
+  scenarios,
+  setMode,
+}: ChatProps) {
+  const hasQuote = (s: Scenario): s is Scenario & { quote: Quote } =>
+    s.quote !== null;
   return (
     <div className="flex flex-col h-full w-full">
       <main className="flex-1 bg-[#F9FAFB] w-full h-full px-8 overflow-y-auto pb-20">
         <div className="text-xs text-gray-400 text-right pr-2 pb-1"></div>
         <div className="flex flex-col gap-4">
           {/* Render chat messages normally */}
-          {chatMessages.length > 0 && chatMessages.map((msg, index) => (
-            <MessageBubble
-              key={msg.id || index}
-              avatar={msg.role === "assistant" ? "CC" : "RM"}
-              message={msg.content}
-              time={
-                msg.timestamp
-                  ? new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : ""
-              }
-              align={msg.role === "assistant" ? "left" : "right"}
-            />
-          ))}
-          {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
-          {mode === 'draft' && Array.isArray(scenarios) && (() => {
-            const scenarioWithQuote = scenarios.find(s => s.quote);
-            if (!scenarioWithQuote) return null;
-            return (
-              <QuoteDraft
-                key={"quote-draft-main"}
-                quote={scenarioWithQuote.quote}
-                scenarioLabel={scenarioWithQuote.label}
-                setMode={setMode}
+          {chatMessages.length > 0 &&
+            chatMessages.map((msg, index) => (
+              <MessageBubble
+                key={msg.id || index}
+                avatar={msg.role === "assistant" ? "CC" : "RM"}
+                message={msg.content}
+                time={
+                  msg.timestamp
+                    ? new Date(msg.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : ""
+                }
+                align={msg.role === "assistant" ? "left" : "right"}
               />
-            );
-          })()}
-
+            ))}
+          {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
+          {mode === "draft" &&
+            Array.isArray(scenarios) &&
+            (() => {
+              const scenarioWithQuote = scenarios.find(hasQuote);
+              if (!scenarioWithQuote) return null;
+              return (
+                <QuoteDraft
+                  key={"quote-draft-main"}
+                  quote={scenarioWithQuote.quote}
+                  scenarioLabel={scenarioWithQuote.label}
+                  setMode={setMode}
+                />
+              );
+            })()}
 
           {chatMessages.length === 0 && (
             <NewEmptyChat onSendText={onSendText ?? (() => {})} />

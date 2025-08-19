@@ -53,9 +53,15 @@ export default function QuoteTab({ scenarios, title }: QuoteTabProps) {
         // Scenario view: remove external white container
         <div>
           {scenarios[activeIndex].quote ? (
-            <Quote quote={scenarios[activeIndex].quote} scenarioLabel={scenarios[activeIndex].label} title={title} />
+            <Quote
+              quote={scenarios[activeIndex].quote}
+              scenarioLabel={scenarios[activeIndex].label}
+              title={title}
+            />
           ) : (
-            <div className="text-gray-400 text-center">No quote for this scenario.</div>
+            <div className="text-gray-400 text-center">
+              No quote for this scenario.
+            </div>
           )}
         </div>
       )}

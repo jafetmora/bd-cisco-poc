@@ -5,9 +5,10 @@ import StepHeader from "./StepHeader";
 import TabSection from "./TabSection";
 import QuotationTable from "./QuoteTable";
 import type { DisplayMode } from "../../store/DisplayModeContext";
+import type { Quote as QuoteType } from "../../types/Quotes";
 
 interface QuoteProps {
-  quote?: any;
+  quote?: QuoteType | null;
   scenarioLabel?: string;
   title?: string;
   loading?: boolean;
@@ -15,19 +16,36 @@ interface QuoteProps {
   mode?: DisplayMode;
 }
 
-export default function Quote({ quote, scenarioLabel, title, loading = false, error = null, mode }: QuoteProps) {
+export default function Quote({
+  quote,
+  scenarioLabel,
+  title,
+  loading = false,
+  error = null,
+  mode,
+}: QuoteProps) {
   const [activeTab, setActiveTab] = useState("Items");
 
   if (quote !== undefined) {
-    if (!quote) return <div className="text-gray-400 text-center">No quote for this scenario.</div>;
+    if (!quote)
+      return (
+        <div className="text-gray-400 text-center">
+          No quote for this scenario.
+        </div>
+      );
     return (
       <main className="bg-[#F9FAFB] w-full py-0">
-        {quote.header && <QuoteHeaderBar data={quote.header} title={title} noMargins />}
+        {quote.header && (
+          <QuoteHeaderBar data={quote.header} title={title} noMargins />
+        )}
         <TabSection activeTab={activeTab} onChange={setActiveTab} />
         {activeTab === "Items" && (
           <>
             <ItemSearchHeader />
-            <QuotationTable items={quote?.items ?? []} summary={quote?.summary} />
+            <QuotationTable
+              items={quote?.items ?? []}
+              summary={quote?.summary}
+            />
           </>
         )}
       </main>
@@ -52,7 +70,15 @@ export default function Quote({ quote, scenarioLabel, title, loading = false, er
     );
   }
 
-  if (!quote) return <div className="text-gray-400 text-center">No quote for this scenario.</div>;
+  if (!quote)
+    return (
+      <div className="text-gray-400 text-center">
+        No quote for this scenario.
+      </div>
+    );
+
+  // From here on, `quote` is definitely a QuoteType
+  const q: QuoteType = quote as QuoteType;
 
   return (
     <main className="bg-[#F9FAFB] w-full py-0">
@@ -60,14 +86,16 @@ export default function Quote({ quote, scenarioLabel, title, loading = false, er
       <div className="text-xs text-gray-400 text-right pb-1">Mode: {mode}</div>
       <StepHeader currentStep={1} />
       {scenarioLabel && (
-        <div className="text-lg font-semibold mb-2 text-primary">{scenarioLabel}</div>
+        <div className="text-lg font-semibold mb-2 text-primary">
+          {scenarioLabel}
+        </div>
       )}
-      {quote.header && <QuoteHeaderBar data={quote.header} noMargins />}
+      {q.header && <QuoteHeaderBar data={q.header} noMargins />}
       <TabSection activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === "Items" && (
         <>
           <ItemSearchHeader />
-          <QuotationTable items={quote?.items ?? []} summary={quote?.summary} />
+          <QuotationTable items={q.items ?? []} summary={q.summary} />
         </>
       )}
     </main>

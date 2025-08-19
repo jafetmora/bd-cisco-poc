@@ -42,9 +42,18 @@ export default function MainPanelContainer() {
   return (
     <div className="h-full w-full">
       {mode === "draft" ? (
-        <Chat chatMessages={quoteSession?.chatMessages || []} scenarios={quoteSession?.scenarios || []} mode={mode} setMode={setMode} onSendText={handleSendText}/>
+        <Chat
+          chatMessages={quoteSession?.chatMessages || []}
+          scenarios={quoteSession?.scenarios || []}
+          mode={mode}
+          setMode={setMode}
+          onSendText={handleSendText}
+        />
       ) : (
-        <QuoteTab scenarios={quoteSession?.scenarios || []} title={quoteSession?.title || ""}/>
+        <QuoteTab
+          scenarios={quoteSession?.scenarios || []}
+          title={quoteSession?.title || ""}
+        />
       )}
     </div>
   );

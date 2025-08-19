@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaChevronDown, FaChevronRight, FaSearch } from "react-icons/fa";
-import type { QuoteLineItem, QuotePricingSummary } from "../../../types/Quotes";
+import type { QuoteLineItem, QuotePricingSummary } from "../../types/Quotes";
 
 type Props = {
   items: QuoteLineItem[];
