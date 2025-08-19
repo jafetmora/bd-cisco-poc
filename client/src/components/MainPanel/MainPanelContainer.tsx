@@ -45,6 +45,7 @@ export default function MainPanelContainer() {
         <Chat
           chatMessages={quoteSession?.chatMessages || []}
           scenarios={quoteSession?.scenarios || []}
+          thinking={quoteSession?.thinking || false}
           mode={mode}
           setMode={setMode}
           onSendText={handleSendText}

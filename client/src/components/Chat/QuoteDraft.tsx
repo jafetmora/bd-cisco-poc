@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { IoMdExpand } from "react-icons/io";
 import type { Quote } from "../../types/Quotes";
 
 import type { DisplayMode } from "../../store/DisplayModeContext";
@@ -24,43 +24,20 @@ const QuoteDraft: React.FC<QuoteDraftProps> = ({
           CC
         </div>
         <div className="bg-white border-2 border-[#38BDF8] rounded-xl shadow-sm px-6 py-5 w-full relative">
-          {/* Expand Icon Top Right - OUTSIDE header button */}
-          <div className="absolute top-3 right-3 z-10">
-            <button
-              className="p-2 rounded-full hover:bg-[#E0F2FE] transition-colors"
-              title="Expand to detailed view"
-              onClick={() => {
-                if (setMode) {
-                  setMode("detailed");
-                }
-                setExpanded(true);
-              }}
-              aria-label="Expand to detailed view"
-              type="button"
-            >
-              {/* Icon: Maximize/Expand (Heroicons style) */}
-              <svg
-                className="w-5 h-5 text-[#0369A1]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"
-                />
-              </svg>
-            </button>
-          </div>
           {/* Accordion Header */}
-          <button
-            className="flex items-center gap-3 mb-2 w-full focus:outline-none"
+          <div
+            className="flex items-center gap-3 mb-2 w-full focus:outline-none cursor-pointer"
             onClick={() => setExpanded((prev) => !prev)}
             aria-expanded={expanded}
             aria-controls={`quote-details-${header.quoteNumber}`}
-            type="button"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setExpanded((prev) => !prev);
+              }
+            }}
           >
             <div className="flex flex-col flex-1 min-w-0 text-left">
               <span className="font-semibold text-[#0369A1] text-base truncate">
@@ -70,24 +47,41 @@ const QuoteDraft: React.FC<QuoteDraftProps> = ({
                 {scenarioLabel}
               </span>
             </div>
-            <span className="px-2 py-1 rounded bg-[#E0F2FE] text-[#0369A1] text-xs font-semibold">
-              {header.status}
-            </span>
-            <svg
-              className={`ml-2 w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-1 rounded bg-[#E0F2FE] text-[#0369A1] text-xs font-semibold">
+                {header.status}
+              </span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+              <button
+                className="p-2 rounded-full hover:bg-[#E0F2FE] transition-colors"
+                title="Expand to detailed view"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (setMode) {
+                    setMode("detailed");
+                  }
+                  setExpanded(true);
+                }}
+                aria-label="Expand to detailed view"
+                type="button"
+              >
+                <IoMdExpand />
+              </button>
+            </div>
+          </div>
           {/* Accordion Content */}
           {expanded && (
             <div id={`quote-details-${header.quoteNumber}`}>

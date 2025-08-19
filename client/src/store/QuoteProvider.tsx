@@ -43,7 +43,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const quoteSession = await getQuote(sessionId);
-      setQuoteSession(quoteSession);
+      setQuoteSession({ ...quoteSession, thinking: false });
     } catch (e: unknown) {
       setError(getErrorMessage(e) ?? "Failed to load initial quote");
     } finally {
