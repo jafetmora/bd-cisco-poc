@@ -9,6 +9,7 @@ import QuoteHeaderBar from "./QuoteHeaderBar";
 type Props = {
   scenarios: Scenario[];
   className?: string;
+  title?: string;
 };
 
 function formatCurrency(
@@ -178,7 +179,7 @@ function ScenarioCard({
   );
 }
 
-export default function QuoteCompare({ scenarios, className }: Props) {
+export default function QuoteCompare({ scenarios, className, title }: Props) {
   // Compute cheapest (Best Value) and most expensive (Most Profitable) by summary.total
   const totals = scenarios
     .map((s) => ({ id: s.id, total: s.quote?.summary?.total }))
@@ -202,7 +203,7 @@ export default function QuoteCompare({ scenarios, className }: Props) {
         <div className="mb-4 -mx-6">
           <QuoteHeaderBar
             data={firstQuote.header}
-            title={firstQuote.header.title}
+            title={title}
           />
         </div>
       )}

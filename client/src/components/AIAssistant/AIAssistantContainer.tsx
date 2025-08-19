@@ -1,5 +1,3 @@
-
-import { useState } from "react";
 import { FiSidebar } from "react-icons/fi";
 import { useQuote } from "../../store/useQuote";
 import { useDisplayMode } from "../../store/DisplayModeContext";
@@ -91,6 +89,7 @@ export default function AIAssistantContainer() {
               scenarios={quoteSession?.scenarios || []}
               onSendText={handleSendText}
               mode={mode}
+              thinking={quoteSession?.thinking}
             />
           ) : (
             <ChatHistory

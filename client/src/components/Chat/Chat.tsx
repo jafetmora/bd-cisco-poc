@@ -19,6 +19,7 @@ interface ChatProps {
   scenarios: Scenario[];
   onSendText?: (text: string) => void;
   mode?: DisplayMode;
+  thinking?: boolean;
 }
 
 export default function Chat({
@@ -27,12 +28,13 @@ export default function Chat({
   mode,
   scenarios,
   setMode,
+  thinking,
 }: ChatProps) {
   const hasQuote = (s: Scenario): s is Scenario & { quote: Quote } =>
     s.quote !== null;
   return (
     <div className="flex flex-col h-full w-full">
-      <main className="flex-1 bg-[#F9FAFB] w-full h-full px-8 overflow-y-auto pb-20">
+      <main className="flex-1 bg-[#F9FAFB] w-full h-full px-8 overflow-y-auto py-8">
         <div className="text-xs text-gray-400 text-right pr-2 pb-1"></div>
         <div className="flex flex-col gap-4">
           {/* Render chat messages normally */}
@@ -53,6 +55,24 @@ export default function Chat({
                 align={msg.role === "assistant" ? "left" : "right"}
               />
             ))}
+          {/* Thinking indicator */}
+          {thinking && (
+            <MessageBubble
+              avatar="CC"
+              message={
+                <div className="flex items-center gap-2 text-gray-600">
+                  <span className="italic">Thinking</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-sky-400 animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-2 h-2 rounded-full bg-sky-400 animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-2 h-2 rounded-full bg-sky-400 animate-bounce"></span>
+                  </span>
+                </div>
+              }
+              time={""}
+              align={"left"}
+            />
+          )}
           {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
           {mode === "draft" &&
             Array.isArray(scenarios) &&

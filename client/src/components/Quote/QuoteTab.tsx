@@ -45,12 +45,10 @@ export default function QuoteTab({ scenarios, title }: QuoteTabProps) {
       </div>
       {/* Tab Content */}
       {activeIndex === scenarios.length ? (
-        // Trade-offs: no white rounded container
         <div>
-          <QuoteCompare scenarios={scenarios} />
+          <QuoteCompare scenarios={scenarios} title={title} />
         </div>
       ) : (
-        // Scenario view: remove external white container
         <div>
           {scenarios[activeIndex].quote ? (
             <Quote

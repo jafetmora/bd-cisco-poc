@@ -1,9 +1,10 @@
 // MessageBubble.tsx
 // Bubble styled according to feedback with CC/RM colors, full-width, and timestamp positioning
+import type { ReactNode } from "react";
 
 interface MessageBubbleProps {
   avatar: string;
-  message: string;
+  message: ReactNode;
   time?: string;
   align?: "left" | "right";
 }

@@ -67,6 +67,7 @@ export interface QuoteSession {
   chatMessages: ChatMessage[];
   scenarios: Scenario[];
   title: string;
+  thinking: boolean;
 }
 
 export interface Quote {

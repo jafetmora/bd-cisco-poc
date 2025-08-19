@@ -32,7 +32,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const sendQuoteUpdate = useCallback<QuoteContextValue["sendQuoteUpdate"]>(
     (payload) => {
-      setQuoteSession(payload);
+      setQuoteSession({ ...payload, thinking: true });
       socket.emit("QUOTE_UPDATED_CLIENT", payload);
     },
     [],
@@ -61,6 +61,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         chatMessages: [],
         scenarios: [],
         title: 'New Session',
+        thinking: false,
       };
       setQuoteSession(emptySession);
     } catch (e: unknown) {
@@ -72,7 +73,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const onSocketMessage = useCallback(
     (payload: QuoteSession) => {
-      applyQuoteUpdate(payload);
+      applyQuoteUpdate({ ...payload, thinking: false });
     },
     [applyQuoteUpdate],
   );

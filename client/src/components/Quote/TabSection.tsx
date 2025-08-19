@@ -8,7 +8,7 @@ export default function TabSection({
   onChange: (t: string) => void;
 }) {
   return (
-    <div className="flex gap-6 border-b border-gray-200 px-8 pt-8">
+    <div className="flex gap-6 border-b border-gray-200 px-8 pt-2">
       {tabs.map((tab) => (
         <button
           key={tab}

@@ -34,21 +34,25 @@ export default function Quote({
         </div>
       );
     return (
-      <main className="bg-[#F9FAFB] w-full py-0">
+      <section className="w-full">
         {quote.header && (
-          <QuoteHeaderBar data={quote.header} title={title} noMargins />
+          <div className="mb-4 -mx-6">
+            <QuoteHeaderBar data={quote.header} title={title} />
+          </div>
         )}
-        <TabSection activeTab={activeTab} onChange={setActiveTab} />
-        {activeTab === "Items" && (
-          <>
-            <ItemSearchHeader />
-            <QuotationTable
-              items={quote?.items ?? []}
-              summary={quote?.summary}
-            />
-          </>
-        )}
-      </main>
+        <div className="-mx-6">
+          <TabSection activeTab={activeTab} onChange={setActiveTab} />
+          {activeTab === "Items" && (
+            <>
+              <ItemSearchHeader />
+              <QuotationTable
+                items={quote?.items ?? []}
+                summary={quote?.summary}
+              />
+            </>
+          )}
+        </div>
+      </section>
     );
   }
 
