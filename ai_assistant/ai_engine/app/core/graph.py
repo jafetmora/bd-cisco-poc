@@ -1305,7 +1305,8 @@ def orchestrator_node(state: AgentState) -> dict:
             print(f"  - Quote requirements are missing: {missing_info}")
             return {
                 "requirements_ok": False,
-                "final_response": prompt_message
+                "final_response": prompt_message,
+                "missing_info": missing_info,
             }
 
     # --- SUA LÓGICA ORIGINAL DE ROTEAMENTO (INTACTA) ---
