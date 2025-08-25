@@ -57,10 +57,10 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     try {
       const emptySession = {
         id: uuidv4(),
-        userId: 'user-local',
+        userId: "user-local",
         chatMessages: [],
         scenarios: [],
-        title: 'New Session',
+        title: "New Session",
         thinking: false,
       };
       setQuoteSession(emptySession);

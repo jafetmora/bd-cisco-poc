@@ -206,10 +206,6 @@ def _build_tfidf(texts: List[str], keys: List[str], vec_file: Path, mat_file: Pa
 # Pipeline principal (somente artefatos preparados)
 # ──────────────────────────────────────────────────────────────────────────────
 def create_knowledge_base():
-    if not os.getenv("OPENAI_API_KEY"):
-        logging.error("❌ OPENAI_API_KEY not set. Aborting.")
-        return
-
     _ensure_dirs()
     logging.info("▶️  Ingesting prepared datasets (PDF + Price List).")
     all_docs_raw: list[LangChainDocument] = []

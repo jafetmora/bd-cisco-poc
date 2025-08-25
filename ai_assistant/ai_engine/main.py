@@ -1,26 +1,10 @@
-# services/ai_engine/main.py
 """
 Main entry point for running the Cisco Sales Assistant application.
 Demonstrates:
 1) Handling vague queries (asks for missing info)
 2) Handling specific queries (full quote/design)
 """
-import os
 from sys import argv
-
-API_KEY = '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'
-os.environ["OPENAI_API_KEY"] = API_KEY
-
-
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "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"
-
-if not os.getenv("OPENAI_API_KEY"):
-    print("❌ FATAL: OPENAI_API_KEY not set. Defina no env ou no API_KEY.")
-    raise SystemExit(1)
-else:
-    print("✅ OPENAI_API_KEY is set for this session.")
 
 # App
 from ai_engine.app.core.graph import app

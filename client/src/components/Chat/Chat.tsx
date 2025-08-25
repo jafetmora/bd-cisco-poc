@@ -74,7 +74,8 @@ export default function Chat({
             />
           )}
           {/* Show QuoteDraft only once if mode is 'draft' and there is a scenario with a quote */}
-          {mode === "draft" && !thinking &&
+          {mode === "draft" &&
+            !thinking &&
             Array.isArray(scenarios) &&
             (() => {
               const scenarioWithQuote = scenarios.find(hasQuote);

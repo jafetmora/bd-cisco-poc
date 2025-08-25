@@ -1,6 +1,5 @@
- import { useState } from "react";
- import { FiSend } from "react-icons/fi";
-
+import { useState } from "react";
+import { FiSend } from "react-icons/fi";
 
 interface NewEmptyChatProps {
   onSendText: (text: string) => void | Promise<void>;

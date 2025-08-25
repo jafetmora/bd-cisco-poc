@@ -1,16 +1,15 @@
-import logging
 from ai_engine.app.core.tools import product_search_tool
 from langchain_openai import OpenAIEmbeddings
+from ai_engine.settings import OPENAI_API_KEY
+
+import logging
 import openai
 
 # Configuração de logging para garantir que as mensagens apareçam
 logging.basicConfig(level=logging.INFO)
 
-# Defina a chave da API diretamente no código
-openai_api_key = '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'  # Substitua pela sua chave da OpenAI
-
 # Defina a chave da API diretamente
-openai.api_key = openai_api_key  # Isso define a chave para todas as chamadas OpenAI
+openai.api_key = OPENAI_API_KEY  # Isso define a chave para todas as chamadas OpenAI
 
 # Configure o cliente OpenAIEmbeddings com a chave da API diretamente
 embeddings = OpenAIEmbeddings(

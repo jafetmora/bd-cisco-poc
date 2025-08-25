@@ -201,10 +201,7 @@ export default function QuoteCompare({ scenarios, className, title }: Props) {
       {/* Header Bar (uses first available quote) */}
       {firstQuote && (
         <div className="mb-4 -mx-6">
-          <QuoteHeaderBar
-            data={firstQuote.header}
-            title={title}
-          />
+          <QuoteHeaderBar data={firstQuote.header} title={title} />
         </div>
       )}
 
