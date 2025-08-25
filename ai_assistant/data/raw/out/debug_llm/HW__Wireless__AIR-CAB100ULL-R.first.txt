@@ -1,0 +1,81 @@
+{
+  "cisco_product_id": "AIR-CAB100ULL-R",
+  "commercial_name": "100 ft. ULTRA LOW LOSS CABLE ASSEMBLY W/RP-TNC CONNECTORS",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Cables",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 516.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 516.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Bulk",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Access Point",
+      "Wireless Controller"
+    ],
+    "compatible_with": [
+      "Cisco AIR-AP1800",
+      "Cisco AIR-AP2800",
+      "Cisco AIR-AP3700"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "CE",
+      "FCC",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Cable Assembly",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "RP-TNC"
+        ]
+      },
+      "power": "PoE",
+      "mounting": "Indoor/Outdoor",
+      "controller_capacity_aps": 64
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "cisco_product_id": "AIR-ANT2524V4C-R=",
+  "commercial_name": "2.4GHz 2dBi/5GHz 4dBi Ceiling Mount Omni Ant., 4-port,RP- TNC",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antennas",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-30",
+    "last_support_date": "2030-06-30"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 577.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 577.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Access Points"
+    ],
+    "compatible_with": [
+      "Cisco Catalyst 9800 Series",
+      "Cisco Aironet 1800 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Omni-directional Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 4,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.9,
+      "antenna": {
+        "type": "Omni",
+        "connectors": [
+          "RP-TNC"
+        ]
+      },
+      "power": "Power over Ethernet (PoE)",
+      "mounting": "Ceiling",
+      "controller_capacity_aps": 64
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

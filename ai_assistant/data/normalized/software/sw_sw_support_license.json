@@ -1,0 +1,197 @@
+[
+  {
+    "cisco_product_id": "LIC-ENT-1YR",
+    "commercial_name": "Meraki MR Enterprise Cloud Controller License, 1 Year",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_support_license",
+      "subcategory": null,
+      "software_attributes": {
+        "term": 1,
+        "edition": null,
+        "device_type": null,
+        "cloud_managed": true,
+        "support_level": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 150.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "LIC-ENT-10YR",
+    "commercial_name": "Meraki MR Enterprise Cloud Controller License, 10 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_support_license",
+      "subcategory": null,
+      "software_attributes": {
+        "term": 10,
+        "edition": null,
+        "device_type": null,
+        "cloud_managed": true,
+        "support_level": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 900.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "LIC-ENT-3YR",
+    "commercial_name": "Meraki MR Enterprise Cloud Controller License, 3 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_support_license",
+      "subcategory": null,
+      "software_attributes": {
+        "term": 3,
+        "edition": null,
+        "device_type": null,
+        "cloud_managed": true,
+        "support_level": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 300.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "LIC-ENT-5YR",
+    "commercial_name": "Meraki MR Enterprise Cloud Controller License, 5 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_support_license",
+      "subcategory": null,
+      "software_attributes": {
+        "term": 5,
+        "edition": null,
+        "device_type": null,
+        "cloud_managed": true,
+        "support_level": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 450.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "LIC-ENT-7YR",
+    "commercial_name": "Meraki MR Enterprise Cloud Controller License, 7 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_support_license",
+      "subcategory": null,
+      "software_attributes": {
+        "term": 7,
+        "edition": null,
+        "device_type": null,
+        "cloud_managed": true,
+        "support_level": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 630.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  }
+]

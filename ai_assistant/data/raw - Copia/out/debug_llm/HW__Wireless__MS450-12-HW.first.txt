@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "MS450-12-HW",
+  "commercial_name": "Meraki MS450-L3 Stack Cld-Mngd 12x40GE Aggregation Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Network Switch",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 20700.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 20700.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 5,
+            "discount_pct": 5
+          },
+          {
+            "type": "Loyalty",
+            "threshold": 10,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 10,
+        "price": 19665.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki MS200 Series Access Points",
+      "Meraki MX Security Appliances"
+    ],
+    "compatible_with": [
+      "Cisco Meraki Dashboard",
+      "Cisco Meraki API"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP30"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Aggregation Switch",
+      "wifi_standard": "802.11ax",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 80,
+      "antenna": {
+        "type": "Omni",
+        "connectors": "N-Type"
+      },
+      "power": "100-240V AC",
+      "mounting": "Rack-mountable",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

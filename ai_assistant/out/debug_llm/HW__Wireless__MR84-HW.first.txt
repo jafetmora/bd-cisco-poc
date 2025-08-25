@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "MR84-HW",
+  "commercial_name": "Meraki MR84 Cloud Managed AP",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Point",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-07-15",
+    "last_support_date": "2030-07-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 2399.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 2399.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5.0
+          },
+          {
+            "type": "Tiered",
+            "threshold": 20,
+            "discount_pct": 10.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 2299.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Meraki Licenses",
+      "PoE Injector"
+    ],
+    "compatible_with": [
+      "Cisco Meraki Dashboard",
+      "Cisco Meraki MX Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac Wave 2",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 2.5,
+      "antenna": {
+        "type": "Integrated",
+        "connectors": "N/A"
+      },
+      "power": "802.3at (PoE+)",
+      "mounting": "Ceiling or Wall Mount",
+      "controller_capacity_aps": 128
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

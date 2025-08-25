@@ -1,0 +1,95 @@
+{
+  "cisco_product_id": "STRING_SKU",
+  "commercial_name": "Product Marketing Name",
+  "product_type": "software",
+  "category": "Routers",
+  "subcategory": null,
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": null,
+    "last_support_date": null
+  },
+  "entitlement": {
+    "smart_account_required": true,
+    "virtual_account": null,
+    "activation_type": "cloud",
+    "grace_period_days": 30
+  },
+  "dependencies": {
+    "required_hardware_categories": [],
+    "required_hardware_skus": [],
+    "incompatible_with": []
+  },
+  "region_restrictions": {
+    "allowed_regions": [
+      "global"
+    ],
+    "blocked_countries": []
+  },
+  "renewal": {
+    "auto_renew": true,
+    "renewal_window_days": 90,
+    "late_renewal_policy": "prorate_on_reactivation"
+  },
+  "pricing_model": {
+    "currency": "USD",
+    "billing_model": "subscription",
+    "billing_frequency": "annual",
+    "msrp_per_unit": 0.0,
+    "unit_of_measure": "router",
+    "term_months": 12,
+    "billing_anchor": "co-term",
+    "proration_rules": {
+      "enabled": true,
+      "rounding": "ceil_month"
+    },
+    "pricing_tiers": [
+      {
+        "min_qty": 1,
+        "price": 0.0
+      },
+      {
+        "min_qty": 10,
+        "price": 0.0,
+        "discount_pct": 10.0
+      },
+      {
+        "min_qty": 50,
+        "price": 0.0,
+        "discount_pct": 18.0
+      }
+    ],
+    "partner_tier_discounts": {
+      "None": 0.0,
+      "Bronze": 2.0,
+      "Silver": 5.0,
+      "Gold": 8.0,
+      "Platinum": 12.0
+    },
+    "support_level_multipliers": {
+      "None": 1.0,
+      "Standard": 1.05,
+      "Premium": 1.12
+    }
+  },
+  "notes": "",
+  "attributes": {
+    "router_license": {
+      "bundle": "DNA-Advantage",
+      "features": [
+        "SD-WAN",
+        "AppQoE",
+        "Telemetry",
+        "Security"
+      ],
+      "supported_families": [
+        "ISR 4000",
+        "Catalyst 8300",
+        "Catalyst 8200"
+      ],
+      "performance_unlocks": {
+        "sdwan_tunnels_max": 50
+      }
+    }
+  }
+}

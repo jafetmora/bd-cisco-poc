@@ -1,0 +1,177 @@
+[
+  {
+    "cisco_product_id": "WIC-1B-S/T-V3",
+    "commercial_name": "1-Port ISDN WAN Interface Card (dial and leased line)",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_other",
+      "subcategory": null,
+      "software_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 600.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "WIC-1B-S/T-V3=",
+    "commercial_name": "1-Port ISDN WAN Interface Card (dial and leased line)",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_other",
+      "subcategory": null,
+      "software_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 728.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "FL-8XX-512U1GB",
+    "commercial_name": "CISCO800 DRAM Upgrade from 512MB to 1GB",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_other",
+      "subcategory": null,
+      "software_attributes": {
+        "notes": "CISCO800 DRAM Upgrade from 512MB to 1GB"
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 250.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "EDU-DNA-A-3Y",
+    "commercial_name": "CISCO DNA Advantage Term Licenses for EDU SKUs - 3 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_other",
+      "subcategory": null,
+      "software_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 540.0,
+      "elig_pct": 0.0,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  },
+  {
+    "cisco_product_id": "EDU-DNA-A-5Y",
+    "commercial_name": "CISCO DNA Advantage Term Licenses for EDU SKUs - 5 Years",
+    "product_type": "software",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "sw_other",
+      "subcategory": null,
+      "software_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 900.0,
+      "elig_pct": 0.0,
+      "pricing_tiers": []
+    },
+    "license": {
+      "term_months": null,
+      "seats_included": null,
+      "metering": null,
+      "sku_family": null
+    },
+    "compatibility": {
+      "requires_hardware": [],
+      "compatible_platforms": [],
+      "min_versions": {}
+    }
+  }
+]

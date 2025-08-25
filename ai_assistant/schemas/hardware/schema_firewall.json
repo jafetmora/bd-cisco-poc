@@ -1,0 +1,74 @@
+{
+  "cisco_product_id": "STRING_SKU",
+  "commercial_name": "Product Marketing Name",
+  "product_type": "hardware",
+  "category": "Firewall",
+  "subcategory": null,
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": null,
+    "last_support_date": null
+  },
+  "pricing_model": {
+    "type": "one_time",
+    "currency": "USD",
+    "base_price": 0.0,
+    "elig_pct": 0.01,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 0.0,
+        "effective": "2025-01-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 10,
+            "discount_pct": 0.15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [],
+    "compatible_with": []
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -5,
+      "oper_temp_max_c": 45,
+      "ip_rating": null
+    }
+  },
+  "attributes": {
+    "firewall": {
+      "fw_throughput_gbps": 4.0,
+      "ngfw_throughput_gbps": 2.5,
+      "ips_throughput_gbps": 2.0,
+      "ipsec_vpn_gbps": 1.8,
+      "max_sessions_m": 2.0,
+      "interfaces": [
+        {
+          "type": "GE",
+          "qty": 8
+        },
+        {
+          "type": "SFP+",
+          "qty": 2
+        }
+      ],
+      "ha_supported": true,
+      "utm_services": [
+        "IPS",
+        "AV",
+        "URL",
+        "AppControl"
+      ]
+    }
+  }
+}

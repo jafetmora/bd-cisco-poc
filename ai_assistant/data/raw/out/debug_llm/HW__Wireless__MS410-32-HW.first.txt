@@ -1,0 +1,79 @@
+{
+  "cisco_product_id": "MS410-32-HW",
+  "commercial_name": "Meraki MS410-32 Cld-Mngd 32x GigE SFP Switch",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Switches",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 15000.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 15000.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Bundle",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Cloud Management License",
+      "SFP Modules"
+    ],
+    "compatible_with": [
+      "Meraki MX Security Appliances",
+      "Meraki MR Access Points",
+      "Meraki MV Cameras"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC Part 15",
+      "CE",
+      "ROHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 40,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Switch",
+      "wifi_standard": "802.11ax",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 10,
+      "antenna": {
+        "type": "Omni-directional",
+        "connectors": "N-type"
+      },
+      "power": "PoE+",
+      "mounting": "Rack-mounted",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

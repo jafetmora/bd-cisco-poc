@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "CAB-ADSL-RJ11",
+  "commercial_name": "Lavender Cable for xDSL, Straight-through, RJ-11, 6 feet",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Cables",
+  "lifecycle": {
+    "status": "active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2028-01-01"
+  },
+  "pricing_model": {
+    "type": "fixed",
+    "currency": "USD",
+    "base_price": 0.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 5.99,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "bulk",
+            "threshold": 10,
+            "discount_pct": 5
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 5.49,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "bulk",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "ADSL modem",
+      "Router"
+    ],
+    "compatible_with": [
+      "Cisco 8800 Series",
+      "Cisco ISR 4000"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "UL Listed",
+      "FCC Part 68"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP20"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "cable",
+      "wifi_standard": "n/a",
+      "radios": "n/a",
+      "mimo": "n/a",
+      "max_phy_throughput_gbps": 0.1,
+      "antenna": {
+        "type": "n/a",
+        "connectors": "RJ-11"
+      },
+      "power": "n/a",
+      "mounting": "n/a",
+      "controller_capacity_aps": "n/a"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

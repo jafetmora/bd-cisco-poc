@@ -1,0 +1,11 @@
+
+# Solution Guide: Healthcare Clinic Network Refresh
+
+## Overview
+A healthcare clinic requires a highly reliable, secure, and HIPAA-compliant network infrastructure. Key requirements include secure Wi-Fi for staff and guests, robust firewalling to protect patient data (EHR), and reliable voice communication.
+
+## Recommended Components
+- **Switching:** The Catalyst 9300 series (e.g., C9300-24P) is recommended for the core network due to its advanced security features and stacking capabilities. A Cisco DNA Advantage license is mandatory for full functionality.
+- **Wireless:** For clinical areas, Meraki cloud-managed Wi-Fi 6 access points like the MR46 provide secure and easy-to-manage wireless connectivity. A separate guest SSID can be configured with traffic shaping rules.
+- **Security:** A next-generation firewall such as the Firepower 1000 series (e.g., FPR1120-ASA-K9) is essential for threat defense and intrusion prevention.
+- **Collaboration:** Cisco IP Phones from the 8800 series (e.g., CP-8841-K9) offer reliable voice and video communication suitable for reception and clinical staff.

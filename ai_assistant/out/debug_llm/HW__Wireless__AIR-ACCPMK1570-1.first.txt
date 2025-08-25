@@ -1,0 +1,82 @@
+{
+  "cisco_product_id": "AIR-ACCPMK1570-1",
+  "commercial_name": "1570 Series Pole-Mount Kit (Type-1)",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 219.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 219.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Access Point",
+      "Mounting Bracket",
+      "Antenna"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1560 Series",
+      "Cisco Catalyst 9100 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP66"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Pole-Mount Kit",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.9,
+      "antenna": {
+        "type": "Directional",
+        "connectors": [
+          "N-Type",
+          "RP-TNC"
+        ]
+      },
+      "power": "PoE",
+      "mounting": "Pole",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-NK910",
+  "commercial_name": "3602E AP with 802.11ac Module Eco Pack for N Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 18261.91,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 18261.91,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotion",
+            "threshold": 1,
+            "discount_pct": 2
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Catalyst 9800 Series Wireless Controller",
+      "Cisco DNA Center"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco Mobility Express"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "8x8",
+      "max_phy_throughput_gbps": 2.5,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-type"
+      },
+      "power": "PoE+",
+      "mounting": "Ceiling or Wall",
+      "controller_capacity_aps": 200
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

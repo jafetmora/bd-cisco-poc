@@ -1,0 +1,157 @@
+[
+  {
+    "cisco_product_id": "EDU-AP4800-B-K9",
+    "commercial_name": "EDU SKU .11ac W2 Analytics AP w/CA; 4x4:3; -B Domain",
+    "product_type": "hardware",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "other_hw",
+      "subcategory": null,
+      "hardware_attributes": {
+        "notes": "EDU SKU .11ac W2 Analytics AP w/CA; 4x4:3; -B Domain"
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 1995.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": []
+    }
+  },
+  {
+    "cisco_product_id": "EDU-AP4800-B-K9C",
+    "commercial_name": "EDU_Cisco Aironet Mobility Express 4800 Series",
+    "product_type": "hardware",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "other_hw",
+      "subcategory": null,
+      "hardware_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 1995.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": []
+    }
+  },
+  {
+    "cisco_product_id": "AIR-AP2802E-S-K9",
+    "commercial_name": "802.11ac W2 AP w/CA; 4x4:3; Ext Ant; 2xGbE, S Domain",
+    "product_type": "hardware",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "other_hw",
+      "subcategory": null,
+      "hardware_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 1716.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": []
+    }
+  },
+  {
+    "cisco_product_id": "AIR-SD240GBKS4-EV=",
+    "commercial_name": "Spare SSD for Cisco Wireless Controller 5520 and 8540",
+    "product_type": "hardware",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "other_hw",
+      "subcategory": null,
+      "hardware_attributes": {
+        "notes": null
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 875.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": []
+    }
+  },
+  {
+    "cisco_product_id": "CAB-ADSL-RJ11",
+    "commercial_name": "Lavender Cable for xDSL, Straight-through, RJ-11, 6 feet",
+    "product_type": "hardware",
+    "lifecycle": {
+      "status": "unknown",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "technical_profile": {
+      "category": "other_hw",
+      "subcategory": null,
+      "hardware_attributes": {
+        "notes": "Lavender Cable for xDSL, Straight-through, RJ-11, 6 feet"
+      }
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 0.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": []
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": []
+    }
+  }
+]

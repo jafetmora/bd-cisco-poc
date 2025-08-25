@@ -1,0 +1,1262 @@
+[
+  {
+    "cisco_product_id": "15454M-R1062SWK9=",
+    "commercial_name": "MSTP - ANSI & ETSI, R10.6.2 - RTU LIC DVD, NO WSON",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 1995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "NCS2006-LCD=",
+    "commercial_name": "NCS 2006 LCD Display with Backup Memory",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 80.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "GLC-ZX-SMD",
+    "commercial_name": "1000BASE-ZX SFP transceiver module, SMF, 1550nm, DOM",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 3995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "GLC-ZX-SMD=",
+    "commercial_name": "1000BASE-ZX SFP transceiver module, SMF, 1550nm, DOM",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 4114.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-100G-CWDM4-S=",
+    "commercial_name": "100GBASE CWDM4 QSFP Transceiver, LC, 2km over SMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 16648.99,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-100G-LR4-S",
+    "commercial_name": "100GBASE LR4 QSFP Transceiver, LC, 10km over SMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 29995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-100G-LR4-S=",
+    "commercial_name": "100GBASE LR4 QSFP Transceiver, LC, 10km over SMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 32986.01,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-100G-SR4-S",
+    "commercial_name": "100GBASE SR4 QSFP Transceiver, MPO, 100m over OM4 MMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 1995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-100G-SR4-S=",
+    "commercial_name": "100GBASE SR4 QSFP Transceiver, MPO, 100m over OM4 MMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 2294.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DWDM-XFP-C",
+    "commercial_name": "10G MultiRate C Band Tunable DWDM XFP",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 20500.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "FET-40G=",
+    "commercial_name": "40G Line Extender for FEX",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 3124.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CPAK-100G-ER4L=",
+    "commercial_name": "CPAK module, 100G for applications >10km",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 78750.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CPAK-100G-LR4=",
+    "commercial_name": "CPAK-100G-LR4 Transceiver module, 10km SMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 42000.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CPAK-100G-SR10=",
+    "commercial_name": "CPAK-100G-SR10 Transceiver module, 100m OM3 MMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 7350.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "CPAK-10X10G-LR",
+    "commercial_name": "CPAK-10X10GLR, Transceiver module, 10 x 10Gb/s 10km SMF",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 29400.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "DWDM-SFP10G-C-S",
+    "commercial_name": "DWDM Tunable SFP+ Module, Enterprise-Class",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 12500.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-40GE-LR4",
+    "commercial_name": "QSFP 40GBASE-LR4 Transceiver Module, LC, 10KM",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 13995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-4X10G-LR-S",
+    "commercial_name": "QSFP 4x10G Transceiver Module,SM MPO, 10KM, Enterprise-Class",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 5995.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "QSFP-4X10G-LR-S=",
+    "commercial_name": "QSFP 4x10G Transceiver Module,SM MPO, 10KM, Enterprise-Class",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 6442.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "SFP-10G-BX40D-I=",
+    "commercial_name": "SFP+ Bidirectional for 40km, downstream",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 13554.0,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  },
+  {
+    "cisco_product_id": "SFP-10G-BX40U-I=",
+    "commercial_name": "SFP+ Bidirectional for 40km, upstream",
+    "product_type": "hardware",
+    "category": "Connectors",
+    "subcategory": null,
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": null,
+      "last_support_date": null
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 14449.99,
+      "elig_pct": 1.0,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [],
+      "compatible_with": []
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": null
+      }
+    },
+    "attributes": {
+      "connector": {
+        "type": "SFP+",
+        "gender": "n/a",
+        "angle": "straight",
+        "impedance_ohm": 50,
+        "supported_cable_categories": [
+          "OM3",
+          "OM4"
+        ]
+      }
+    }
+  }
+]

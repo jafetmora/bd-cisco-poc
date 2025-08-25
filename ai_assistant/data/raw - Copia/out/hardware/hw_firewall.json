@@ -1,0 +1,248 @@
+[
+  {
+    "cisco_product_id": "ASA5510-MEM-1GB=",
+    "commercial_name": "1 GB Memory Upgrade for Cisco ASA 5510",
+    "product_type": "hardware",
+    "category": "Firewall",
+    "subcategory": "firewall",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 350.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [
+        "N/A"
+      ],
+      "compatible_with": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      }
+    },
+    "attributes": {
+      "firewall": {
+        "fw_throughput_gbps": 4.0,
+        "ngfw_throughput_gbps": 2.5,
+        "ips_throughput_gbps": 2.0,
+        "ipsec_vpn_gbps": 1.8,
+        "max_sessions_m": 2.0,
+        "interfaces": [
+          {
+            "type": "GE",
+            "qty": 8
+          },
+          {
+            "type": "SFP+",
+            "qty": 2
+          }
+        ],
+        "ha_supported": true,
+        "utm_services": [
+          "IPS",
+          "AV",
+          "URL",
+          "AppControl"
+        ]
+      }
+    },
+    "technical_profile": {
+      "category": "Firewall",
+      "subcategory": "firewall"
+    }
+  },
+  {
+    "cisco_product_id": "ASA5520-MEM-2GB=",
+    "commercial_name": "2 GB Memory Upgrade for Cisco ASA 5520",
+    "product_type": "hardware",
+    "category": "Firewall",
+    "subcategory": "firewall",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 0.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [
+        "N/A"
+      ],
+      "compatible_with": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      }
+    },
+    "attributes": {
+      "firewall": {
+        "fw_throughput_gbps": 4.0,
+        "ngfw_throughput_gbps": 2.5,
+        "ips_throughput_gbps": 2.0,
+        "ipsec_vpn_gbps": 1.8,
+        "max_sessions_m": 2.0,
+        "interfaces": [
+          {
+            "type": "GE",
+            "qty": 8
+          },
+          {
+            "type": "SFP+",
+            "qty": 2
+          }
+        ],
+        "ha_supported": true,
+        "utm_services": [
+          "IPS",
+          "AV",
+          "URL",
+          "AppControl"
+        ]
+      }
+    },
+    "technical_profile": {
+      "category": "Firewall",
+      "subcategory": "firewall"
+    }
+  },
+  {
+    "cisco_product_id": "ASA5540-MEM-2GB=",
+    "commercial_name": "2 GB Memory Upgrade for Cisco ASA 5540",
+    "product_type": "hardware",
+    "category": "Firewall",
+    "subcategory": "firewall",
+    "lifecycle": {
+      "status": "active",
+      "eos_announced": "2030-12-31",
+      "last_support_date": "2035-12-31"
+    },
+    "pricing_model": {
+      "type": "one_time",
+      "currency": "USD",
+      "base_price": 650.0,
+      "elig_pct": 0.01,
+      "pricing_tiers": [
+        {
+          "min_quantity": 1,
+          "price": 0.0,
+          "effective": "2025-01-01",
+          "discount_rules": [
+            {
+              "type": "volume",
+              "threshold": 10,
+              "discount_pct": 0.15
+            }
+          ]
+        }
+      ]
+    },
+    "dependencies": {
+      "required_components": [
+        "N/A"
+      ],
+      "compatible_with": [
+        "N/A"
+      ]
+    },
+    "regulatory": {
+      "certifications": [
+        "FCC",
+        "CE",
+        "IC"
+      ],
+      "environment": {
+        "oper_temp_min_c": -5,
+        "oper_temp_max_c": 45,
+        "ip_rating": "IP30"
+      }
+    },
+    "attributes": {
+      "firewall": {
+        "fw_throughput_gbps": 4.0,
+        "ngfw_throughput_gbps": 2.5,
+        "ips_throughput_gbps": 2.0,
+        "ipsec_vpn_gbps": 1.8,
+        "max_sessions_m": 2.0,
+        "interfaces": [
+          {
+            "type": "GE",
+            "qty": 8
+          },
+          {
+            "type": "SFP+",
+            "qty": 2
+          }
+        ],
+        "ha_supported": true,
+        "utm_services": [
+          "IPS",
+          "AV",
+          "URL",
+          "AppControl"
+        ]
+      }
+    },
+    "technical_profile": {
+      "category": "Firewall",
+      "subcategory": "firewall"
+    }
+  }
+]

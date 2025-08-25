@@ -1,0 +1,92 @@
+{
+  "cisco_product_id": "MA-QSFP-40G-SR4",
+  "commercial_name": "Meraki SR4 QSFP 40G Transceiver",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Transceivers",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2028-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 3294.5,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 3294.5,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Loyalty Discount",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 3150.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Nexus 9000 Series Switch",
+      "Cisco Catalyst 9300 Series Switch"
+    ],
+    "compatible_with": [
+      "Cisco Meraki MR Series",
+      "Cisco Catalyst 9100 Series",
+      "Cisco Wireless LAN Controller"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "UL",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 85,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Transceiver",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 40,
+      "antenna": {
+        "type": "Integrated",
+        "connectors": [
+          "SFP+",
+          "QSFP",
+          "LC"
+        ]
+      },
+      "power": "1.5W",
+      "mounting": "Rack Mount",
+      "controller_capacity_aps": 250
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "max_data_rate_gbps": 40,
+    "form_factor": "Pluggable"
+  }
+}

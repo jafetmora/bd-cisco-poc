@@ -2,9 +2,9 @@ name: Full CI
 
 on:
   push:
-    branches: [ dev, '**/feature/**', '**/bugfix/**' ]
+    branches: [dev, "**/feature/**", "**/bugfix/**"]
   pull_request:
-    branches: [ dev, main ]
+    branches: [dev, main]
 
 permissions:
   contents: read
@@ -20,10 +20,10 @@ jobs:
         uses: actions/checkout@v4
 
       # ---------- Back-End (FastAPI) ----------
-      - name: Set up Python 3.11
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.9"
 
       - name: Cache pip
         uses: actions/cache@v4
@@ -44,7 +44,7 @@ jobs:
         run: black --check api
 
       - name: Mypy typing check
-        run: MYPYPATH=api mypy api
+        run: mypy -p api
 
       - name: Bandit security scan
         run: bandit -r api -ll

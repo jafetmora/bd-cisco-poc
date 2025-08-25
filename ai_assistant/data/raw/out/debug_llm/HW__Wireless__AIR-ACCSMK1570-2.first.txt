@@ -1,0 +1,90 @@
+{
+  "cisco_product_id": "AIR-ACCSMK1570-2",
+  "commercial_name": "1570 Series Strand-Mount Kit (Type-2)",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Mounting Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-15",
+    "last_support_date": "2030-01-15"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 89.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 89.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Reseller",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 84.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 50,
+            "discount_pct": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-AP1572I-B-K9",
+      "AIR-AP1572I-C-K9"
+    ],
+    "compatible_with": [
+      "AIR-CT3504-K9",
+      "AIR-CT5520-K9"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "IEEE 802.11ac",
+      "FCC Part 15",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 65,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Mounting Kit",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.75,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "RP-SMA"
+      },
+      "power": "PoE",
+      "mounting": "Strand-Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

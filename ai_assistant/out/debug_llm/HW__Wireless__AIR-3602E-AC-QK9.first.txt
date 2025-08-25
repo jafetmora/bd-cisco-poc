@@ -1,0 +1,90 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-QK9",
+  "commercial_name": "3602E AP with 802.11ac Module for Q Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-05-15",
+    "last_support_date": "2030-05-15"
+  },
+  "pricing_model": {
+    "type": "standard",
+    "currency": "USD",
+    "base_price": 1826.19,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1826.19,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "bulk",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "reseller",
+            "threshold": 5,
+            "discount_pct": 7
+          }
+        ]
+      },
+      {
+        "min_quantity": 25,
+        "price": 1750.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "bulk",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power over Ethernet Injector"
+    ],
+    "compatible_with": [
+      "Cisco 5508 Wireless Controller",
+      "Cisco 5760 Wireless Controller"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "IC",
+      "CE"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP55"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "internal",
+        "connectors": "N/A"
+      },
+      "power": "PoE",
+      "mounting": "ceiling",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

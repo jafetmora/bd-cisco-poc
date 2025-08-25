@@ -6,9 +6,10 @@ import {
   type ReactNode,
 } from "react";
 import type { QuoteSession } from "../types/Quotes";
-import { getQuote } from "../services/api";
 import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
+import { getQuote } from "../services/api";
+import { v4 as uuidv4 } from "uuid";
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -31,18 +32,38 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const sendQuoteUpdate = useCallback<QuoteContextValue["sendQuoteUpdate"]>(
     (payload) => {
-      setQuoteSession(payload);
+      setQuoteSession({ ...payload, thinking: true });
       socket.emit("QUOTE_UPDATED_CLIENT", payload);
     },
     [],
   );
 
+  const loadExistingQuoteSession = useCallback(async (sessionId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const quoteSession = await getQuote(sessionId);
+      setQuoteSession({ ...quoteSession, thinking: false });
+    } catch (e: unknown) {
+      setError(getErrorMessage(e) ?? "Failed to load initial quote");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const loadInitialQuoteSession = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const payload = await getQuote();
-      setQuoteSession(payload);
+      const emptySession = {
+        id: uuidv4(),
+        userId: "user-local",
+        chatMessages: [],
+        scenarios: [],
+        title: "New Session",
+        thinking: false,
+      };
+      setQuoteSession(emptySession);
     } catch (e: unknown) {
       setError(getErrorMessage(e) ?? "Failed to load initial quote");
     } finally {
@@ -52,7 +73,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const onSocketMessage = useCallback(
     (payload: QuoteSession) => {
-      applyQuoteUpdate(payload);
+      applyQuoteUpdate({ ...payload, thinking: false });
     },
     [applyQuoteUpdate],
   );
@@ -76,6 +97,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       quoteSession,
       loading,
       error,
+      loadExistingQuoteSession,
       loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,
@@ -86,6 +108,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       quoteSession,
       loading,
       error,
+      loadExistingQuoteSession,
       loadInitialQuoteSession,
       connectSocket,
       disconnectSocket,

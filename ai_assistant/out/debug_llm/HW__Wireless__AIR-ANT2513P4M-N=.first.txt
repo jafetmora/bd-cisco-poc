@@ -1,0 +1,87 @@
+{
+  "cisco_product_id": "AIR-ANT2513P4M-N=",
+  "commercial_name": "2.4 GHz/5 GHz 13 dBi Patch Antenna.,4 port, N conn.",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1649.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1649.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 5,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 10,
+        "price": 1484.1,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk Purchase",
+            "threshold": 10,
+            "discount_pct": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Access Point",
+      "Mounting Hardware"
+    ],
+    "compatible_with": [
+      "Cisco 5520 WLC",
+      "Cisco 3504 WLC"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 4,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Patch",
+        "connectors": [
+          "N-Type"
+        ]
+      },
+      "power": "10-30 dBm",
+      "mounting": "Wall or pole",
+      "controller_capacity_aps": 250
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

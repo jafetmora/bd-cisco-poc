@@ -1,0 +1,88 @@
+{
+  "cisco_product_id": "AIR-ACCAMK-2=",
+  "commercial_name": "1560 External Directional Antenna Mount Kit",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-12-01",
+    "last_support_date": "2030-12-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 124.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 124.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5.0
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 115.0,
+        "effective": "2023-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 20,
+            "discount_pct": 10.0
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco 1560 Access Point",
+      "Mounting Bracket"
+    ],
+    "compatible_with": [
+      "Cisco 1560 Series",
+      "Cisco Wireless Controller"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna Mount",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Directional",
+        "connectors": [
+          "RP-SMA",
+          "N-Type"
+        ]
+      },
+      "power": "PoE",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "cisco_product_id": "15454M-R1062SWK9=",
+    "commercial_name": "MSTP - ANSI & ETSI, R10.6.2 - RTU LIC DVD, NO WSON",
+    "product_type": "software",
+    "category": "Connectors",
+    "subcategory": "Network Licensing",
+    "lifecycle": {
+      "status": "Active",
+      "eos_announced": "2025-06-01",
+      "last_support_date": "2028-06-01"
+    },
+    "license_model": {
+      "type": "Perpetual",
+      "term": "N/A",
+      "seats_or_nodes": "5",
+      "includes_support": true
+    },
+    "entitlements": {
+      "features": [
+        "Advanced Configuration",
+        "Real-time Monitoring",
+        "Automated Backup",
+        "Multi-Site Management"
+      ],
+      "tier": "Enterprise",
+      "usage_limits": {
+        "max_connections": 100,
+        "max_bandwidth": "1 Gbps"
+      }
+    },
+    "pricing_model": {
+      "currency": "USD",
+      "base_price": 1995.0,
+      "billing_cycle": "Annual",
+      "pricing_tiers": [
+        {
+          "tier_name": "Standard",
+          "tier_price": 1995.0
+        },
+        {
+          "tier_name": "Premium",
+          "tier_price": 2995.0
+        }
+      ],
+      "elig_pct": 1.0
+    },
+    "dependencies": {
+      "requires": [
+        "Cisco IOS XR",
+        "Cisco Nexus 9000 Series Switches"
+      ],
+      "compatibility": [
+        "Cisco Catalyst 9000 Series",
+        "Cisco ASR 9000 Series"
+      ]
+    },
+    "regulatory": {
+      "compliance": [
+        "RoHS",
+        "WEEE",
+        "FCC Part 15"
+      ]
+    },
+    "metadata": {
+      "vendor_sku_aliases": [
+        "15454MR1062SWK9",
+        "MSTP-R10.6.2"
+      ],
+      "notes": "This software provides advanced functionalities for network management and is suitable for large enterprise environments."
+    }
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "AIR-CT3504-RMNT=",
+  "commercial_name": "3504 Wireless Controller Rack Mount Tray",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Controllers",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-01-01",
+    "last_support_date": "2030-01-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 262.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 262.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume Discount",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Tiered Pricing",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 20,
+        "price": 249.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-ANT2513P4M-N= (Antenna)",
+      "AIR-PWR-AC (Power Supply)"
+    ],
+    "compatible_with": [
+      "AIR-CAP3702I-A-K9",
+      "AIR-CAP1702I-A-K9"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": 0,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP40"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Wireless Controller",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 4.0,
+      "antenna": {
+        "type": "External",
+        "connectors": "SMA"
+      },
+      "power": "100-240V AC",
+      "mounting": "Rack Mount",
+      "controller_capacity_aps": 150
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

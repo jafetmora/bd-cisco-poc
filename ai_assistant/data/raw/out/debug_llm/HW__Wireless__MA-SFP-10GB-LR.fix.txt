@@ -1,0 +1,91 @@
+{
+  "cisco_product_id": "MA-SFP-10GB-LR",
+  "commercial_name": "Meraki 10G Base LR Single-Mode",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Optical Transceivers",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-06-01"
+  },
+  "pricing_model": {
+    "type": "flat",
+    "currency": "USD",
+    "base_price": 3995.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 3995.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "bulk",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "seasonal",
+            "threshold": 5,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 3795.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Meraki Controller",
+      "Meraki Access Points"
+    ],
+    "compatible_with": [
+      "MR Series",
+      "MS Series",
+      "MX Series",
+      "Cisco Catalyst"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "IEEE 802.3ae",
+      "RoHS",
+      "FCC Part 15",
+      "CE Mark"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 75,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "SFP+ Module",
+      "wifi_standard": "N/A",
+      "radios": "N/A",
+      "mimo": "N/A",
+      "max_phy_throughput_gbps": 10,
+      "antenna": {
+        "type": "Single-Mode Fiber",
+        "connectors": [
+          "LC"
+        ]
+      },
+      "power": 1.5,
+      "mounting": "Plug-in",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "environmental_conditions": "Non-condensing",
+    "form_factor": "SFP+"
+  }
+}

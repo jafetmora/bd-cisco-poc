@@ -1,5 +1,5 @@
-import Layout from "./components/Layout/Layout";
+import MainPage from "./pages/MainPage";
 
 export default function App() {
-  return <Layout />;
+  return <MainPage />;
 }

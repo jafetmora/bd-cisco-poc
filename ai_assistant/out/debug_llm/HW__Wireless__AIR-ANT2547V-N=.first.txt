@@ -1,0 +1,87 @@
+{
+  "cisco_product_id": "AIR-ANT2547V-N=",
+  "commercial_name": "2.4 GHz 4dBi/5 GHz 7dBi Dual Band Omni Antenna, N connector",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antennas",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2023-12-01",
+    "last_support_date": "2026-12-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 347.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 347.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Volume",
+            "threshold": 50,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 100,
+        "price": 300.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Wireless Access Point",
+      "Controller"
+    ],
+    "compatible_with": [
+      "AIR-AP1815I",
+      "AIR-AP1852I",
+      "AIR-CT3504"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -30,
+      "oper_temp_max_c": 70,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": [
+          "N-Type"
+        ]
+      },
+      "power": "10 W",
+      "mounting": "Pole mountable",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

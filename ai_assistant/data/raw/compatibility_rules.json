@@ -1,0 +1,27 @@
+{
+    "C9300-24P": {
+        "requires": [
+            "C9300-DNA-A-3Y"
+        ],
+        "supports": [
+            "GLC-TE"
+        ],
+        "incompatible_with": []
+    },
+    "MER-MR46-HW": {
+        "requires": [
+            "LIC-MR-ENT-1Y"
+        ],
+        "supports": [],
+        "incompatible_with": [
+            "C9300-DNA-A-3Y"
+        ]
+    },
+    "FPR1120-ASA-K9": {
+        "requires": [],
+        "supports": [
+            "GLC-TE"
+        ],
+        "incompatible_with": []
+    }
+}

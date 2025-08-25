@@ -1,0 +1,84 @@
+{
+  "cisco_product_id": "AIR-3602E-AC-NK9",
+  "commercial_name": "3602E AP with 802.11ac Module for N Reg Domain",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Access Points",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2026-04-01",
+    "last_support_date": "2032-04-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 1826.19,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 1826.19,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Promotional",
+            "threshold": 20,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 1735.19,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Power Over Ethernet (PoE) Switch"
+    ],
+    "compatible_with": [
+      "Cisco Prime Infrastructure",
+      "Cisco DNA Center"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "IC"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 50,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Internal",
+        "connectors": "N/A"
+      },
+      "power": "802.3at PoE",
+      "mounting": "Ceiling mount or wall mount",
+      "controller_capacity_aps": 50
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

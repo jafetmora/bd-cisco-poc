@@ -1,0 +1,102 @@
+{
+  "cisco_product_id": "AIR-CORD-R3P-40NA=",
+  "commercial_name": "1520 Series AC Power Cord, 40 ft. N. Amer Plug",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Power Accessories",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-06-01",
+    "last_support_date": "2030-12-31"
+  },
+  "pricing_model": {
+    "type": "standard",
+    "currency": "USD",
+    "base_price": 381.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 381.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "volume",
+            "threshold": 5,
+            "discount_pct": 10
+          },
+          {
+            "type": "seasonal",
+            "threshold": 10,
+            "discount_pct": 15
+          }
+        ]
+      },
+      {
+        "min_quantity": 10,
+        "price": 360.0,
+        "effective": "2023-10-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "AIR-CAP3702I-A-K9",
+      "AIR-LAP1142N-A-K9"
+    ],
+    "compatible_with": [
+      "AIR-CT5508-K9",
+      "WS-C3850-48P"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "UL Listed",
+      "CE Mark",
+      "FCC Compliance",
+      "RoHS Compliant",
+      "WEEE Compliant"
+    ],
+    "environment": {
+      "oper_temp_min_c": -20,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Access Point",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.7,
+      "antenna": {
+        "type": "Omnidirectional",
+        "connectors": "N-Type"
+      },
+      "power": "PoE+",
+      "mounting": "Ceiling or Wall",
+      "controller_capacity_aps": 100
+    },
+    "physical": {
+      "length": "40 ft",
+      "weight": "1.5 lbs",
+      "color": "Black",
+      "material": "PVC"
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless",
+    "supported_protocols": [
+      "HTTP",
+      "HTTPS",
+      "SNMP",
+      "Telnet"
+    ],
+    "power_requirements": {
+      "input_voltage": "100-240V",
+      "frequency": "50/60 Hz"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "cisco_product_id": "AIR-ANT2524DB-R",
+  "commercial_name": "2.4 GHz 2 dBi/5 GHz 4 dBi Dipole Ant., Blk, RP-TNC",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antenna",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2025-09-01",
+    "last_support_date": "2030-09-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 45.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 45.0,
+        "effective": "2024-01-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Corporate",
+            "threshold": 25,
+            "discount_pct": 10
+          }
+        ]
+      },
+      {
+        "min_quantity": 50,
+        "price": 40.0,
+        "effective": "2024-01-01",
+        "discount_rules": []
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Cisco Wireless Controller",
+      "Cisco Access Points"
+    ],
+    "compatible_with": [
+      "Cisco 3504 Wireless Controller",
+      "Cisco AIR-AP2802I"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC Part 15",
+      "IC ICES-003",
+      "CE Marking"
+    ],
+    "environment": {
+      "oper_temp_min_c": -10,
+      "oper_temp_max_c": 60,
+      "ip_rating": "IP65"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 2,
+      "mimo": "2x2",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Dipole",
+        "connectors": [
+          "RP-TNC"
+        ]
+      },
+      "power": "0.5W",
+      "mounting": "Wall",
+      "controller_capacity_aps": 100
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}

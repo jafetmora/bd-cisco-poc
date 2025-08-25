@@ -1,0 +1,93 @@
+{
+  "cisco_product_id": "AIR-ANT2544V4M-R=",
+  "commercial_name": "2.4GHz 4dBi/5GHz 4dBi Multi Mount Omni Ant., 4-port,RP- TNC",
+  "product_type": "hardware",
+  "category": "Wireless",
+  "subcategory": "Antennas",
+  "lifecycle": {
+    "status": "Active",
+    "eos_announced": "2026-03-01",
+    "last_support_date": "2031-03-01"
+  },
+  "pricing_model": {
+    "type": "Standard",
+    "currency": "USD",
+    "base_price": 927.0,
+    "elig_pct": 1.0,
+    "pricing_tiers": [
+      {
+        "min_quantity": 1,
+        "price": 927.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Volume",
+            "threshold": 10,
+            "discount_pct": 5
+          },
+          {
+            "type": "Reseller",
+            "threshold": 1,
+            "discount_pct": 3
+          }
+        ]
+      },
+      {
+        "min_quantity": 5,
+        "price": 885.0,
+        "effective": "2023-10-01",
+        "discount_rules": [
+          {
+            "type": "Bulk",
+            "threshold": 5,
+            "discount_pct": 4
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "required_components": [
+      "Access Point",
+      "Power Injector"
+    ],
+    "compatible_with": [
+      "Cisco Aironet 1830 Series",
+      "Cisco Catalyst 9100 Series"
+    ]
+  },
+  "regulatory": {
+    "certifications": [
+      "FCC",
+      "CE",
+      "RoHS"
+    ],
+    "environment": {
+      "oper_temp_min_c": -40,
+      "oper_temp_max_c": 65,
+      "ip_rating": "IP67"
+    }
+  },
+  "attributes": {
+    "wireless": {
+      "device_type": "Omni-Directional Antenna",
+      "wifi_standard": "802.11ac",
+      "radios": 4,
+      "mimo": "4x4",
+      "max_phy_throughput_gbps": 1.3,
+      "antenna": {
+        "type": "Omni",
+        "connectors": [
+          "RP-TNC",
+          "N-Type"
+        ]
+      },
+      "power": "20 dBm",
+      "mounting": "Pole Mount",
+      "controller_capacity_aps": 16
+    }
+  },
+  "technical_profile": {
+    "category": "Wireless"
+  }
+}
