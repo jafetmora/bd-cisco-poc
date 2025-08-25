@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List, Tuple, Any
 from uuid import uuid4
 from datetime import datetime
 import logging
@@ -119,67 +119,71 @@ def quote_to_agent_state(quote: Quote) -> Dict:
     }
 
 
-def agent_state_to_quote(state: Dict) -> Quote:
-    header = state.get("header", {})
-    summary = state.get("summary", {})
-    items = state.get("items", [])
+def agent_state_to_quote(state: Dict[str, Any]) -> Quote:
+    header = state.get("header", {}) or {}
+    summary = state.get("summary", {}) or {}
+    items = state.get("items", []) or []
 
-    def _lt(d: Optional[Dict]):
+    def _lt(d: Optional[Dict[str, Any]]):
         kind = (d or {}).get("kind", "instant")
         if kind == "days":
             return LeadTimeDays(kind="days", value=int((d or {}).get("value", 0)))
+        if kind == "na":
+            return LeadTimeInstant(kind="instant")
         return LeadTimeInstant(kind="instant")
 
-    return Quote(
-        header=QuoteHeaderData(
-            title=header.get("title") or "Draft Quote",
-            dealId=header.get("dealId") or "DEAL-NEW",
-            quoteNumber=header.get("quoteNumber") or "Q-NEW",
-            status=(
-                QuoteStatus.DRAFT
-                if (header.get("status") is None)
-                else QuoteStatus(header.get("status"))
-            ),
-            expiryDate=header.get("expiryDate") or "2025-12-31",
-            priceProtectionExpiry=header.get("priceProtectionExpiry"),
-            priceList=PriceList(
-                name=(header.get("priceList") or {}).get("name", "Standard"),
-                region=(header.get("priceList") or {}).get("region", "NA"),
-                currency=CurrencyCode(
-                    (header.get("priceList") or {}).get("currency", "USD")
-                ),
-            ),
-            currency=CurrencyCode(summary.get("currency", "USD")),
-            subtotal=float(summary.get("subtotal", 0.0)),
-            tax=float(summary.get("tax", 0.0)),
-            discount=float(summary.get("discount", 0.0)),
-            total=float(summary.get("total", 0.0)),
+    header_model = QuoteHeaderData(
+        title=header.get("title") or "Draft Quote",
+        dealId=header.get("dealId") or "DEAL-NEW",
+        quoteNumber=header.get("quoteNumber") or "Q-NEW",
+        status=(
+            QuoteStatus.DRAFT
+            if (header.get("status") is None)
+            else QuoteStatus(header.get("status"))
         ),
-        items=[
-            QuoteLineItem(
-                id=str(li.get("id") or f"line-{i+1}"),
-                category=li.get("category", "Unknown"),
-                productCode=li.get("productCode", "UNKNOWN"),
-                product=li.get("product", "Unknown Product"),
-                leadTime=_lt(li.get("leadTime")),
-                unitPrice=float(li.get("unitPrice", 0.0)),
-                quantity=int(li.get("quantity", 1)),
-                currency=CurrencyCode(li.get("currency", "USD")),
-            )
-            for i, li in enumerate(items)
-        ],
-        summary=QuotePricingSummary(
-            currency=CurrencyCode(summary.get("currency", "USD")),
-            subtotal=float(summary.get("subtotal", 0.0)),
-            tax=float(summary.get("tax", 0.0)),
-            discount=float(summary.get("discount", 0.0)),
-            total=float(summary.get("total", 0.0)),
+        expiryDate=header.get("expiryDate") or "2025-12-31",
+        priceProtectionExpiry=header.get("priceProtectionExpiry"),
+        priceList=PriceList(
+            name=(header.get("priceList") or {}).get("name", "Standard"),
+            region=(header.get("priceList") or {}).get("region", "NA"),
+            currency=CurrencyCode(
+                (header.get("priceList") or {}).get("currency", "USD")
+            ),
         ),
-        traceId=state.get("traceId"),
     )
 
+    summary_model = QuotePricingSummary(
+        currency=CurrencyCode(summary.get("currency", "USD")),
+        subtotal=float(summary.get("subtotal", 0.0)),
+        tax=float(summary.get("tax", 0.0)) if summary.get("tax") is not None else None,
+        discount=(
+            float(summary.get("discount", 0.0))
+            if summary.get("discount") is not None
+            else None
+        ),
+        total=float(summary.get("total", 0.0)),
+    )
 
-# ------------------ helpers de sesión ------------------
+    items_models = [
+        QuoteLineItem(
+            id=str(li.get("id") or f"line-{i+1}"),
+            category=li.get("category", "Unknown"),
+            productCode=li.get("productCode"),
+            product=li.get("product", "Unknown Product"),
+            leadTime=_lt(li.get("leadTime")),
+            unitPrice=float(li.get("unitPrice", 0.0)),
+            quantity=int(li.get("quantity", 1)),
+            currency=CurrencyCode(li.get("currency", "USD")),
+        )
+        for i, li in enumerate(items)
+    ]
+
+    return Quote(
+        header=header_model,
+        items=items_models,
+        summary=summary_model,
+        traceId=state.get("traceId"),
+    )
 
 
 def extract_last_user_message(session: QuoteSession) -> Optional[str]:
