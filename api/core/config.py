@@ -16,6 +16,9 @@ class Settings(BaseSettings):
         default=True,
         validation_alias=AliasChoices("CORS_ALLOW_CREDENTIALS"),
     )
+    SECRET_KEY: str = Field(default="dev-secret-change-me")
+    ALGORITHM: str = Field(default="HS256")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=120)
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

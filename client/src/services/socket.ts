@@ -2,32 +2,88 @@ import type { QuoteSession } from "../types/Quotes";
 
 type Handler<T> = (data: T) => void;
 
-const WS_URL = import.meta.env.VITE_WS_URL;
+const WS_BASE_URL = import.meta.env.VITE_WS_URL as string;
 
 export type QuoteSocketEvents = {
   QUOTE_UPDATED: QuoteSession;
   QUOTE_UPDATED_CLIENT: QuoteSession;
+  ERROR?: string;
+  UNKNOWN_EVENT?: string;
 };
 
-class QuoteSocket<Events extends Record<string, unknown>> {
-  private ws: WebSocket;
-  private handlers: {
-    [K in keyof Events]?: Set<Handler<Events[K]>>;
-  } = {};
+type PendingEvent<Events> = {
+  [K in keyof Events]: { event: K; data: Events[K] };
+}[keyof Events];
 
-  constructor(url: string) {
-    this.ws = new WebSocket(url);
+export class QuoteSocket<Events extends Record<string, unknown>> {
+  private ws: WebSocket | null = null;
+  private handlers: { [K in keyof Events]?: Set<Handler<Events[K]>> } = {};
+  private pendingQueue: PendingEvent<Events>[] = [];
+  private urlBase: string;
+
+  constructor(urlBase: string) {
+    this.urlBase = urlBase;
+  }
+
+  connect(token: string) {
+    if (!token) throw new Error("WS connect called without token");
+    if (
+      this.ws &&
+      (this.ws.readyState === WebSocket.OPEN ||
+        this.ws.readyState === WebSocket.CONNECTING)
+    ) {
+      return;
+    }
+    const urlWithToken = this.urlBase.includes("?")
+      ? `${this.urlBase}&token=${encodeURIComponent(token)}`
+      : `${this.urlBase}?token=${encodeURIComponent(token)}`;
+
+    this.ws = new WebSocket(urlWithToken);
+
+    this.ws.onopen = () => {
+      const queued = [...this.pendingQueue];
+      this.pendingQueue = [];
+      queued.forEach(({ event, data }) => this._send(event, data));
+    };
+
     this.ws.onmessage = (event) => {
       try {
-        const parsed = JSON.parse(event.data);
-        const { event: evt, data } = parsed;
-        if (evt && this.handlers[evt as keyof Events]) {
-          this.handlers[evt as keyof Events]!.forEach((cb) => cb(data));
+        const parsed = JSON.parse(event.data) as {
+          event?: keyof Events;
+          data: unknown;
+        };
+        const evt = parsed.event;
+        if (evt && this.handlers[evt]) {
+          // type cast seguro porque sabemos que evt es keyof Events
+          this.handlers[evt]!.forEach((cb) =>
+            cb(parsed.data as Events[typeof evt]),
+          );
         }
-      } catch {
-        // TODO: add error handling/logging
+      } catch (error) {
+        console.error(error);
       }
     };
+
+    this.ws.onclose = (e) => {
+      console.error(e);
+      this.ws = null;
+    };
+
+    this.ws.onerror = () => {
+      // noop
+    };
+  }
+
+  disconnect() {
+    if (this.ws) {
+      try {
+        this.ws.close(1000, "Client closing");
+      } catch (error) {
+        console.error(error);
+      }
+      this.ws = null;
+    }
+    this.pendingQueue = [];
   }
 
   on<K extends keyof Events>(event: K, cb: Handler<Events[K]>) {
@@ -40,8 +96,20 @@ class QuoteSocket<Events extends Record<string, unknown>> {
   }
 
   emit<K extends keyof Events>(event: K, data: Events[K]) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this._send(event, data);
+      return;
+    }
+    this.pendingQueue.push({ event, data } as PendingEvent<Events>);
+  }
+
+  private _send<K extends keyof Events>(event: K, data: Events[K]) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      this.pendingQueue.push({ event, data } as PendingEvent<Events>);
+      return;
+    }
     this.ws.send(JSON.stringify({ event, data }));
   }
 }
 
-export const socket = new QuoteSocket<QuoteSocketEvents>(WS_URL);
+export const socket = new QuoteSocket<QuoteSocketEvents>(WS_BASE_URL);
