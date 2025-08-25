@@ -1,7 +1,7 @@
 from uuid import uuid4
 from datetime import datetime
-from fastapi import APIRouter
-
+from fastapi import APIRouter, Depends
+from api.auth.deps import get_current_username
 from api.models.user import Role
 from api.models.chat import ChatMessage
 from api.models.quote import (
@@ -21,12 +21,17 @@ router = APIRouter(prefix="/quote", tags=["quotes"])
 
 
 @router.post("/", response_model=QuoteSession)
-def quote(session: QuoteSession) -> QuoteSession:
+def quote(
+    session: QuoteSession, current_user: str = Depends(get_current_username)
+) -> QuoteSession:
+    print(current_user)
     return session
 
 
 @router.get("/", response_model=QuoteSession)
-def get_quote() -> QuoteSession:
+def get_quote(current_user: str = Depends(get_current_username)) -> QuoteSession:
+    print(f"Current user {current_user}")
+
     header = QuoteHeaderData(
         title="Sample Quote",
         dealId="D12345",

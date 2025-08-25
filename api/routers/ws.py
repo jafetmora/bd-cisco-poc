@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import logging
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, Depends
 from pydantic import ValidationError
 
 from api.deps import get_agent_client
@@ -13,6 +13,7 @@ from api.domain.services import (
 )
 
 from api.models.quote import QuoteSession
+from api.routers.auth import decode_token
 
 router = APIRouter(tags=["ws"])
 logger = logging.getLogger(__name__)
@@ -21,8 +22,16 @@ _service = QuoteService()
 
 @router.websocket("/ws")
 async def websocket_endpoint(
-    websocket: WebSocket, agent: AgentPort = Depends(get_agent_client)
+    websocket: WebSocket,
+    agent: AgentPort = Depends(get_agent_client),
+    token: str = Query(...),
 ):
+    try:
+        data = decode_token(token)
+    except Exception:
+        await websocket.close(code=4401)
+        return
+
     await websocket.accept()
     try:
         while True:

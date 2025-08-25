@@ -10,6 +10,7 @@ import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
 import { getQuote } from "../services/api";
 import { v4 as uuidv4 } from "uuid";
+import { useAuth } from "../hooks/useAuth";
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -24,6 +25,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
   const [quoteSession, setQuoteSession] = useState<QuoteSession | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { state: authState, isAuthenticated } = useAuth();
 
   const applyQuoteUpdate = useCallback<QuoteContextValue["applyQuoteUpdate"]>(
     (payload) => setQuoteSession(payload),
@@ -55,7 +57,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const emptySession = {
+      const emptySession: QuoteSession = {
         id: uuidv4(),
         userId: "user-local",
         chatMessages: [],
@@ -78,19 +80,24 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     [applyQuoteUpdate],
   );
 
-  const connectSocket = useCallback(() => {
+  useEffect(() => {
     socket.on("QUOTE_UPDATED", onSocketMessage);
-  }, [onSocketMessage]);
-
-  const disconnectSocket = useCallback(() => {
-    socket.off("QUOTE_UPDATED", onSocketMessage);
+    return () => {
+      socket.off("QUOTE_UPDATED", onSocketMessage);
+    };
   }, [onSocketMessage]);
 
   useEffect(() => {
+    if (isAuthenticated && authState.token) {
+      socket.connect(authState.token);
+    } else {
+      socket.disconnect();
+    }
+  }, [isAuthenticated, authState.token]);
+
+  useEffect(() => {
     loadInitialQuoteSession();
-    connectSocket();
-    return () => disconnectSocket();
-  }, [loadInitialQuoteSession, connectSocket, disconnectSocket]);
+  }, [loadInitialQuoteSession]);
 
   const value = useMemo<QuoteContextValue>(
     () => ({
@@ -99,8 +106,8 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       error,
       loadExistingQuoteSession,
       loadInitialQuoteSession,
-      connectSocket,
-      disconnectSocket,
+      connectSocket: () => {},
+      disconnectSocket: () => {},
       applyQuoteUpdate,
       sendQuoteUpdate,
     }),
@@ -110,8 +117,6 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       error,
       loadExistingQuoteSession,
       loadInitialQuoteSession,
-      connectSocket,
-      disconnectSocket,
       applyQuoteUpdate,
       sendQuoteUpdate,
     ],
