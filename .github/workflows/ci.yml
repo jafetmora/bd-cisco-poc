@@ -100,24 +100,24 @@ jobs:
       #     docker run --rm aquasec/trivy image --severity HIGH,CRITICAL ai-agent-client:ci
 
   ###--- Deployment job runs only on main merges ---###
-  deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # deploy:
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   needs: ci
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: us-east-1
+  #     - name: Configure AWS credentials (OIDC)
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE }}
+  #         aws-region: us-east-1
 
-      - name: Build & push images to ECR
-        run: |
-          ./infra/scripts/build_push_ecr.sh
+  #     - name: Build & push images to ECR
+  #       run: |
+  #         ./infra/scripts/build_push_ecr.sh
 
-      - name: Trigger App Runner deployment
-        run: |
-          aws apprunner start-deployment --service-arn ${{ secrets.APP_RUNNER_ARN }}
+  #     - name: Trigger App Runner deployment
+  #       run: |
+  #         aws apprunner start-deployment --service-arn ${{ secrets.APP_RUNNER_ARN }}
