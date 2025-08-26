@@ -1,0 +1,41 @@
+name: Deploy Client (S3)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'client/**'
+      - '.github/workflows/deploy-client.yml'
+
+env:
+  AWS_REGION: us-east-2
+  S3_BUCKET: bd-cisco-poc-client-ohio-7438c2
+  # Pasa la URL de tu API App Runner:
+  VITE_API_URL: https://tnru88f9bk.us-east-2.awsapprunner.com
+  VITE_WS_URL: wss://tnru88f9bk.us-east-2.awsapprunner.com/ws
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Build client
+        working-directory: client
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.14.0 --activate
+          pnpm install --frozen-lockfile
+          VITE_API_URL=${{ env.VITE_API_URL }} VITE_WS_URL=${{ env.VITE_WS_URL }} pnpm build
+
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3
+        run: aws s3 sync client/dist s3://${{ env.S3_BUCKET }} --delete

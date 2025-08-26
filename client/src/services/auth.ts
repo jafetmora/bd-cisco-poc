@@ -1,7 +1,8 @@
 import type { JwtPayload, LoginResponse } from "../types/Auth";
 
-const API_BASE_URL =
-  import.meta.env?.VITE_API_BASE_URL ?? "http://localhost:8002";
+const API_BASE_URL = import.meta.env?.VITE_API_URL;
+
+console.log("DEBUG", API_BASE_URL);
 
 function base64UrlDecode(input: string): string {
   // handle base64url => base64

@@ -1,20 +1,49 @@
 version: '3.8'
 
 services:
+  agent:
+    networks:
+      - cisco-agent-network
+    build:
+      context: ./ai_assistant
+      dockerfile: Dockerfile   # tu Dockerfile se llama "dockerfile"
+      target: dev              # usa "prod" para prod
+    container_name: cisco-agent-ai
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./ai_assistant:/app
+    environment:
+      ENV: "development"
+    restart: unless-stopped
+
   api:
     networks:
       - cisco-agent-network
     build:
       context: ./api
-      target: ${API_ENV:-dev}
+      target: dev
     container_name: cisco-api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
-      - ./api:/app
+      - ./api:/app/api
     environment:
-      - ENV=${API_ENV:-development}
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+      AGENT_BASE_URL: "http://agent:8002/turns"
+      CORS_ORIGINS: '["http://localhost:5173"]'
+      APP_ENV: "dev"
+      REDIS_URL: "redis://redis:6379/0"
+      REDIS_MAX_CONNECTIONS: "50"
+      REDIS_SOCKET_TIMEOUT: "5"
+      REDIS_RETRIES: "3"
+      REDIS_HEALTHCHECK_SECS: "30"
+      REDIS_CLUSTER_MODE: "false"
+      DEBUG_REDIS_ENDPOINTS: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
   client:
@@ -22,17 +51,32 @@ services:
       - cisco-agent-network
     build:
       context: ./client
-      target: ${CLIENT_ENV:-dev}
+      target: dev
     container_name: cisco-client
     ports:
       - "5173:5173"
-
     environment:
-      - NODE_ENV=${CLIENT_ENV:-development}
+      NODE_ENV: "development"
+      VITE_WS_URL: "ws://localhost:8001/ws"
+      VITE_API_URL: "http://localhost:8001"
+    restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    container_name: cisco-redis
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - cisco-agent-network
     restart: unless-stopped
 
 networks:
   cisco-agent-network:
-    name: ${DOCKER_NETWORK_NAME:-cisco-agent-net}
+    name: cisco-agent-net
     driver: bridge

@@ -9,14 +9,15 @@ RUN pip install --upgrade pip && \
 
 # ----------- Development Stage -----------
 FROM base AS dev
+COPY . /app/api
 RUN pip install --no-cache-dir debugpy
 EXPOSE 8000
 ENV ENV=development
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # ----------- Production Stage -----------
 FROM base AS prod
-COPY . .
+COPY . /app/api
 EXPOSE 8000
 ENV ENV=production
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
