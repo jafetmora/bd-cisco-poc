@@ -7,6 +7,10 @@ on:
       - 'client/**'
       - '.github/workflows/deploy-client.yml'
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: us-east-2
   S3_BUCKET: bd-cisco-poc-client-ohio-7438c2
