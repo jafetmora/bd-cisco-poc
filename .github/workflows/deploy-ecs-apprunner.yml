@@ -1,0 +1,51 @@
+name: Deploy API & Agent (App Runner)
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS creds (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # --- Build & push API ---
+      - name: Build & push API
+        env: { IMAGE_TAG: ${{ github.sha }} }
+        run: |
+          docker build -f api/Dockerfile -t $ECR_REGISTRY/bd-cisco-poc/api:${IMAGE_TAG} -t $ECR_REGISTRY/bd-cisco-poc/api:latest ./api
+          docker push $ECR_REGISTRY/bd-cisco-poc/api:${IMAGE_TAG}
+          docker push $ECR_REGISTRY/bd-cisco-poc/api:latest
+
+      # --- Build & push AGENT ---
+      - name: Build & push AGENT
+        env: { IMAGE_TAG: ${{ github.sha }} }
+        run: |
+          docker build -f ai_assistant/Dockerfile -t $ECR_REGISTRY/bd-cisco-poc/ai-agent:${IMAGE_TAG} -t $ECR_REGISTRY/bd-cisco-poc/ai-agent:latest ./ai_assistant
+          docker push $ECR_REGISTRY/bd-cisco-poc/ai-agent:${IMAGE_TAG}
+          docker push $ECR_REGISTRY/bd-cisco-poc/ai-agent:latest
+
+      # --- Trigger App Runner deployments ---
+      - name: Deploy agent-service
+        run: aws apprunner start-deployment --service-arn ${{ secrets.APP_RUNNER_AGENT_ARN }}
+
+      - name: Deploy api-service
+        run: aws apprunner start-deployment --service-arn ${{ secrets.APP_RUNNER_API_ARN }}

@@ -22,3 +22,5 @@ tiktoken
 # Manipulação de dados e validação (usado pelo FastAPI e LangChain)
 pydantic
 numpy
+langgraph
+pandas
