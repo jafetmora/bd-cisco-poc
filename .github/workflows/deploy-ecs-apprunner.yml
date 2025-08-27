@@ -1,4 +1,4 @@
-name: Deploy API & Agent (App Runner)
+name: Deploy API (ECS) & Agent (App Runner)
 
 on:
   push:
@@ -11,6 +11,8 @@ permissions:
 
 env:
   AWS_REGION: us-east-2
+  ECS_CLUSTER: cisco-poc-cluster
+  ECS_SERVICE: api-service
 
 jobs:
   deploy:
@@ -26,13 +28,11 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Construimos ECR_REGISTRY a partir de AWS_ACCOUNT_ID y AWS_REGION
       - name: Compute ECR registry
         run: echo "ECR_REGISTRY=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com" >> $GITHUB_ENV
 
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
-        # (opcional) with: { registry: ${{ env.ECR_REGISTRY }} }
 
       # --- Build & push API ---
       - name: Build & push API
@@ -58,9 +58,51 @@ jobs:
           docker push ${ECR_REGISTRY}/bd-cisco-poc/ai-agent:${IMAGE_TAG}
           docker push ${ECR_REGISTRY}/bd-cisco-poc/ai-agent:latest
 
-      # --- Despliegue App Runner (relee config y toma :latest) ---
-      - name: Deploy agent-service
-        run: aws apprunner start-deployment --service-arn "${{ secrets.APP_RUNNER_AGENT_ARN }}"
+      # --- App Runner: fijar imagen del Agent por SHA (evita depender de :latest) ---
+      - name: Update App Runner (agent) to image by SHA
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws apprunner update-service \
+            --service-arn "${{ secrets.APP_RUNNER_AGENT_ARN }}" \
+            --source-configuration "{
+              \"ImageRepository\": {
+                \"ImageRepositoryType\": \"ECR\",
+                \"ImageIdentifier\": \"${ECR_REGISTRY}/bd-cisco-poc/ai-agent:${IMAGE_TAG}\",
+                \"ImageConfiguration\": { \"Port\": \"8002\" }
+              }
+            }"
 
-      - name: Deploy api-service
-        run: aws apprunner start-deployment --service-arn "${{ secrets.APP_RUNNER_API_ARN }}"
+      # --- ECS: registrar nueva TaskDef con imagen del API por SHA y desplegar ---
+      - name: Install jq
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Describe current TaskDefinition
+        id: td
+        run: |
+          TD_ARN=$(aws ecs describe-services --cluster "${ECS_CLUSTER}" --services "${ECS_SERVICE}" --query 'services[0].taskDefinition' --output text)
+          echo "TASK_DEF_ARN=${TD_ARN}" >> $GITHUB_ENV
+          aws ecs describe-task-definition --task-definition "${TD_ARN}" --query 'taskDefinition' > taskdef.json
+          cat taskdef.json | jq '.family'
+
+      - name: Create new TaskDefinition revision with image by SHA
+        env:
+          NEW_IMAGE: ${{ env.ECR_REGISTRY }}/bd-cisco-poc/api:${{ github.sha }}
+        run: |
+          # Limpia campos no permitidos y reemplaza la imagen del primer contenedor (ajusta índice si tienes más contenedores)
+          jq 'del(.revision,.status,.requiresAttributes,.compatibilities,.taskDefinitionArn,.registeredAt,.registeredBy)
+              | .containerDefinitions[0].image = env.NEW_IMAGE' taskdef.json > new-taskdef.json
+          NEW_TD_ARN=$(aws ecs register-task-definition --cli-input-json file://new-taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
+          echo "NEW_TD_ARN=${NEW_TD_ARN}" >> $GITHUB_ENV
+          echo "Registered: ${NEW_TD_ARN}"
+
+      - name: Update ECS service to new TaskDefinition
+        run: |
+          aws ecs update-service \
+            --cluster "${ECS_CLUSTER}" \
+            --service "${ECS_SERVICE}" \
+            --task-definition "${NEW_TD_ARN}" \
+            --force-new-deployment
+
+      - name: Wait for ECS service to be stable
+        run: aws ecs wait services-stable --cluster "${ECS_CLUSTER}" --services "${ECS_SERVICE}"
