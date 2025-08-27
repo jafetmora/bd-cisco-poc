@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL ?? "http://localhost:8002";
+import type { QuoteSession } from "../types/Quotes";
+import type { Product } from "../types/Product";
+
+const API_BASE_URL = import.meta.env?.VITE_API_URL ?? "http://localhost:8000";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -41,13 +44,24 @@ api.interceptors.response.use(
   },
 );
 
-import type { QuoteSession } from "../types/Quotes";
 
 export async function getQuote(sessionId?: string): Promise<QuoteSession> {
   const response = await api.get("/quote", {
     params: {
       sessionId,
     },
+  });
+  return response.data;
+}
+
+export async function updateQuote(session: QuoteSession): Promise<QuoteSession> {
+  const response = await api.post("/quote", session);
+  return response.data;
+}
+
+export async function getProducts(q: string): Promise<Product[]> {
+  const response = await api.get("/products", {
+    params: { q },
   });
   return response.data;
 }
