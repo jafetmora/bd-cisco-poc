@@ -105,12 +105,23 @@ def _load_pdf_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[La
 
     for _, r in df.iterrows():
         meta = {
-            "source_group": "pdf",
-            "source_file": r.get("source_file"),
-            "page": int(r.get("page") or 0),
-            "chunk_index": int(r.get("chunk_index") if pd.notna(r.get("chunk_index")) else -1),
-            "block_type": r.get("block_type", "text"),
-            "heading": r.get("heading"),
+            "source_group": "price",
+            "workbook": r.get("workbook"),
+            "sheet": r.get("sheet"),
+            "sku": r.get("sku"),
+            "commercial_name": r.get("commercial_name"),
+            "family": r.get("family"),
+            "product_family": r.get("product_family"),
+            "product_line": r.get("product_line"),
+            "dimension": r.get("dimension"),
+            "list_price_usd": r.get("list_price_usd"),
+            "ports": r.get("ports"),
+            "poe_type": r.get("poe_type"),
+            "management": r.get("management"),
+            "wifi_standard": r.get("wifi_standard"),
+            "release_year": r.get("release_year"),
+            "availability": r.get("availability"),
+            "eol_status": r.get("eol_status"),
             "id": r.get("id"),
         }
         text = str(r["text"])
@@ -158,10 +169,47 @@ def _load_price_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[
             "sheet": r.get("sheet"),
             "sku": r.get("sku"),
             "family": r.get("family"),
+            "product_family": r.get("product_family"),
             "product_line": r.get("product_line"),
             "dimension": r.get("dimension"),
             "list_price_usd": r.get("list_price_usd"),
             "id": r.get("id"),
+            # 🔹 extras técnicos
+            "ports": r.get("ports"),
+            "port_speed": r.get("port_speed"),
+            "poe_type": r.get("poe_type"),
+            "poe": r.get("poe"),
+            "stacking": r.get("stacking"),
+            "management": r.get("management"),
+            "switch_layer": r.get("switch_layer"),
+            "throughput": r.get("throughput"),
+            "latency": r.get("latency"),
+            "management_interface": r.get("management_interface"),
+            "network_interface": r.get("network_interface"),
+            "performance_tier": r.get("performance_tier"),
+            "wifi_standard": r.get("wifi_standard"),
+            "indoor_outdoor": r.get("indoor_outdoor"),
+            "antenna": r.get("antenna"),
+            "radios": r.get("radios"),
+            "max_throughput": r.get("max_throughput"),
+            "controller_compat": r.get("controller_compat"),
+            "processor": r.get("processor"),
+            "release_year": r.get("release_year"),
+            "warranty_period": r.get("warranty_period"),
+            "support_type": r.get("support_type"),
+            "compliance": r.get("compliance"),
+            "package_contents": r.get("package_contents"),
+            "operating_temp": r.get("operating_temp"),
+            "storage_temp": r.get("storage_temp"),
+            "humidity": r.get("humidity"),
+            "weight_kg": r.get("weight_kg"),
+            "width": r.get("width"),
+            "height": r.get("height"),
+            "depth": r.get("depth"),
+            "availability": r.get("availability"),
+            "eol_status": r.get("eol_status"),
+            "end_of_sale": r.get("end_of_sale"),
+            "eos_date": r.get("eos_date"),
         }
         text = str(r["text"])
         text_norm = str(r["text_norm"])
@@ -176,12 +224,53 @@ def _load_price_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[
 # ──────────────────────────────────────────────────────────────────────────────
 # Index builders
 # ──────────────────────────────────────────────────────────────────────────────
-def _build_faiss(docs: List[LangChainDocument], out_dir: Path):
+#def _build_faiss(docs: List[LangChainDocument], out_dir: Path):
+#    if out_dir.exists():
+#        shutil.rmtree(out_dir, onerror=_remove_readonly)
+#    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+#    vs = FAISS.from_documents(docs, embeddings)
+#    vs.save_local(str(out_dir))
+
+def _build_faiss(docs: List[LangChainDocument], out_dir: Path, batch_size: int = 100):
+    import tiktoken
+    enc = tiktoken.get_encoding("cl100k_base")  # mesmo tokenizer do embedding
+
     if out_dir.exists():
         shutil.rmtree(out_dir, onerror=_remove_readonly)
+
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    vs = FAISS.from_documents(docs, embeddings)
+    vs = None
+
+    current_batch = []
+    current_tokens = 0
+    max_tokens = 250_000  # margem de segurança < 300k
+
+    def flush(batch, vs):
+        if not batch:
+            return vs
+        print(f"[INFO] Embedding {len(batch)} docs, ~{sum(len(enc.encode(d.page_content)) for d in batch)} tokens")
+        if vs is None:
+            vs = FAISS.from_documents(batch, embeddings)
+        else:
+            vs.add_documents(batch)
+        return vs
+
+    for d in docs:
+        tokens = len(enc.encode(d.page_content))
+        # se somar esse doc ultrapassa limite → fecha lote
+        if current_tokens + tokens > max_tokens:
+            vs = flush(current_batch, vs)
+            current_batch, current_tokens = [], 0
+        current_batch.append(d)
+        current_tokens += tokens
+
+    # flush final
+    vs = flush(current_batch, vs)
+
+    out_dir.mkdir(parents=True, exist_ok=True)
     vs.save_local(str(out_dir))
+    print(f"[INFO] ✅ FAISS salvo em {out_dir} com {len(docs)} documentos")
+
 
 def _build_bm25(docs: List[LangChainDocument], out_file: Path):
     if out_file.exists():

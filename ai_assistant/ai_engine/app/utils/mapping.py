@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 from ai_engine.app.domain.types import QuoteItem, Scenario, QuoteSummary
 
@@ -24,7 +24,7 @@ def _int(x: Any, default: int = 1) -> int:
     except Exception: return default
 
 
-def scenario_key_from_summary(summary: str | None) -> str:
+def scenario_key_from_summary(summary: Optional[str]) -> str:
     base = (summary or "Option").split(":")[0].strip()
     return base or "Option"
 

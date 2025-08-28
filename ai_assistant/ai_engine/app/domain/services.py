@@ -63,19 +63,9 @@ class QuoteService:
 
 
     def build_summary_message(self, final_state: Dict[str, Any], scenarios: List[Scenario]) -> str:
-        if final_state.get("requirements_ok") is False:
+        if not final_state.get("requirements_ok"):
             return self.build_missing_message(final_state)
-
-        cid = final_state.get("active_client_id")
-        client = None
         
-        if cid:
-            cc = final_state.get("client_context") or {}
-            client = cc.get("company_name") or (cc.get("profile") or {}).get("company_name") or cid
-
-        sku_map = final_state.get("sku_quantities") or {}
-        skus_txt = ", ".join([f"{sku} (x{qty})" for sku, qty in sku_map.items()]) if sku_map else None
-
         designs = final_state.get("solution_designs") or []
         scen_names = []
 
@@ -97,17 +87,8 @@ class QuoteService:
 
         parts = []
         
-        if client and skus_txt:
-            parts.append(f"Here’s a quote for **{client}** with {len(scenarios)} scenario(s) for {skus_txt}.")
-        elif client:
-            parts.append(f"Here’s a quote for **{client}** with {len(scenarios)} scenario(s).")
-        elif skus_txt:
-            parts.append(f"Here’s a quote with {len(scenarios)} scenario(s) for {skus_txt}.")
-        else:
-            parts.append(f"Here’s a quote with {len(scenarios)} scenario(s).")
-
-        if scen_names:
-            parts.append("Scenarios: " + ", ".join(scen_names) + ".")
-        if totals_txt:
-            parts.append("Estimated totals → " + ", ".join(totals_txt) + ".")
-        return " ".join(parts).strip() or "Here’s your quote summary."
+        print("FINAL STATE")
+        print(final_state)
+        print("FINAL STATE")
+        
+        return final_state.get("next_best_action")

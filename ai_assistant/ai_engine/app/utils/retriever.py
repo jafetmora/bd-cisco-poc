@@ -22,6 +22,9 @@ from ai_engine.app.core.config import settings
 logger = logging.getLogger(__name__)
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Caminhos (casam com o novo ingest_data.py unificado)
+# ──────────────────────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────────────────────
 # Paths (derivados de Settings)
 # ──────────────────────────────────────────────────────────────────────────────
 PROCESSED_DIR: Path = settings.data_dir / "processed"
@@ -63,42 +66,41 @@ def _safe_load_npz(path: Path):
         logger.warning(f"⚠️  Falha ao carregar NPZ: {path} — {e}")
         return None
 
+def _safe_load_npz(path: Path):
+    try:
+        return sparse.load_npz(str(path))
+    except Exception as e:
+        logger.warning(f"⚠️  Falha ao carregar NPZ: {path} — {e}")
+        return None
+
 def _norm_query(q: str) -> str:
     q = (q or "").strip()
     return re.sub(r"\s+", " ", q)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lazy factories (evitan efectos al importar)
+# Carregamento dos artefatos unificados
 # ──────────────────────────────────────────────────────────────────────────────
-@lru_cache(maxsize=1)
-def get_embeddings() -> OpenAIEmbeddings:
-    # Si prefieres pasar la key explícita: api_key=settings.openai_api_key
-    return OpenAIEmbeddings(model=settings.embedding_model)
+_embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-@lru_cache(maxsize=1)
-def get_faiss_docs() -> Optional[FAISS]:
-    if not FAISS_INDEX_DOCS_DIR.exists():
+def _load_faiss(dirpath: Path) -> Optional[FAISS]:
+    if not dirpath.exists():
         return None
     try:
         return FAISS.load_local(
-            str(FAISS_INDEX_DOCS_DIR),
-            embeddings=get_embeddings(),
+            str(dirpath),
+            embeddings=_embeddings,
             allow_dangerous_deserialization=True,
-        ) # nosec B301 (gated by ENV)
-    except Exception as e: 
-        logger.warning(f"⚠️  Falha ao carregar FAISS em {FAISS_INDEX_DOCS_DIR}: {e}")
+        )
+    except Exception as e:
+        logger.warning(f"⚠️  Falha ao carregar FAISS em {dirpath}: {e}")
         return None
 
-@lru_cache(maxsize=1)
-def get_bm25_docs() -> Optional[BM25Retriever]:
-    return _safe_load_pickle(BM25_DOCS_FILE)
+faiss_docs: Optional[FAISS] = _load_faiss(FAISS_INDEX_DOCS_DIR)
+bm25_docs:  Optional[BM25Retriever] = _safe_load_pickle(BM25_DOCS_FILE)
 
-@lru_cache(maxsize=1)
-def get_tfidf_assets() -> tuple[Optional[Any], Optional[Any], List[str]]:
-    vec = _safe_load_pickle(TFIDF_DOCS_VEC_FILE)
-    mat = _safe_load_npz(TFIDF_DOCS_MAT_FILE)
-    keys = _safe_load_pickle(TFIDF_DOCS_KEYS) or []
-    return vec, mat, keys
+tfidf_vectorizer = _safe_load_pickle(TFIDF_DOCS_VEC_FILE)
+tfidf_matrix     = _safe_load_npz(TFIDF_DOCS_MAT_FILE)
+tfidf_keys: List[str] = _safe_load_pickle(TFIDF_DOCS_KEYS) or []
 
 def _tfidf_ok(matrix, keys) -> bool:
     try:
@@ -107,22 +109,27 @@ def _tfidf_ok(matrix, keys) -> bool:
         return False
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Índices auxiliares: mapear id -> metadata (para casar TF-IDF con FAISS/BM25)
+# Índices auxiliares: mapear id -> metadata (para casar TF-IDF com FAISS/BM25)
 # ──────────────────────────────────────────────────────────────────────────────
-@lru_cache(maxsize=1)
-def get_id_maps() -> tuple[Dict[str, Dict[str, Any]], Dict[str, str]]:
-    _id_to_meta: Dict[str, Dict[str, Any]] = {}
-    _id_to_text: Dict[str, str] = {}
-    faiss_docs = get_faiss_docs()
+_id_to_meta: Dict[str, Dict[str, Any]] = {}
+_id_to_text: Dict[str, str] = {}
+
+def _try_build_id_maps_from_faiss():
+    global _id_to_meta, _id_to_text
     if not faiss_docs:
-        return _id_to_meta, _id_to_text
+        return
     try:
+        # LangChain FAISS mantém docstore + ids
         ds = getattr(faiss_docs, "docstore", None)
         id_index = getattr(faiss_docs, "index_to_docstore_id", None)
+
+        # valores podem vir como dict, list ou iterable
         if hasattr(id_index, "values"):
             store_ids = list(id_index.values())
         else:
             store_ids = list(id_index) if id_index is not None else []
+
+        # tenta acessar docstore.search; fallback para _dict
         for sid in store_ids:
             doc = None
             if hasattr(ds, "search"):
@@ -132,33 +139,47 @@ def get_id_maps() -> tuple[Dict[str, Dict[str, Any]], Dict[str, str]]:
             if not doc:
                 continue
             meta = dict(doc.metadata or {})
-            doc_id = meta.get("id") or sid
-            meta.setdefault("id", doc_id)
+            # Em ingest_data.py gravamos 'id' em metadata
+            doc_id = meta.get("id")
+            if not doc_id:
+                # fallback: usar o próprio sid
+                doc_id = sid
+                meta["id"] = sid
             _id_to_meta[doc_id] = meta
             _id_to_text[doc_id] = doc.page_content
     except Exception as e:
         logger.warning(f"⚠️  Não foi possível construir id->meta do FAISS: {e}")
-    return _id_to_meta, _id_to_text
+
+_try_build_id_maps_from_faiss()
+
+#def _sku_from_key(key: str) -> Optional[str]:
+#    """Para ids do price list (formato SKU__dur__offer) extrai o SKU."""
+#    if not key:
+#        return None
+#    if "__" in key:
+#        cand = key.split("__", 1)[0]
+#        if re.fullmatch(r"[A-Z0-9\-]+", cand or ""):
+#            return cand
+#    return None
 
 def _sku_from_key(key: str) -> Optional[str]:
+    """Extrai SKU do id (novo formato SKU__workbook__sheet__row)."""
     if not key:
         return None
-    if "__" in key:
-        cand = key.split("__", 1)[0]
-        if re.fullmatch(r"[A-Z0-9\\-]+", cand or ""):
-            return cand
-    return None
+    cand = key.split("__", 1)[0]
+    return cand if cand else None
+
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Funções de busca — DOCUMENTOS (PDF + Price)
+# Funções de busca — por DOCUMENTOS (PDF + Price)
 # ──────────────────────────────────────────────────────────────────────────────
 def faiss_search_docs(query: str, k: int = 8, source_group: Optional[str] = None) -> List[Tuple[Any, float]]:
     """Retorna [(Document, score)] — score é distância (menor é melhor)."""
-    faiss_docs = get_faiss_docs()
     if not faiss_docs:
         return []
     try:
         docs = faiss_docs.similarity_search_with_score(_norm_query(query), k=k)
+        # filtro por tipo de fonte, se solicitado
         if source_group:
             docs = [(d, s) for d, s in docs if (d.metadata or {}).get("source_group") == source_group]
         return docs
@@ -168,7 +189,6 @@ def faiss_search_docs(query: str, k: int = 8, source_group: Optional[str] = None
 
 def bm25_search_docs(query: str, k: int = 8, source_group: Optional[str] = None) -> List[Any]:
     """Retorna [Document] ordenados."""
-    bm25_docs = get_bm25_docs()
     if not bm25_docs:
         return []
     try:
@@ -182,7 +202,6 @@ def bm25_search_docs(query: str, k: int = 8, source_group: Optional[str] = None)
 
 def tfidf_scores_by_id(query: str, topk: int = 20) -> Dict[str, float]:
     """Retorna dict {id: score} usando TF-IDF (somente ids, sem Document)."""
-    tfidf_vectorizer, tfidf_matrix, tfidf_keys = get_tfidf_assets()
     if not _tfidf_ok(tfidf_matrix, tfidf_keys) or tfidf_vectorizer is None:
         return {}
     try:
@@ -213,7 +232,7 @@ def hybrid_search_docs(query: str,
         results[mid] = {
             "text": d.page_content,
             "metadata": dict(d.metadata or {}),
-            "score": float(1.0 / (1.0 + max(dist, 1e-6))),
+            "score": float(1.0 / (1.0 + max(dist, 1e-6))),  # distância → ~similaridade
             "source": "faiss",
             "boosts": {},
         }
@@ -222,18 +241,19 @@ def hybrid_search_docs(query: str,
     for d in bm25_search_docs(query, k=k_bm25, source_group=source_group):
         mid = (d.metadata or {}).get("id") or f"bm25-{id(d)}"
         if mid in results:
+            # se já veio do FAISS, soma um pequeno bônus
             results[mid]["source"] = "both"
             results[mid]["score"] += 0.2
         else:
             results[mid] = {
                 "text": d.page_content,
                 "metadata": dict(d.metadata or {}),
-                "score": 0.6,
+                "score": 0.6,   # baseline arbitrário para BM25 puro
                 "source": "bm25",
                 "boosts": {},
             }
 
-    # TF-IDF boost
+    # TF-IDF boost (por id)
     tfidf_map = tfidf_scores_by_id(query, topk=k_tfidf)
     if tfidf_map:
         tfidf_max = max(tfidf_map.values()) or 1.0
@@ -243,13 +263,15 @@ def hybrid_search_docs(query: str,
                 results[mid]["score"] += bonus
                 results[mid]["boosts"]["tfidf"] = float(bonus)
 
+    # orderna por score desc
     merged = sorted(results.values(), key=lambda x: x["score"], reverse=True)
     return merged
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Funções de busca — PRODUTOS (grupo 'price')
+# Funções de busca — PRODUTOS (usam somente documentos do price list)
 # ──────────────────────────────────────────────────────────────────────────────
 def _filter_price_docs_to_skus(docs: List[Any]) -> List[str]:
+    """Extrai SKUs de documentos (apenas source_group == 'price')."""
     out: List[str] = []
     for d in docs:
         meta = getattr(d, "metadata", {}) or {}
@@ -260,8 +282,10 @@ def _filter_price_docs_to_skus(docs: List[Any]) -> List[str]:
     return out
 
 def faiss_search_products(query: str, k: int = 5) -> List[str]:
+    """Busca SKUs usando FAISS no grupo 'price'."""
     hits = faiss_search_docs(query, k=max(k*2, 8), source_group="price")
-    skus, seen = [], set()
+    skus = []
+    seen = set()
     for d, _ in hits:
         sku = (d.metadata or {}).get("sku")
         if sku and sku not in seen:
@@ -271,8 +295,10 @@ def faiss_search_products(query: str, k: int = 5) -> List[str]:
     return skus
 
 def bm25_search_products(query: str, k: int = 5) -> List[str]:
+    """Busca SKUs usando BM25 no grupo 'price'."""
     docs = bm25_search_docs(query, k=max(k*2, 10), source_group="price")
     skus = _filter_price_docs_to_skus(docs)
+    # de-dup e corta
     seen, out = set(), []
     for s in skus:
         if s not in seen:
@@ -282,11 +308,16 @@ def bm25_search_products(query: str, k: int = 5) -> List[str]:
     return out
 
 def tfidf_search_products(query: str, k: int = 5) -> List[str]:
+    """
+    Busca SKUs usando TF-IDF (via ids). Precisa casar id->sku.
+    - Primeiro tenta mapear pelo id->metadata (derivado do FAISS).
+    - Fallback: extrai SKU do id (formato SKU__dur__offer).
+    """
     id_scores = tfidf_scores_by_id(query, topk=max(k*10, 50))
     if not id_scores:
         return []
+    # ordena por score
     ids_sorted = [i for i, _ in sorted(id_scores.items(), key=lambda kv: kv[1], reverse=True)]
-    _id_to_meta, _ = get_id_maps()
     seen, out = set(), []
     for rid in ids_sorted:
         meta = _id_to_meta.get(rid) or {}
@@ -301,6 +332,7 @@ def tfidf_search_products(query: str, k: int = 5) -> List[str]:
     return out
 
 def hybrid_search_products(query: str, k_faiss: int = 6, k_bm25: int = 6, k_tfidf: int = 6) -> List[str]:
+    """Híbrida: FAISS → BM25 → TF-IDF (dedup). Retorna SKUs."""
     seen, out = set(), []
     for seq in (
         faiss_search_products(query, k_faiss),
@@ -314,14 +346,15 @@ def hybrid_search_products(query: str, k_faiss: int = 6, k_bm25: int = 6, k_tfid
     return out
 
 # ──────────────────────────────────────────────────────────────────────────────
-# (Opcional) chunks só do grupo 'price'
+# (Opcional) utilitário para retornar chunks já mesclados e filtrados só do price
 # ──────────────────────────────────────────────────────────────────────────────
 def hybrid_search_price_chunks(query: str, k_total: int = 12) -> List[Dict[str, Any]]:
+    """Retorna chunks do grupo 'price' (texto + metadata), já rerankeados."""
     merged = hybrid_search_docs(query, k_faiss=10, k_bm25=10, k_tfidf=50, source_group="price")
     return merged[:k_total]
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Compat aliases
+# Compat com versões antigas (aliases)
 # ──────────────────────────────────────────────────────────────────────────────
 faiss_search = faiss_search_products
 bm25_search  = bm25_search_products

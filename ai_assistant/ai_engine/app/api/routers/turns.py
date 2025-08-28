@@ -29,6 +29,7 @@ async def create_turn(
         events = [
             {"type": "missing_info", "fields": final_state.get("missing_info", [])}
         ]
+        nba_q = final_state.get("next_best_action")
         return TurnOut(assistant_message=assistant_text, scenarios=[], events=events)
 
     # Build scenarios
@@ -37,7 +38,7 @@ async def create_turn(
         assistant_text = "I couldn’t assemble scenarios yet. Please share the SKU(s), quantity, and client name to build a quote."
         return TurnOut(assistant_message=assistant_text, scenarios=[], events=[])
 
-    assistant_text = _service.build_summary_message(final_state, scenarios)
+    assistant_text = final_state.get("next_best_action")
     events: List[Dict[str, Any]] = []
 
     if isinstance(final_state.get("logs"), list):
