@@ -24,14 +24,11 @@ router = APIRouter(prefix="/quote", tags=["quotes"])
 def quote(
     session: QuoteSession, current_user: str = Depends(get_current_username)
 ) -> QuoteSession:
-    print(current_user)
     return session
 
 
 @router.get("/", response_model=QuoteSession)
 def get_quote(current_user: str = Depends(get_current_username)) -> QuoteSession:
-    print(f"Current user {current_user}")
-
     header = QuoteHeaderData(
         title="Sample Quote",
         dealId="D12345",

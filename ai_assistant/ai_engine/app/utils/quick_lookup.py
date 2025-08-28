@@ -1,5 +1,3 @@
-# services/ai_engine/app/utils/quick_lookup.py
-
 import re, json
 from pathlib import Path
 from langchain_community.vectorstores import FAISS
