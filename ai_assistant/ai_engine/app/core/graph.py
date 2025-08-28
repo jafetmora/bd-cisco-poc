@@ -2108,6 +2108,208 @@ def _primitive(o):
     return d
 
 def llm_designer_node(state: AgentState) -> dict:
+    """
+    LLM Designer node: builds 3 scenarios using a structured output schema.
+    - Accepts optional base_sku.
+    - Uses only the provided product_context (no SKU invention).
+    - Keeps state.orchestrator_decision.needs_pricing = True for downstream pricing.
+    """
+    print("\n🤖 [LLM Designer] Asking LLM to create scenarios…")
+
+    # ---- Inputs & guards ----
+    product_context = state.get("product_context") or []
+    if not product_context:
+        print("  - No context at all. Cannot design scenarios.")
+        error_design = [SolutionDesign(summary="Error", justification="No product context available.", components=[])]
+        return {"solution_designs": error_design}
+
+    base_sku: Optional[str] = state.get("base_product_sku")
+    product_domain: str = state.get("product_domain") or ""
+    user_query: str = state.get("user_query", "")
+    qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
+
+    # Conversational memory (optional; may be empty strings)
+    conversation_window = state.get("conversation_window", "")
+    conversation_summary = state.get("conversation_summary", "")
+
+    if not base_sku:
+        base_sku = None
+        print(f"  - Inferred base_sku from context: {base_sku}")
+
+    # JSON context payload
+    product_context_json = json.dumps(product_context, indent=2)
+    context_json = json.dumps(product_context, indent=2)
+
+    def _role_from_dim(p: dict) -> str:
+        dim = (p.get("product_dimension") or p.get("category") or "").strip().casefold()
+        name = (p.get("commercial_name") or p.get("product_name") or "").strip().casefold()
+
+        if "license" in dim or "licen" in name:
+            return "license"
+        if "access" in dim or re.search(r"\b(kit|mount|cable|adapter|adaptor|bracket|antenna|psu|power)\b", name):
+            return "accessory"
+        return "hardware"
+
+    def _domain_from_family(p: dict) -> str:
+        fam = (p.get("family") or "").strip().casefold()
+        # regra simples: se mencionar "switch", é switch; caso contrário, tratamos como wifi
+        return "switch" if "switch" in fam else "wifi"
+
+    def build_context_by_family(products: list[dict], limit_per_bucket: int = 40) -> dict:
+        buckets = {
+            "wifi":   {"hardware": [], "licenses": [], "accessories": []},
+            "switch": {"hardware": [], "licenses": [], "accessories": []},
+        }
+        for p in products or []:
+            dom = _domain_from_family(p)
+            role = _role_from_dim(p)
+            key  = "accessories" if role == "accessory" else ("licenses" if role == "license" else "hardware")
+            buckets[dom][key].append(p)
+
+        # limitar quantidade por bucket (opcional)
+        for dom in buckets:
+            for k in buckets[dom]:
+                buckets[dom][k] = buckets[dom][k][:limit_per_bucket]
+        return buckets
+
+    # === uso ===
+    product_context = state.get("product_context") or []
+    context_buckets = build_context_by_family(product_context)
+
+    context_json = json.dumps(context_buckets, indent=2)
+
+
+
+    base_quantity = int(qty_map.get(base_sku, 1)) if base_sku else 1  # not directly used, but available if needed
+
+
+    prev_designs = state.get("solution_designs") or []
+    # Converta SolutionDesign -> dict para serializar:
+    def _sd_to_dict(d):
+        if isinstance(d, SolutionDesign):
+            return {
+                "summary": d.summary,
+                "justification": d.justification,
+                "components": [
+                    {"sku": c.part_number, "quantity": int(c.quantity)} for c in (d.components or [])
+                ],
+            }
+        return d
+
+    previous_designs_json = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+    state["solution_designs"] = []
+
+
+    #revision = state.get("revision_request")
+    #revision_dict = revision.__dict__ if revision else {}
+    #revision_json = json.dumps(revision_dict, indent=2)
+    #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
+    #print("99999999999999999999999999999999999999999999999999999999999999", context_json)
+    print(">>> LLM Designer sees revision_request:", state.get("revision_request"))
+
+    revision = state.get("revision_request")
+    if revision is None:
+        revision_dict = {}
+    elif isinstance(revision, dict):
+        revision_dict = revision
+    else:
+        revision_dict = revision.__dict__
+    revision_json = json.dumps(revision_dict, indent=2)
+    #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
+
+    revision = state.get("revision_request")
+    if not revision:
+        #print("1111111111111111111111111111111111111111111111111111")
+        # ---- Prompt (intentionally blank body; variables still wired) ----
+        prompt_template = ChatPromptTemplate.from_template(
+        """
+            You are an expert and commercially-aware Cisco Sales Engineer.
+
+            USER QUERY:
+            {user_query}
+
+            AVAILABLE COMPONENTS (authoritative catalogue — ONLY use SKUs listed below; do NOT invent SKUs):
+            ```json
+            {context_json}
+            ```
+
+            TASK
+            - Design exactly 3 options labeled **"Essential (Good)"**, **"Standard (Better)"**, **"Complete (Best)"**.
+            BUSINESS RULES
+            1) Catalogue-lock: Use ONLY SKUs found in AVAILABLE COMPONENTS.
+            2) No duplicates within a scenario; if you need more units, set "quantity" > 1 in a single line.
+            3) Relevance: Do not add major infrastructure (e.g., controllers/gateways/large switches) as “accessories” to a single AP quote. Focus on directly relevant items (licenses, mounting kits, antennas, power).
+            5) Progression: Keep a logical technical progression (Standard > Essential, Complete > Standard). “Complete” should be a modest step up from “Standard”, not an extreme jump.
+            7) Always adding relevant licenses and accessories (if present in AVAILABLE COMPONENTS and aligned with the main product). 
+                - Licenses (product_dimension="License") should appear in all scenario when the main product requires subscription.
+                - Accessories (product_dimension="Accessory") like mounts, antennas, or power supplies should be included in all scenarios.
+            8) If you are asked to make any changes to a specific sku, change only that, keep the rest of the PREVIOUS SCENARIOS exactly as they are.
+            9) If the user requests Wi-Fi, use wifi.hardware/licenses/accessories. If the user requests a switch, use switch.hardware/licenses/accessories.
+            6) You are a Cisco Solutions Architect, so you must create the scenarios with all the necessary components among those you have available.
+            7) Use a maximum of 10 components per scenario.
+
+            OUTPUT FORMAT (STRICT)
+            - Respond with JSON only (no prose, no markdown fences).
+            - Must match this exact schema:
+             Output JSON only, matching the schema:
+            {{
+              "scenarios": [
+                {{
+                  "name": "Essential (Good)|Standard (Better)|Complete (Best)",
+                  "justification": "reason",
+                  "components": [{{"sku": "<SKU>", "quantity": <int>}}]
+                }}
+              ]
+            }}
+            VALIDATION
+            - Every component must include both fields: "sku" (string) and "quantity" (integer ≥ 1).
+            - Do not output any fields other than the schema above.
+            - Do not include markdown code fences or commentary.
+
+                """
+                )
+    else:
+        prompt_template = ChatPromptTemplate.from_template("""
+            You are an expert Cisco Sales Engineer. Apply a targeted revision (delta) to existing scenarios.
+
+            USER QUERY:
+            {user_query}
+
+            AVAILABLE COMPONENTS (authoritative — ONLY use SKUs listed):
+            json
+            {context_json}
+
+            PREVIOUS SCENARIOS (authoritative — START FROM THIS; DO NOT REBUILD FROM SCRATCH):
+            json
+            {previous_designs_json}
+
+            BUSINESS RULES
+            1) Catalogue-lock: Use ONLY SKUs found in AVAILABLE COMPONENTS.
+            2) No duplicates within a scenario; if you need more units, set "quantity" > 1 in a single line.
+            9) If the user requests Wi-Fi, use wifi.hardware/licenses/accessories. If the user requests a switch, use switch.hardware/licenses/accessories.
+            6) You are a Cisco Solutions Architect, so you must create the scenarios with all the necessary components among those you have available.
+            7) Use a maximum of 10 components per scenario.
+
+
+            OUTPUT (STRICT)
+            Return JSON only (no prose) matching exactly:
+            {{
+              "scenarios": [
+                {{
+                  "name": "Essential (Good)|Standard (Better)|Complete (Best)",
+                  "justification": "reason",
+                  "components": [{{"sku": "<SKU>", "quantity": <int>}}]
+                }}
+              ]
+            }}
+
+            VALIDATION
+
+            Every component has "sku" (string) and "quantity" (int ≥ 1).
+
+            Do not output any additional fields.
+                            """)
+
     # ---- LLM (structured output) ----
     llm = your_llm_instance
     structured_llm = llm.with_structured_output(QuoteScenarios, method="function_calling")
