@@ -35,6 +35,10 @@ async def create_turn(
     # Build scenarios
     scenarios = _service.scenarios_from_state(final_state)
     if not scenarios:
+        final_reponse = final_state.get("final_response")
+
+        if final_reponse:
+            return TurnOut(assistant_message=final_reponse, scenarios=[], events=[])
         assistant_text = "I couldn’t assemble scenarios yet. Please share the SKU(s), quantity, and client name to build a quote."
         return TurnOut(assistant_message=assistant_text, scenarios=[], events=[])
 
