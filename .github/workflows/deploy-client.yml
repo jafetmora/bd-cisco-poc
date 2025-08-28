@@ -14,9 +14,8 @@ permissions:
 env:
   AWS_REGION: us-east-2
   S3_BUCKET: bd-cisco-poc-client-ohio-7438c2
-  # Pasa la URL de tu API App Runner
-  VITE_API_URL: http://cisco-poc-alb-694466021.us-east-2.elb.amazonaws.com
-  VITE_WS_URL: ws://cisco-poc-alb-694466021.us-east-2.elb.amazonaws.com/ws
+  VITE_API_URL: https://d2xwx7ojpy08cy.cloudfront.net
+  VITE_WS_URL: wss://d2xwx7ojpy08cy.cloudfront.net/ws
 
 jobs:
   build-and-upload:
