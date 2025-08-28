@@ -51,50 +51,59 @@ class ThreeScenarios(BaseModel):
                 raise ValueError("scenarios must be a non-empty list")
         return v
 
+class NBAOutput(BaseModel):
+    question_for_refinement: str
+    refinements: Optional[List[Dict[str, Any]]] = []
+
 
 class AgentState(TypedDict, total=False):
-    # Entrada
+    # Input
     user_query: str
     orchestrator_decision: "AgentRoutingDecision"
 
-    # --- ADICIONE ESTAS DUAS LINHAS ---
-    product_context: List[Dict[str, str]]
+    # --- PRODUCT CONTEXT ---
+    product_context: List[Dict[str, str]]  # metadata of retrieved products
     base_product_sku: Optional[str]
-    # --- FIM DA ADIÇÃO ---
+    revision_request: Optional[Dict[str, Any]] 
+    # --- END PRODUCT CONTEXT ---
 
     # Client awareness
     active_client_id: Optional[str]
     client_context: Dict
     client_ack_message: str
 
-    # Contexto técnico (produtos recuperados)
+    # Technical context (retrieved products)
     technical_results: List[Dict]
 
-    # Designer retorna múltiplas opções
+    # Designer returns multiple solutions
     solution_designs: List["SolutionDesign"]
 
     sku_quantities: Dict[str, int]
 
-    # Validação & regras
+    # Validation & rules
     integrity_errors: List[str]
     rule_errors: List[str]
 
-    # Pricing: por bucket (ex.: por cenário) -> lista de itens
+    # Pricing per bucket (e.g., scenario) -> list of items
     pricing_results: Dict[str, List[dict]]
 
-    # Comparação
+    # Comparison
     comparison_results: Dict[str, Dict]
 
-    # Compatibilidade & lifecycle
+    # Compatibility & lifecycle
     compatibility_results: Dict[str, Dict]
     lifecycle_info: Dict[str, Dict]
 
-    # --- AQUI ESTÁ FALTANDO ---
+    # EA / Enterprise Agreement
     ea: Dict[str, Any]
     ea_pricing_preview: Dict[str, Any]
-    # --- FIM DA ADIÇÃO ---
 
-    # NBA + resposta final
+    # NBA / Final response
     next_best_action: str
     final_response: str
 
+    # --- REFINEMENT HISTORY & LAST INTERACTION ---
+    last_question: Optional[str]       # last question asked by NBA Agent
+    last_answer: Optional[str]         # user's answer to last question
+    refinements: List[Dict[str, Any]]  # full Q&A history for refinements
+    # --- END REFINEMENT ---

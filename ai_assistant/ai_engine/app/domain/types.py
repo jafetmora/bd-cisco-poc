@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, Any
+from typing import Optional, TypedDict, Literal, Any, Union
 
 
 Currency = Literal["USD", "EUR"]
@@ -13,7 +13,7 @@ class LeadTimeDays(TypedDict):
     value: int
 
 
-LeadTime = LeadTimeInstant | LeadTimeDays
+LeadTime = Union[LeadTimeInstant, LeadTimeDays]
 
 
 class QuoteItem(TypedDict):
@@ -33,7 +33,7 @@ class QuoteHeader(TypedDict, total=False):
     quoteNumber: str
     status: str
     expiryDate: str
-    priceProtectionExpiry: str | None
+    priceProtectionExpiry: Optional[str]
     priceList: dict[str, Any]
     currency: Currency
 

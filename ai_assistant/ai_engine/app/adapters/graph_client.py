@@ -13,6 +13,9 @@ class AgentState(TypedDict, total=False):
     solution_designs: list[dict]
     pricing_results: dict[str, list[dict]]
     logs: list[str]
+    next_best_action: str
+    last_question: str
+    last_answer: str 
 
 
 class GraphPort(Protocol):

@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     embedding_model: str = Field("text-embedding-3-small", env="EMBEDDING_MODEL")
     llm_model: str = Field("gpt-4o-mini", env="LLM_MODEL")
 
-    raw_data_path: Path = Field(default_factory=lambda: _data_dir() / "raw", env="RAW_DATA_PATH")
+    raw_data_path: Path = Field(default_factory=lambda: _data_dir() / "_raw", env="RAW_DATA_PATH")
     vector_store_path: Path = Field(
         default_factory=lambda: _data_dir() / "processed" / "vector_store",
         env="VECTOR_STORE_PATH",

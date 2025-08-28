@@ -28,18 +28,33 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 PRICE_PREP_DIR = os.getenv("PRICE_PREP_DIR", "data/processed/pricelist_prep")
 PARQUET_PATH = os.path.join(PRICE_PREP_DIR, "catalog_products_clean.parquet")
-CSV_PATH     = os.path.join(PRICE_PREP_DIR, "catalog_products_clean.csv")
+#CSV_PATH     = os.path.join(PRICE_PREP_DIR, "catalog_products_clean.csv")
+
+#PARQUET_PATH = os.path.join(PRICE_PREP_DIR, "rag_facts.parquet")
+JSONL_PATH   = os.path.join(PRICE_PREP_DIR, "rag_facts.jsonl")
+
+#def _load_catalog_df() -> pd.DataFrame:
+#    if os.path.exists(PARQUET_PATH):
+#        src = PARQUET_PATH
+#        df = pd.read_parquet(PARQUET_PATH)
+#    elif os.path.exists(CSV_PATH):
+#        src = CSV_PATH
+#        df = pd.read_csv(CSV_PATH)
+#    else:
+#        raise FileNotFoundError(
+#            f"Catalog not found. Expected at {PARQUET_PATH} or {CSV_PATH}."
+#        )
 
 def _load_catalog_df() -> pd.DataFrame:
     if os.path.exists(PARQUET_PATH):
         src = PARQUET_PATH
         df = pd.read_parquet(PARQUET_PATH)
-    elif os.path.exists(CSV_PATH):
-        src = CSV_PATH
-        df = pd.read_csv(CSV_PATH)
+    elif os.path.exists(JSONL_PATH):
+        src = JSONL_PATH
+        df = pd.DataFrame([json.loads(l) for l in open(JSONL_PATH, encoding="utf-8") if l.strip()])
     else:
         raise FileNotFoundError(
-            f"Catalog not found. Expected at {PARQUET_PATH} or {CSV_PATH}."
+            f"Catalog not found. Expected at {PARQUET_PATH} or {JSONL_PATH}."
         )
 
     # garantias mínimas
@@ -47,7 +62,7 @@ def _load_catalog_df() -> pd.DataFrame:
         "sku", "description", "list_price_usd", "duration",
         "subscription_type", "offer_type", "qty_uom", "price_uom",
         "family", "product_line", "workbook", "sheet",
-        "dimension",  # <-- precisa existir
+        "dimension", "product_dimension", # <-- precisa existir
     ]:
         if col not in df.columns:
             df[col] = None
@@ -68,33 +83,32 @@ def _load_catalog_df() -> pd.DataFrame:
 CATALOG_DF: pd.DataFrame = _load_catalog_df()
 
 
-def map_portfolio(row):
-    text = (
-        (row.get("sku") or "") +
-        (row.get("family") or "") +
-        (row.get("dimension") or "") +
-        (row.get("description") or "")
-    ).lower()
-
-    portfolio = None
-
-    # 1) Checa Meraki
-    if any(k in text for k in [" meraki", " mr", " ms", " mx", "mv", "mt"]):
-        portfolio = "meraki"
-
-    # 2) Se também tiver Catalyst → sobrescreve para enterprise_networking
-    if any(k in text for k in ["catalyst", "c9k", "c9300", "c9400", "c9500", "enterprise networking"]):
-        portfolio = "enterprise_networking"
-
-    # 3) Se não bateu antes, checa Security
-    elif any(k in text for k in ["umbrella", "duo", "secure firewall", "ftd", "amp", "xdr"]):
-        portfolio = "security"
-
-    return portfolio
-
-CATALOG_DF["portfolio"] = CATALOG_DF.apply(map_portfolio, axis=1)
+#def map_portfolio(row):
+#    text = (
+#        (row.get("sku") or "") +
+#        (row.get("family") or "") +
+#        (row.get("dimension") or "") +
+#        (row.get("description") or "")
+#    ).lower()
+#
+#    portfolio = None
+#
+#    # 1) Checa Meraki
+#    if any(k in text for k in [" meraki", " mr", " ms", " mx", "mv", "mt"]):
+#        portfolio = "meraki"
+#
+#    # 2) Se também tiver Catalyst → sobrescreve para enterprise_networking
+#    if any(k in text for k in ["catalyst", "c9k", "c9300", "c9400", "c9500", "enterprise networking"]):
+#        portfolio = "enterprise_networking"
+#
+#    # 3) Se não bateu antes, checa Security
+#    elif any(k in text for k in ["umbrella", "duo", "secure firewall", "ftd", "amp", "xdr"]):
+#        portfolio = "security"
+#
+#    return portfolio
 
 # Índices auxiliares
+
 ROWS_BY_SKU: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
 for _, r in CATALOG_DF.iterrows():
     ROWS_BY_SKU[str(r.get("sku"))].append({
@@ -111,8 +125,45 @@ for _, r in CATALOG_DF.iterrows():
         "workbook": r.get("workbook"),
         "sheet": r.get("sheet"),
         "dimension": r.get("dimension"), 
-        "portfolio": r.get("portfolio"), # <-- ADICIONADO
+        "product_dimension": r.get("product_dimension"),
+        "product_type": r.get("product_type"),
+        "portfolio": r.get("portfolio"),
+
+        # 🔹 Campos técnicos brutos
+        "ports": r.get("ports"),
+        "port_speed": r.get("port_speed"),
+        "poe_type": r.get("poe_type"),
+        "management": r.get("management"),
+        "switch_layer": r.get("switch_layer"),
+        "throughput": r.get("throughput"),
+        "latency": r.get("latency"),
+        "wifi_standard": r.get("wifi_standard"),
+        "indoor_outdoor": r.get("indoor_outdoor"),
+        "antenna": r.get("antenna"),
+        "radios": r.get("radios"),
+        "max_throughput": r.get("max_throughput"),
+        "poe": r.get("poe"),
+        "controller_compat": r.get("controller_compat"),
+        "release_year": r.get("release_year"),
+        "warranty_period": r.get("warranty_period"),
+        "support_type": r.get("support_type"),
+        "compliance": r.get("compliance"),
+        "package_contents": r.get("package_contents"),
+        "operating_temp": r.get("operating_temp"),
+        "storage_temp": r.get("storage_temp"),
+        "humidity": r.get("humidity"),
+        "weight_kg": r.get("weight_kg"),
+        "width": r.get("width"),
+        "height": r.get("height"),
+        "depth": r.get("depth"),
+        "availability": r.get("availability"),
+        "eol_status": r.get("eol_status"),
+        "end_of_sale": r.get("end_of_sale"),
+        "eos_date": r.get("eos_date"),
     })
+
+
+
 
 # “product_dict” compatível (agregado por SKU)
 def _aggregate_product_record(sku: str, rows: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -120,11 +171,16 @@ def _aggregate_product_record(sku: str, rows: List[Dict[str, Any]]) -> Dict[str,
     if rows:
         counts = Counter([str(x.get("description") or "") for x in rows])
         desc = counts.most_common(1)[0][0] if counts else ""
+
     fam = next((x.get("family") for x in rows if x.get("family")), None)
     pl  = next((x.get("product_line") for x in rows if x.get("product_line")), None)
-    dim = next((x.get("dimension") for x in rows if x.get("dimension")), None)  # 👈 aqui pega teu campo
-    ea_agre = next((x.get("portfolio") for x in rows if x.get("portfolio")), None)  # 👈 aqui pega teu campo
+    ptype = next((x.get("product_type") for x in rows if x.get("product_type")), None)
+    pdim  = next((x.get("product_dimension") for x in rows if x.get("product_dimension")), None)
+    dim   = next((x.get("dimension") for x in rows if x.get("dimension")), None)
 
+    portfolio = next((x.get("portfolio") for x in rows if x.get("portfolio")), None)
+
+    # Agrupa tiers de preços
     tiers = []
     for x in rows:
         tiers.append({
@@ -145,8 +201,8 @@ def _aggregate_product_record(sku: str, rows: List[Dict[str, Any]]) -> Dict[str,
         "commercial_name": desc or sku,
         "family": fam,
         "product_line": pl,
-        "dimension": dim,   # 👈 adicionado aqui
-        "portfolio": ea_agre,
+        "product_dimension": pdim,
+        "product_type": ptype,
         "pricing_model": {
             "currency": "USD",
             "base_price": base_price,
@@ -154,12 +210,37 @@ def _aggregate_product_record(sku: str, rows: List[Dict[str, Any]]) -> Dict[str,
         },
         "description": desc,
         "source": "price_list_catalog",
+        # 🔹 Agora todos os atributos técnicos ficam disponíveis
+        "technical_specs": {
+            "ports": rows[0].get("ports"),
+            "port_speed": rows[0].get("port_speed"),
+            "switch_layer": rows[0].get("switch_layer"),
+            "throughput": rows[0].get("throughput"),
+            "latency": rows[0].get("latency"),
+            "management": rows[0].get("management"),
+            "network_interface": rows[0].get("network_interface"),
+            "performance_tier": rows[0].get("performance_tier"),
+            # Wireless
+            "wifi_standard": rows[0].get("wifi_standard"),
+            "indoor_outdoor": rows[0].get("indoor_outdoor"),
+            "antenna": rows[0].get("antenna"),
+            "radios": rows[0].get("radios"),
+            "max_throughput": rows[0].get("max_throughput"),
+            "controller_compat": rows[0].get("controller_compat"),
+            # Hardware extra
+            "processor": rows[0].get("processor"),
+            "release_year": rows[0].get("release_year"),
+            "warranty": rows[0].get("warranty_period"),
+            "support": rows[0].get("support_type"),
+        }
+
     }
 
 
 PRODUCT_DICT: Dict[str, Dict[str, Any]] = {
     sku: _aggregate_product_record(sku, rows) for sku, rows in ROWS_BY_SKU.items()
 }
+
 
 # Mantém um dict de clientes vazio p/ compat (se alguém importar)
 CLIENTS_DICT: Dict[str, Dict[str, Any]] = {}
