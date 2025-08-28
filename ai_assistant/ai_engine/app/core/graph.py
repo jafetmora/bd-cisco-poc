@@ -8,6 +8,7 @@ from typing import List, Dict, Optional, Tuple, Any
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
+#from langgraph.utils.runnable import Send
 
 import hashlib
 
@@ -241,7 +242,7 @@ design_agent = design_prompt | llm_creative.with_structured_output(
 
 from langchain.prompts import ChatPromptTemplate
 
-nba_prompt = ChatPromptTemplate.from_template(
+nba_prompt_r = ChatPromptTemplate.from_template(
     """You are an intelligent sales assistant for Cisco. 
 Your goal is to help refine the user's requirements for a better quote. 
 You have access to:
@@ -274,6 +275,22 @@ Previous Refinements:
 
 Respond **with a JSON object compatible with the SolutionDesign schema**, including the field:
 - question_for_refinement: the next intelligent question to ask the user."""
+)
+
+nba_prompt_qa = ChatPromptTemplate.from_template(
+    """You are an intelligent sales assistant for Cisco.
+Your goal is to ANSWER the user's question directly and concisely, based on the provided context.
+
+User question:
+{user_query}
+
+Available Products Context:
+{product_context}
+
+**VERY IMPORTANT:** You must format your output as a JSON object that fits the provided tool schema.
+Your final, direct answer to the user's question **MUST be placed inside the 'question_for_refinement' field.**
+
+Do not generate a new question. Generate the final answer and place it in the specified field."""
 )
 
 
@@ -1436,107 +1453,68 @@ def parse_revision_intent(q: str) -> RevisionRequest | None:
     return None
 
 
-
-
 def orchestrator_node(state) -> dict:
     """
-    HARD BLOCK se faltar:
-      (a) client/company name
-      (b) product domain (Wi-Fi/Switching)
-      (c) number of users
+    Orchestrator minimalista: classifica a intenção do usuário e a adiciona
+    diretamente ao estado para o roteador.
     """
+    import json
+
     q = state.get("user_query", "") or ""
-    q_low = q.lower()
+    print(f"\n🎻 [Orchestrator] Classifying intent for query: «{q}»")
 
-    # preferir valores já existentes no estado; senão, extrair da query
-    client_name    = state.get("client_name")    or _extract_client_name(q)
-    product_domain = state.get("product_domain") or _detect_product_domain(q)
-    users_count    = state.get("users_count")    or _extract_users_count(q)
+    llm_prompt = f"""
+You are a technical sales assistant. 
+Classify the user's intent into one of three types:
+  - "quote" → user wants a new quote or solution scenario
+  - "revision" → user wants to modify or replace a previous quote
+  - "question" → user wants information or clarification only
 
-    print(f"\n🎻 [Orchestrator] Analyzing query: «{q}»")
+Respond only with JSON, e.g.:
+{{"intent": "quote" | "revision" | "question"}}
 
-    price_tokens  = ["price", "cost", "quote", "budget", "preço", "custa", "cotação", "quanto"]
-    design_tokens = ["design", "architecture", "solution", "scenario", "cenário", "topologia"]
+USER QUERY:
+{q}
+"""
 
-    is_quote_intent  = any(t in q_low for t in price_tokens)
-    is_design_intent = any(t in q_low for t in design_tokens)
+    try:
+        llm_response = llm.invoke(llm_prompt)
+        if hasattr(llm_response, "content"):
+            llm_text = llm_response.content
+        else:
+            llm_text = str(llm_response)
+        
+        llm_data = json.loads(llm_text)
+        intent = llm_data.get("intent", "question")
+    except Exception as e:
+        print(f"  - LLM failed: {e}")
+        intent = "question"
 
-    # SKUs e quantidades explícitas na frase
-    qty_map, _explicit_qty_found = extract_sku_quantities(q)
+    print(f"🎯 Detected intent: {intent}")
 
-    # Se já temos contexto mínimo OU já existem cenários anteriores, não bloquear
-    have_context = bool((client_name and users_count and product_domain) or state.get("solution_designs"))
+    decision = {
+        "needs_design": intent in ["quote", "revision"],
+        "needs_pricing": intent in ["quote", "revision"],
+        "needs_technical": intent == "question"
+    }
 
-    if not have_context:
-        missing = []
-        if not client_name:
-            missing.append("the customer's company name (e.g., 'ACME LLC')")
-        if not product_domain:
-            missing.append("the product domain (Wi-Fi or Switching)")
-        if not users_count:
-            missing.append("the number of users (e.g., '50 users')")
-
-        print(f"  - Blocking: missing={missing}")
-        return prune_nones({
-            "requirements_ok": False,
-            "final_response": (
-                "To proceed with the quote, I need:\n"
-                + "\n".join(f"- {item}" for item in missing)
-                + "\n\nExamples you can send:\n"
-                  "- Client: ACME LLC\n"
-                  "- Domain: Wi-Fi for a small office (~50 users)\n"
-                  "- Domain: Switching with PoE for 24–48 ports"
-            ),
-            "orchestrator_decision": None,
-            "product_domain": product_domain,
-            "client_name": client_name,
-            "users_count": users_count,
-            "sku_map": qty_map,   # ← mantenha o que já conseguimos extrair
-            "revision_request": state.get("revision_request"),
-        })
-
-    # Decisão padrão
-    decision = AgentRoutingDecision(
-        needs_design=True if (is_design_intent or is_quote_intent) else True,  # geralmente queremos design
-        needs_technical=("spec" in q_low or "datasheet" in q_low or "especifica" in q_low),
-        needs_pricing=True,  # mantido sempre true por simplicidade
-    )
-
-    # Sinais adicionais
-    comp_tokens   = ["compare", "vs", "versus", "difference between", "diferença entre"]
-    compat_tokens = ["compatible", "compatível", "works with", "compatibility", "interoperability", "interop"]
-    life_tokens   = ["eol", "eos", "end of life", "end-of-life", "end of support", "replacement", "successor", "substitute", "replace"]
-
-    if any(t in q_low for t in compat_tokens):
-        decision.needs_compatibility = True
-        decision.needs_technical = True
-    if any(t in q_low for t in life_tokens):
-        decision.needs_lifecycle = True
-        decision.needs_technical = True
-    if any(t in q_low for t in comp_tokens) and not decision.needs_pricing:
-        decision.needs_comparison = True
-        decision.needs_technical = True
-
-    # Detectar pedido de revisão (ex.: "replace ... in best scenario")
-    rev = parse_revision_intent(q)
-    print(">>> PARSED REVISION:", rev)
-
-    if rev:
-        decision.needs_design = True
-        decision.needs_pricing = True
-        state["revision_request"] = rev
-        print(">>> STATE AFTER SET:", state.get("revision_request"))
-
+    # Retornar estado atualizado
     return prune_nones({
+        # ✅ A CORREÇÃO ESTÁ AQUI: Adicionar a intenção para o roteador usar
+        "next_flow": intent,
         "requirements_ok": True,
         "final_response": None,
         "orchestrator_decision": decision,
-        "product_domain": product_domain,
-        "client_name": client_name,
-        "users_count": users_count,
-        "sku_map": qty_map,
-        "revision_request": state.get("revision_request"),
+        "product_domain": state.get("product_domain"),
+        "client_name": state.get("client_name"),
+        "users_count": state.get("users_count"),
+        "sku_map": state.get("sku_map"),
+        "revision_request": state.get("revision_request") if intent == "revision" else None,
     })
+
+
+
+
 
 
 
@@ -1573,7 +1551,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
     """
 
     dec = state.get("orchestrator_decision")
-    if not (dec and dec.needs_pricing):
+    if not (dec and dec.get("needs_pricing")):
         print("⏩ Pricing skipped")
         return {}
 
@@ -1894,35 +1872,57 @@ def build_markdown_from(
     return "\n".join(lines) if lines else "No response generated."
 
 
+# This is the corrected and simplified version of your node.
 def synthesize_node(state: AgentState) -> dict:
     print("\n🎯 [Synthesizer] Building final message…")
 
-    # Variáveis locais
-    designs = state.get("solution_designs") or []
-    pr = state.get("pricing_results") or {}
-    ea = state.get("ea") or {}
+    # Get the intent for the CURRENT turn from the state.
+    intent = state.get("next_flow")
 
-    try:
-        final_message = build_markdown_from(designs, pr, ea, state)
+    # --- Path 1: If the intent was a simple question ---
+    if intent == "question":
+        # Get the answer that nba_agent_node prepared.
+        final_answer = state.get("final_response", "Sorry, I could not generate an answer.")
+        print(f"   - Intent is 'question'. Displaying direct answer.")
+        
+        # We only return the final_response. The old quote data in the state is ignored.
+        return {"final_response": final_answer}
 
-        # Adiciona apenas a última pergunta inteligente gerada
-        last_question = state.get("next_question")
-        if last_question:
-            final_message += f"\n\n**Question to refine requirements:** {last_question}"
+    # --- Path 2: If the intent was a quote or revision ---
+    else:
+        print(f"   - Intent is '{intent}'. Building full quote markdown.")
+        designs = state.get("solution_designs") or []
+        pr = state.get("pricing_results") or {}
+        ea = state.get("ea") or {}
+        
+        # This part of your code for building the message was correct.
+        try:
+            final_message = build_markdown_from(designs, pr, ea, state)
+            
+            # Add the last refinement question, if the nba_agent generated one.
+            next_action = state.get("next_best_action")
+            if next_action:
+                final_message += f"\n\n**Next Step:** {next_action}"
+                
+        except Exception as e:
+            print(f"[Synth] ERROR in build_markdown_from: {e}")
+            final_message = "Failed to build the final message."
+        
+        # For a quote, we clear the 'final_response' from any previous turn
+        # to ensure the quote is the only output.
+        state["final_response"] = None
 
-    except Exception as e:
-        print(f"[Synth] ERROR in build_markdown_from: {e}")
-        final_message = "Failed to build final message."
+        return prune_nones({
+            "final_response": final_message,
+            "solution_designs": designs,
+            "pricing_results": pr,
+            "ea": ea,
+            "client_name": state.get("client_name"),
+            "users_count": state.get("users_count"),
+            "product_domain": state.get("product_domain"),
+        })
 
-    return prune_nones({
-        "final_response": final_message,
-        "solution_designs": designs,
-        "pricing_results": pr,
-        "ea": ea,
-        "client_name": state.get("client_name"),
-        "users_count": state.get("users_count"),
-        "product_domain": state.get("product_domain"),
-    })
+
 
 
 
@@ -1972,10 +1972,12 @@ def clean_for_json(obj):
     else:
         return obj
 
+from typing import Optional
+
 def context_collector_node(state: AgentState) -> dict:
     print("\n🔍 [Context Collector] Fetching context for the LLM…")
 
-    user_query = state["user_query"]
+    user_query = state.get("user_query", "")
     skus = hybrid_search_products(user_query, k_faiss=40, k_bm25=40, k_tfidf=55)
 
     product_context = []
@@ -1983,9 +1985,7 @@ def context_collector_node(state: AgentState) -> dict:
         info = product_dict.get(sku)
         if not info:
             continue
-
         tech = info.get("technical_specs", {}) or {}
-
         product_context.append({
             "sku": sku,
             "commercial_name": info.get("commercial_name") or info.get("description") or sku,
@@ -1995,8 +1995,6 @@ def context_collector_node(state: AgentState) -> dict:
             "product_dimension": info.get("product_dimension"),
             "product_type": info.get("product_type"),
             "pricing_model": info.get("pricing_model"),
-
-            # 🔹 agora puxando do technical_specs corretamente
             "ports": tech.get("ports"),
             "port_speed": tech.get("port_speed"),
             "poe_type": tech.get("poe_type") or tech.get("poe"),
@@ -2024,14 +2022,18 @@ def context_collector_node(state: AgentState) -> dict:
 
     product_context = clean_for_json(product_context)
 
-    return prune_nones({
+    # 🔹 Aqui indicamos explicitamente o branch que deve receber a saída
+    return {
+        #"_branch": "nba_agent",
         "product_context": product_context,
         "base_product_sku": base_sku,
         "product_domain": state.get("product_domain"),
         "client_name": state.get("client_name"),
         "users_count": state.get("users_count"),
         "revision_request": state.get("revision_request"),
-    })
+    }
+
+
 
 
 
@@ -2217,8 +2219,10 @@ def llm_designer_node(state: AgentState) -> dict:
     revision_json = json.dumps(revision_dict, indent=2)
     #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
 
-    revision = state.get("revision_request")
-    if not revision:
+    #revision = state.get("revision_request")
+    revision = state.get("next_flow")
+    #if not revision:
+    if revision != "revision":
         #print("1111111111111111111111111111111111111111111111111111")
         # ---- Prompt (intentionally blank body; variables still wired) ----
         prompt_template = ChatPromptTemplate.from_template(
@@ -2234,19 +2238,27 @@ def llm_designer_node(state: AgentState) -> dict:
             ```
 
             TASK
-            - Design exactly 3 options labeled **"Essential (Good)"**, **"Standard (Better)"**, **"Complete (Best)"**.
+            Your main goal is to design **exactly 3 distinct options** labeled "Essential (Good)", "Standard (Better)", and "Complete (Best)".
+
+            For EACH of the 3 scenarios, you MUST follow these steps in order:
+            1.  **Select and Size Hardware:** First, select the primary hardware (switches, in this case). You MUST apply the `Sizing Calculation` rule to determine the correct quantity.
+            2.  **Add Required Licenses:** Second, after selecting the hardware, find the corresponding and compatible licenses from the context. You MUST apply the `License Matching` rule. Every piece of main hardware that requires a license must have one.
+            3.  **Add Necessary Accessories:** Third, add any relevant accessories like power supplies or mounting kits that are available in the context.
+            4.  **Justify Your Choices:** Briefly explain why you chose those components for that scenario.
+
             BUSINESS RULES
-            1) Catalogue-lock: Use ONLY SKUs found in AVAILABLE COMPONENTS.
-            2) No duplicates within a scenario; if you need more units, set "quantity" > 1 in a single line.
-            3) Relevance: Do not add major infrastructure (e.g., controllers/gateways/large switches) as “accessories” to a single AP quote. Focus on directly relevant items (licenses, mounting kits, antennas, power).
-            5) Progression: Keep a logical technical progression (Standard > Essential, Complete > Standard). “Complete” should be a modest step up from “Standard”, not an extreme jump.
-            7) Always adding relevant licenses and accessories (if present in AVAILABLE COMPONENTS and aligned with the main product). 
-                - Licenses (product_dimension="License") should appear in all scenario when the main product requires subscription.
-                - Accessories (product_dimension="Accessory") like mounts, antennas, or power supplies should be included in all scenarios.
-            8) If you are asked to make any changes to a specific sku, change only that, keep the rest of the PREVIOUS SCENARIOS exactly as they are.
-            9) If the user requests Wi-Fi, use wifi.hardware/licenses/accessories. If the user requests a switch, use switch.hardware/licenses/accessories.
-            6) You are a Cisco Solutions Architect, so you must create the scenarios with all the necessary components among those you have available.
-            7) Use a maximum of 10 components per scenario.
+            1)  **Sizing Calculation:** You MUST carefully read the `{user_query}` to identify the required number of users. The total number of ports from all combined switches MUST be equal to or greater than that number of users.
+
+            2)  **License and Accessory Matching:**
+                -   Licenses MUST perfectly match the hardware model. A license for a 24-port switch (`...-24-...`) CANNOT be used with a 48-port switch (`...-48-HW`).
+                -   Assume a standard **3-year or 5-year license term** for all quotes. AVOID 1-day licenses (`-1D`).
+
+            3)  **Logical Progression:** Create a meaningful difference between the 3 scenarios.
+                -   "Essential": Meets the minimum requirements with standard licenses.
+                -   "Standard": Could improve upon "Essential" by adding redundant power supplies for reliability or using longer-term licenses (e.g., 5-year instead of 3-year).
+                -   "Complete": Should be the best option. Use a more powerful switch model (if available in context), include the longest-term licenses, and all necessary accessories for a full deployment. **If you cannot create a meaningful upgrade for "Standard" or "Complete", create a variation of "Essential" but clearly state why.**
+
+            4)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
 
             OUTPUT FORMAT (STRICT)
             - Respond with JSON only (no prose, no markdown fences).
@@ -2257,7 +2269,7 @@ def llm_designer_node(state: AgentState) -> dict:
                 {{
                   "name": "Essential (Good)|Standard (Better)|Complete (Best)",
                   "justification": "reason",
-                  "components": [{{"sku": "<SKU>", "quantity": <int>}}]
+                  "components": [{{ "sku": "<SKU>", "quantity": <int> }}]
                 }}
               ]
             }}
@@ -2269,6 +2281,8 @@ def llm_designer_node(state: AgentState) -> dict:
                 """
                 )
     else:
+        #print("22222222222222222222222222222222222222222222222222222222222222")
+        #print(previous_designs_json)
         prompt_template = ChatPromptTemplate.from_template("""
             You are an expert Cisco Sales Engineer. Apply a targeted revision (delta) to existing scenarios.
 
@@ -2298,7 +2312,7 @@ def llm_designer_node(state: AgentState) -> dict:
                 {{
                   "name": "Essential (Good)|Standard (Better)|Complete (Best)",
                   "justification": "reason",
-                  "components": [{{"sku": "<SKU>", "quantity": <int>}}]
+                  "components": [{{ "sku": "<SKU>", "quantity": <int> }}]
                 }}
               ]
             }}
@@ -2381,140 +2395,169 @@ def llm_designer_node(state: AgentState) -> dict:
     return {"solution_designs": final_designs, "orchestrator_decision": dec}
 
 
+# FILE: your_graph.py
+
+# Your Pydantic class - remains unchanged
+class NBAOutput(BaseModel):
+    question_for_refinement: str
+    refinements: Optional[List[Dict[str, Any]]] = []
+
+# Your complete node, with minimal changes
 def nba_agent_node(state: AgentState) -> dict:
     """
-    Agent that generates intelligent questions to refine the quote.
-    Keeps the last question and answer in the state to avoid repetition.
+    Agent that generates intelligent questions to refine the quote
+    or provides a direct answer to a user question.
     """
-    print("\n🤖 [NBA Agent] Generating next refinement question…")
+    print("\n🤖 [NBA Agent] Deciding next best action…")
 
-    # Refinement history (question + answer)
-    refinements = state.get("refinements", [])
+    intent = state.get("next_flow")
+    
+    # The chain uses the original, unchanged NBAOutput class
+    chain = llm_nba.with_structured_output(NBAOutput)
 
-    # Already calculated scenarios and prices
-    designs = state.get("solution_designs", [])
-    pr = state.get("pricing_results", {})
+    if intent != "question":
+        # --- Path 1: User wants a quote refinement (This was your original logic) ---
+        print(f"   - Handling intent: '{intent}'. Generating refinement question.")
+        
+        # This entire block of input preparation is for the refinement prompt
+        refinements = state.get("refinements", [])
+        designs = state.get("solution_designs", [])
+        pr = state.get("pricing_results", {})
 
-    # Create a summary block of solutions
-    bullets = []
-    for d in designs:
-        name = d.summary.split(":")[0]
-        bucket = pr.get(name, []) or []
-        total = sum(float(p.get("subtotal", 0.0) or 0.0) for p in bucket)
-        cur = bucket[0].get("currency", "USD") if bucket else "USD"
-        bullets.append(f"- {name}: approx. {cur} ${total:,.0f}")
-    solutions_block = "\n".join(bullets)
+        bullets = []
+        for d in designs:
+            name = d.summary.split(":")[0]
+            bucket = pr.get(name, []) or []
+            total = sum(float(p.get("subtotal", 0.0) or 0.0) for p in bucket)
+            cur = bucket[0].get("currency", "USD") if bucket else "USD"
+            bullets.append(f"- {name}: approx. {cur} ${total:,.0f}")
+        solutions_block = "\n".join(bullets)
 
-    # Last question and answer
-    last_question = state.get("last_question")
-    last_answer = state.get("last_answer")
+        last_question = state.get("last_question")
+        last_answer = state.get("last_answer")
 
-    # Prepare input for the LLM
-    ai_input = {
-        "user_query": state["user_query"].splitlines()[0],
-        "solutions": solutions_block,
-        "refinements": refinements,
-        "last_question": last_question,
-        "last_answer": last_answer,
-        "product_context": state.get("product_context", []),
-        "product_metadata": [
-                    {**p, **(p.get("technical_specs") or {})}
-                    for p in state.get("product_context", [])
-                ],
-    }
+        ai_input = {
+            "user_query": state["user_query"].splitlines()[0],
+            "solutions": solutions_block,
+            "refinements": refinements,
+            "last_question": last_question,
+            "last_answer": last_answer,
+            "product_context": state.get("product_context", []),
+            "product_metadata": [
+                {**p, **(p.get("technical_specs") or {})}
+                for p in state.get("product_context", [])
+            ],
+        }
 
-    # LLM call to generate intelligent question
-    chain = nba_prompt | llm_nba.with_structured_output(
-            NBAOutput, method="function_calling"
-        )
-    ai_message = chain.invoke(ai_input)
-    print("\n[DEBUG] 🔎 Raw LLM response:")
-    #print(ai_message)
-    #print("--------------------------------------------------5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555")
+        # Use your refinement prompt (nba_prompt_r)
+        full_chain = nba_prompt_r | chain
+        ai_message = full_chain.invoke(ai_input)
+        
+        # This entire block for processing the output remains exactly the same
+        next_question = ai_message.question_for_refinement.strip()
 
+        state["last_question"] = next_question
+        state["last_answer"] = None
 
-    # New intelligent question
-    next_question = ai_message.question_for_refinement.strip()
+        refinements.append({
+            "question": next_question,
+            "answer": None
+        })
+        state["refinements"] = refinements
 
-    # Save in state
-    state["last_question"] = next_question
-    state["last_answer"] = None  # will be filled when user responds
+        print(f"✅ Generated refinement question: {next_question}")
+        return {"next_best_action": next_question}
 
-    # Also add to refinement history
-    refinements.append({
-        "question": next_question,
-        "answer": None
-    })
-    state["refinements"] = refinements
+    else:
+        # --- Path 2: User wants a direct answer --- ## MODIFIED LOGIC STARTS HERE
+        print(f"   - Handling intent: '{intent}'. Generating direct answer.")
+        
+        # For a direct question, the input is much simpler
+        ai_input = {
+            "user_query": state.get("user_query", ""),
+            "product_context": state.get("product_context", []),
+        }
 
-    print(f"✅ Generated question: {next_question}")
-    return {"next_best_action": next_question}
+        # Use the specific Q&A prompt we defined
+        full_chain = nba_prompt_qa | chain
+        ai_message = full_chain.invoke(ai_input)
 
+        # We extract the text from the field...
+        final_answer = ai_message.question_for_refinement.strip()
+        print(f"✅ Generated final answer: {final_answer}")
 
-
+        # ...and return it in the key for the synthesizer ('synth' node).
+        return {"final_response": final_answer}
 
 
 
 # -------------------- ROUTER --------------------
-def route_after_orch(state: AgentState) -> str:
+# A função route_after_orch não é mais necessária, pois a conexão é direta.
+
+def route_after_collector(state: AgentState) -> str:
     """
-    Decide o próximo passo logo após o Orchestrator.
-    - Se não houver decisão → vai direto para síntese (erro).
-    - Se houver decisão com design/pricing/etc → segue para o coletor de contexto.
+    Decide o próximo nó após o Context Collector baseado na intenção (next_flow)
+    definida pelo Orchestrator.
     """
-    dec = state.get("orchestrator_decision")
-
-    if not dec:
-        return "synth"
-
-    if (dec.needs_design or
-        dec.needs_comparison or
-        dec.needs_compatibility or
-        dec.needs_lifecycle or
-        dec.needs_pricing):
-        return "context_collector"
-
-    return "synth"
-
+    flow_type = state.get("next_flow")  # Espera-se 'question', 'quote' ou 'revision'
+    
+    print(f"--- Roteando após Collector. Intenção: '{flow_type}' ---") # Bom para debug
+    
+    if flow_type == "question":
+        return "nba_agent"  # Perguntas vão direto para o NBA Agent
+    elif flow_type in ["quote", "revision"]:
+        return "llm_designer"  # Cotações/Revisões seguem o fluxo completo
+    else:
+        # É uma boa prática ter um fallback caso o estado não seja o esperado
+        print(f"AVISO: Intenção desconhecida ('{flow_type}'). Roteando para fluxo padrão.")
+        return "llm_designer"
 
 # -------------------- GRAPH ---------------------
 workflow = StateGraph(AgentState)
 
 # 1. Definição dos nós
+print("Definindo nós do workflow...")
 workflow.add_node("orch", orchestrator_node)
 workflow.add_node("context_collector", context_collector_node)
 workflow.add_node("llm_designer", llm_designer_node)
-workflow.add_node("nba_agent", nba_agent_node)  # novo nó para perguntas inteligentes
 workflow.add_node("price", pricing_agent_node)
-#workflow.add_node("ea", ea_recommender_node)
+workflow.add_node("nba_agent", nba_agent_node)
 workflow.add_node("synth", synthesize_node)
 
 # 2. Ponto de entrada
 workflow.set_entry_point("orch")
 
-# 3. Roteamento condicional após o orquestrador
+# 3. Roteamento INCONDICIONAL do Orchestrator para o Context Collector
+# Esta é a correção principal: Usamos add_edge para uma conexão direta e obrigatória.
+workflow.add_edge("orch", "context_collector")
+
+# 4. Roteamento CONDICIONAL após o Context Collector
+# Aqui sim, o uso de add_conditional_edges está correto, pois o caminho bifurca.
 workflow.add_conditional_edges(
-    "orch",
-    route_after_orch,
+    "context_collector",
+    route_after_collector,
     {
-        "context_collector": "context_collector",
-        "synth": "synth"
+        "llm_designer": "llm_designer", # Se a função retornar "llm_designer", vai para este nó
+        "nba_agent": "nba_agent"       # Se a função retornar "nba_agent", vai para este nó
     }
 )
 
-# 4. Fluxo principal
-workflow.add_edge("context_collector", "llm_designer")
-
-# Do designer → preço → NBA (perguntas inteligentes) → EA → síntese
+# 5. Definição do fluxo principal (Quote / Revision)
+# Este é o caminho longo, que começa no designer.
 workflow.add_edge("llm_designer", "price")
-workflow.add_edge("price", "nba_agent")  # passa pelo NBA para perguntar
-workflow.add_edge("nba_agent", "synth")     # depois vai para o EA
-#workflow.add_edge("ea", "synth")
+workflow.add_edge("price", "nba_agent")
 
-# A síntese termina o fluxo
+# 6. Conexão para o nó final de síntese
+# Ambos os caminhos (o curto de 'question' e o longo de 'quote') convergem aqui.
+# O nba_agent sempre levará para a síntese.
+workflow.add_edge("nba_agent", "synth")
+
+# 7. Nó final do grafo
+# A síntese é o último passo antes de terminar o fluxo.
 workflow.add_edge("synth", END)
 
-# 5. Compilação
+# 8. Compilação do grafo
 app = workflow.compile()
-print("✅ LangGraph workflow with NBA agent integrated successfully.")
-
+print("\n✅ LangGraph workflow compilado com sucesso!")
+print("   - Rota 'question': orch -> context_collector -> nba_agent -> synth -> END")
+print("   - Rota 'quote'/'revision': orch -> context_collector -> llm_designer -> price -> nba_agent -> synth -> END")

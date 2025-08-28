@@ -57,6 +57,7 @@ class NBAOutput(BaseModel):
 
 
 class AgentState(TypedDict, total=False):
+    next_flow: Optional[str]
     # Input
     user_query: str
     orchestrator_decision: "AgentRoutingDecision"
