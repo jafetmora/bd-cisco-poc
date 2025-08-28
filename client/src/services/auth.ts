@@ -2,8 +2,6 @@ import type { JwtPayload, LoginResponse } from "../types/Auth";
 
 const API_BASE_URL = import.meta.env?.VITE_API_URL;
 
-console.log("DEBUG", API_BASE_URL);
-
 function base64UrlDecode(input: string): string {
   // handle base64url => base64
   const str = input.replace(/-/g, "+").replace(/_/g, "/");
