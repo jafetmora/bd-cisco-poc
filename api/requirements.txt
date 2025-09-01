@@ -6,3 +6,6 @@ pyjwt>=2.8
 passlib[bcrypt]>=1.7
 pydantic_settings
 httpx
+sqlalchemy==2.0.43
+asyncpg==0.30.0
+greenlet==3.2.4
