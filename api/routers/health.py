@@ -1,9 +1,11 @@
 from fastapi import APIRouter
+from api.core.db import ping_db
 
 
-router = APIRouter(tags=["health"])
+router = APIRouter(prefix="/healthz", tags=["health"])
 
 
-@router.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+@router.get("")
+async def healthz():
+    ok = await ping_db()
+    return {"status": "ok" if ok else "degraded", "db": ok}

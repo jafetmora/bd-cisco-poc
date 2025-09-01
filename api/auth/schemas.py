@@ -15,3 +15,13 @@ class TokenResponse(BaseModel):
 class MeResponse(BaseModel):
     username: str
     full_name: Optional[str] = None
+
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    full_name: Optional[str] = None
+    disabled: bool
+
+    class Config:
+        from_attributes = True
