@@ -1,3 +1,4 @@
+# services/ai_engine/main.py
 """
 Main entry point for running the Cisco Sales Assistant application.
 Demonstrates:
@@ -14,8 +15,28 @@ from ai_engine.app.core.memory import ChatMemory
 from ai_engine.app.schemas.models import AgentState
 from ai_engine.app.schemas.models import SolutionDesign, AgentRoutingDecision
 #from services.ai_engine.app.core.memory import memory
-
 import ai_engine.settings as s
+
+# A simple summarizer chain (you can define this with your other LLM chains)
+from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
+summarizer_prompt = ChatPromptTemplate.from_template(
+    """Condense the following chat history into a concise summary, retaining key facts, user preferences, and decisions.
+        Combine it with the previous summary if one exists.
+
+        Previous Summary:
+        {summary}
+
+        New Chat History:
+        {new_messages}
+
+        New Condensed Summary:"""
+    )
+
+# You'll need an LLM instance for this, can be a cheaper/faster one
+summarizer_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0) 
+summarizer_chain = summarizer_prompt | summarizer_llm
 
 
 def _rehydrate_state(st: dict) -> dict:
@@ -61,51 +82,138 @@ def _to_dict(obj):
 def prune_nones(d: dict) -> dict:
     return {k: v for k, v in (d or {}).items() if v is not None}
 
-def _format_chat_window(window_msgs: list[dict]) -> str:
-    lines = []
-    for m in window_msgs:
-        role = m.get("role", "user")
-        content = (m.get("content") or "").strip()
-        if not content:
-            continue
-        lines.append(f"{role.upper()}: {content}")
-    return "\n".join(lines)
+def _format_chat_window(messages: list[dict]) -> str:
+    """
+    Formats the conversation history into a clean, numbered, human-readable string
+    that is easy for an LLM to parse.
+    """
+    output_lines = []
+    interaction_number = 1
+    
+    for i, msg in enumerate(messages):
+        role = msg.get("role", "user").upper()
+        content = msg.get("content", "").strip()
+        
+        # A USER message marks the beginning of a new interaction turn
+        if role == 'USER':
+            # Add spacing between previous interactions
+            if output_lines:
+                output_lines.append("\n" + "="*30 + "\n")
+            
+            # Add the header for the new interaction
+            output_lines.append(f"--- Interaction #{interaction_number} ---")
+            interaction_number += 1
+        
+        # Add the message itself
+        output_lines.append(f"{role}: {content}")
+        
+    return "\n".join(output_lines)
 
 # ---- principal ----
-def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
-    memory = ChatMemory(redis_url=s.REDIS_URL, session_id=session_id)
+# This is an example of the modified main function in your main.py
 
-    # 1) loga a fala do usuário primeiro (entra na janela)
+# FILE: your_main_script.py
+# Make sure these imports are at the top of your file
+import datetime
+from typing import Dict, Any # Assuming you have these for type hints
+
+# ... (your other functions like _rehydrate_state, _to_dict, prune_nones)
+
+def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
+    """
+    Handles the entire process of memory management and graph invocation for a single turn.
+    """
+    memory = ChatMemory(redis_url=s.REDIS_URL, session_id=session_id)
+    DEFAULT_WINDOW_TURNS = 15
+    
+    # 1. Log the new user message to the conversation history
     memory.add_user(user_query)
 
-    # 2) rehidrata o estado salvo + janela/sumário
+    # 2. Load and prepare the state for this turn
     persisted = _rehydrate_state(memory.get_state() or {})
-    window = memory.get_window(k=8)
+    last_updated = persisted.get("last_updated", "N/A (first run)")
+    print(f"\n🔄 [Memory] Loaded state from: {last_updated}")
+    
+    all_messages = memory.get_messages()
     summary = memory.get_summary()
 
+    # 3. Active Summarization Logic
+    if len(all_messages) > 8 and len(all_messages) % 8 == 0:
+        print("\n🔄 [Memory] Summarizing conversation history...")
+        messages_to_summarize = all_messages[-DEFAULT_WINDOW_TURNS:]
+        
+        new_summary_content = summarizer_chain.invoke({
+            "summary": summary,
+            "new_messages": _format_chat_window(messages_to_summarize)
+        }).content
+        
+        memory.set_summary(new_summary_content)
+        summary = new_summary_content
+        print("   - Summary updated.")
+
+    # 4. Prepare the initial state object for the graph run
+    window = all_messages[-DEFAULT_WINDOW_TURNS:]
     persisted.update({
         "user_query": user_query,
         "conversation_window": _format_chat_window(window),
         "conversation_summary": summary or "",
     })
 
-    # defaults seguros (não sobrescreve se já existir)
-    persisted.setdefault("sku_map", {})
-    persisted.setdefault("product_domain", None)
-    persisted.setdefault("client_name", None)
-    persisted.setdefault("users_count", None)
+    # 5. Run the graph with robust error handling
+    try:
+        print("\n🚀 [Graph] Invoking the agent graph...")
+        final_state_obj = app.invoke(AgentState(**persisted))
+        print("   - Graph execution finished successfully.")
+    except Exception as e:
+        print(f"\n❌ [Graph ERROR] The graph execution failed: {e}")
+        final_state_obj = persisted 
+        final_state_obj['final_response'] = "I'm sorry, I encountered an error and couldn't process your request."
 
-    # 3) roda o grafo
-    final_state_obj = app.invoke(AgentState(**persisted))
-
-    # 4) normaliza p/ dict e mescla com o persisted
+    # 6. Process the final state to prepare for saving
     out = _to_dict(final_state_obj)
     merged_state = {**persisted, **prune_nones(out)}
-
-    # 5) responde e persiste
     final_msg = merged_state.get("final_response") or "No response generated."
-    memory.set_state(merged_state)
-    memory.add_ai(final_msg)
+
+    # 7. Create and persist the LEAN state
+    keys_to_persist = [
+        "solution_designs", "previous_solution_designs", "pricing_results", "refinements",
+        "last_question", "last_answer", "client_name", "users_count",
+        "product_domain",
+    ]
+    lean_state_to_persist = {key: merged_state.get(key) for key in keys_to_persist}
+
+    timestamp = datetime.datetime.now().isoformat()
+    lean_state_to_persist["last_updated"] = timestamp
+
+    # 8. Save the state and the AI's message to Redis
+    print(f"\n💾 [Memory] Persisting lean state to Redis at {timestamp}...")
+    memory.set_state(lean_state_to_persist)
+    
+    # --- ADJUSTMENT IS HERE ---
+    # Get the intent for the current turn to decide what to save in the chat history
+    intent = merged_state.get("next_flow")
+
+    # If the response is a quote, save a placeholder message to the history.
+    # Otherwise, save the actual text response.
+    if intent in ["quote", "revision"]:
+        ai_message_for_history = "[Assistant generated a new/updated quote. The details are saved in the current state.]"
+    else: # For 'question' intent
+        ai_message_for_history = final_msg
+    
+    # Save the clean, potentially summarized message to the conversation list
+    memory.add_ai(ai_message_for_history)
+    # --- END OF ADJUSTMENT ---
+
+    # (Optional) You can use the debug print function we created here if you like
+    # print_redis_state(memory.r, session_id)
+
+            # --- DEBUG PRINT 2: WHAT WAS JUST SAVED TO REDIS ---
+    #print("\n" + "="*20 + " DEBUG: LEAN STATE SAVED TO REDIS " + "="*20)
+    #print( _format_chat_window(window), summary, merged_state.get("solution_designs"), 'teste para verificar o que o agente esta recebendo 999999999999999999999')
+
+    
+    #print(json.dumps(lean_state_to_persist, indent=2, ensure_ascii=False))
+    #print("="*70)
 
     return final_msg
 
