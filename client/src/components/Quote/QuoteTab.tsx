@@ -10,7 +10,10 @@ interface QuoteTabProps {
   title: string;
 }
 
-export default function QuoteTab({ scenarios: propScenarios, title }: QuoteTabProps) {
+export default function QuoteTab({
+  scenarios: propScenarios,
+  title,
+}: QuoteTabProps) {
   const { applyQuoteUpdate, quoteSession } = useQuote();
   const scenarios = quoteSession?.scenarios ?? propScenarios;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -20,9 +23,13 @@ export default function QuoteTab({ scenarios: propScenarios, title }: QuoteTabPr
     if (!quoteSession) return;
     // Update the quote for the correct scenario
     const updatedScenarios = quoteSession.scenarios.map((scenario, i) =>
-      i === idx ? { ...scenario, quote: updatedQuote } : scenario
+      i === idx ? { ...scenario, quote: updatedQuote } : scenario,
     );
-    applyQuoteUpdate({ ...quoteSession, scenarios: updatedScenarios, unsavedChanges: true });
+    applyQuoteUpdate({
+      ...quoteSession,
+      scenarios: updatedScenarios,
+      unsavedChanges: true,
+    });
   }
 
   return (

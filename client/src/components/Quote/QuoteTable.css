@@ -6,7 +6,7 @@
 }
 
 /* Hide arrows for number input (Firefox) */
-.hide-arrows[type='number'] {
+.hide-arrows[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
   width: 2.6em;
@@ -25,4 +25,3 @@ thead th {
   border-bottom: 2px solid #b0b6be !important;
   background: #fff;
 }
-

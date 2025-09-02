@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ItemSearchHeader from "./ItemSearchHeader";
 import QuoteHeaderBar from "./QuoteHeaderBar";
 import StepHeader from "./StepHeader";
 import TabSection from "./TabSection";
 import QuotationTable from "./QuoteTable";
 import type { DisplayMode } from "../../store/DisplayModeContext";
-import type { Quote as QuoteType, QuotePricingSummary } from "../../types/Quotes";
+import type {
+  Quote as QuoteType,
+  QuotePricingSummary,
+} from "../../types/Quotes";
+import type { Product } from "../../types/Product";
+import type { QuoteLineItem } from "../../types/Quotes";
 
 interface QuoteProps {
   quote?: QuoteType | null;
@@ -16,12 +22,6 @@ interface QuoteProps {
   mode?: DisplayMode;
   onUpdateQuote?: (quote: QuoteType) => void;
 }
-
-import type { Product } from "../../types/Product";
-import type { QuoteLineItem } from "../../types/Quotes";
-import { v4 as uuidv4 } from "uuid";
-import { useEffect } from "react";
-
 export default function Quote({
   quote,
   scenarioLabel,
@@ -40,9 +40,13 @@ export default function Quote({
   }, [quote]);
 
   function recalculateSummary(items: QuoteLineItem[]): QuotePricingSummary {
-    const subtotal = items.reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+    const subtotal = items.reduce(
+      (acc, it) => acc + it.unitPrice * it.quantity,
+      0,
+    );
     return {
-      currency: (items[0]?.currency ?? "USD") as import("../../types/Quotes").CurrencyCode,
+      currency: (items[0]?.currency ??
+        "USD") as import("../../types/Quotes").CurrencyCode,
       subtotal,
       total: subtotal,
     };
@@ -51,22 +55,23 @@ export default function Quote({
   function addProductToQuote(product: Product) {
     if (!quote || !onUpdateQuote) return;
     const prev = quote.items ?? [];
-    const existingIdx = prev.findIndex((item) => item.productCode === product.sku);
+    const productCode = product.sku ?? `ID-${product.id}`;
+    const existingIdx = prev.findIndex(
+      (item) => item.productCode === productCode,
+    );
     let updatedItems;
     if (existingIdx !== -1) {
       // Increment quantity if SKU exists
       updatedItems = prev.map((item, idx) =>
-        idx === existingIdx
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        idx === existingIdx ? { ...item, quantity: item.quantity + 1 } : item,
       );
     } else {
       // Add new item
       const newItem: QuoteLineItem = {
         id: uuidv4(),
-        category: product.family,
-        productCode: product.sku,
-        product: product.description,
+        category: product.category ?? "Unknown",
+        productCode: productCode,
+        product: product.description ?? product.name ?? "",
         leadTime: { kind: "na" },
         unitPrice: product.price,
         quantity: 1,
@@ -115,7 +120,7 @@ export default function Quote({
                 items={items}
                 summary={quote?.summary}
                 onDelete={deleteProductsFromQuote}
-                onUpdate={updateProductsFromQuote} 
+                onUpdate={updateProductsFromQuote}
               />
             </>
           )}
@@ -167,7 +172,12 @@ export default function Quote({
       {activeTab === "Items" && (
         <>
           <ItemSearchHeader onProductSelect={addProductToQuote} />
-          <QuotationTable items={items} summary={q.summary} onDelete={deleteProductsFromQuote} onUpdate={updateProductsFromQuote} />
+          <QuotationTable
+            items={items}
+            summary={q.summary}
+            onDelete={deleteProductsFromQuote}
+            onUpdate={updateProductsFromQuote}
+          />
         </>
       )}
     </main>

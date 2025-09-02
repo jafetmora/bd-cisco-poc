@@ -1,5 +1,8 @@
-import axios from "axios";
-
+import axios, {
+  type AxiosResponse,
+  type AxiosError,
+  type InternalAxiosRequestConfig,
+} from "axios";
 import type { QuoteSession } from "../types/Quotes";
 import type { Product } from "../types/Product";
 
@@ -26,7 +29,7 @@ export function setUnauthorizedHandler(handler: () => void) {
   onUnauthorized = handler;
 }
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (AUTH_TOKEN) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${AUTH_TOKEN}`;
@@ -35,15 +38,14 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (resp) => resp,
-  (error) => {
+  (resp: AxiosResponse) => resp,
+  (error: AxiosError) => {
     if (error?.response?.status === 401 && onUnauthorized) {
       onUnauthorized();
     }
     return Promise.reject(error);
   },
 );
-
 
 export async function getQuote(sessionId?: string): Promise<QuoteSession> {
   const response = await api.get("/quote", {
@@ -54,14 +56,23 @@ export async function getQuote(sessionId?: string): Promise<QuoteSession> {
   return response.data;
 }
 
-export async function updateQuote(session: QuoteSession): Promise<QuoteSession> {
+export async function updateQuote(
+  session: QuoteSession,
+): Promise<QuoteSession> {
   const response = await api.post("/quote", session);
   return response.data;
 }
 
 export async function getProducts(q: string): Promise<Product[]> {
-  const response = await api.get("/products", {
-    params: { q },
-  });
-  return response.data;
+  try {
+    const response = await api.get<Product[]>("/products", { params: { q } });
+    return response.data;
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      if (err.response?.status === 404) {
+        return [];
+      }
+    }
+    throw err;
+  }
 }

@@ -10,7 +10,12 @@ type Props = {
   onUpdate: (updatedItems: QuoteLineItem[]) => void;
 };
 
-export default function QuotationTable({ items, summary, onDelete, onUpdate }: Props) {
+export default function QuotationTable({
+  items,
+  summary,
+  onDelete,
+  onUpdate,
+}: Props) {
   const [editingQtyId, setEditingQtyId] = useState<string | null>(null);
   const [editingQtyValue, setEditingQtyValue] = useState<string>("");
 
@@ -18,7 +23,7 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
     const newQty = parseInt(editingQtyValue, 10);
     if (!isNaN(newQty) && newQty > 0 && newQty !== item.quantity) {
       const updatedItems = items.map((it) =>
-        it.id === item.id ? { ...it, quantity: newQty } : it
+        it.id === item.id ? { ...it, quantity: newQty } : it,
       );
       onUpdate(updatedItems);
     }
@@ -106,15 +111,20 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
     const q = search.trim().toLowerCase();
     if (!q) return items;
     return items.filter((i) =>
-      `${i.product} ${i.productCode ?? ""}`.toLowerCase().includes(q)
+      `${i.product} ${i.productCode ?? ""}`.toLowerCase().includes(q),
     );
   }, [items, search]);
 
   const currency = summary?.currency ?? items[0]?.currency ?? "USD";
-  const computedTotal = filteredItems.reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+  const computedTotal = filteredItems.reduce(
+    (acc, it) => acc + it.unitPrice * it.quantity,
+    0,
+  );
 
   // Checkbox logic
-  const allSelected = filteredItems.length > 0 && filteredItems.every((it) => selectedIds.has(it.id));
+  const allSelected =
+    filteredItems.length > 0 &&
+    filteredItems.every((it) => selectedIds.has(it.id));
   const toggleSelectAll = () => {
     if (allSelected) {
       setSelectedIds(new Set());
@@ -130,7 +140,6 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
       return next;
     });
   };
-
 
   const displayLead = (lt: QuoteLineItem["leadTime"]) =>
     lt.kind === "instant"
@@ -196,9 +205,13 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
           <thead className="text-gray-500 bg-white">
             <tr>
               <th className="px-2 py-2 font-medium w-8"></th>
-              <th className="px-4 py-2 font-medium">Hardware, Software and Service</th>
+              <th className="px-4 py-2 font-medium">
+                Hardware, Software and Service
+              </th>
               <th className="px-4 py-2 font-medium">Estimated Lead Time</th>
-              <th className="px-4 py-2 font-medium">Unit List Price ({currency})</th>
+              <th className="px-4 py-2 font-medium">
+                Unit List Price ({currency})
+              </th>
               <th className="px-4 py-2 font-medium">Quantity</th>
               <th className="px-4 py-2 font-medium">Extended List Price</th>
             </tr>
@@ -229,9 +242,7 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
                       </span>
                     ) : null}
                   </td>
-                  <td className="px-4 py-2">
-                    {displayLead(it.leadTime)}
-                  </td>
+                  <td className="px-4 py-2">{displayLead(it.leadTime)}</td>
                   <td className={`px-4 py-2 ${cell.price ? "flash-once" : ""}`}>
                     {it.unitPrice.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
@@ -243,7 +254,7 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
                       setEditingQtyId(it.id);
                       setEditingQtyValue(String(it.quantity));
                     }}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                   >
                     {editingQtyId === it.id ? (
                       <input
@@ -252,11 +263,11 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
                         className="w-16 px-2 py-1 border rounded focus:outline-none hide-arrows"
                         value={editingQtyValue}
                         autoFocus
-                        onChange={e => setEditingQtyValue(e.target.value)}
+                        onChange={(e) => setEditingQtyValue(e.target.value)}
                         onBlur={() => handleQtyEditCommit(it)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') handleQtyEditCommit(it);
-                          if (e.key === 'Escape') cancelQtyEdit();
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleQtyEditCommit(it);
+                          if (e.key === "Escape") cancelQtyEdit();
                         }}
                       />
                     ) : (
@@ -264,10 +275,9 @@ export default function QuotationTable({ items, summary, onDelete, onUpdate }: P
                     )}
                   </td>
                   <td className="px-4 py-2">
-                    {(it.unitPrice * it.quantity).toLocaleString(
-                      undefined,
-                      { minimumFractionDigits: 2 },
-                    )}
+                    {(it.unitPrice * it.quantity).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
                   </td>
                 </tr>
               );

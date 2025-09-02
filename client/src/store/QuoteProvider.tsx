@@ -53,19 +53,26 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const saveQuoteSession = useCallback(async (session: QuoteSession): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const savedSession = await updateQuote(session);
-      setQuoteSession({ ...savedSession, thinking: false, unsavedChanges: false });
-    } catch (e: unknown) {
-      setError(getErrorMessage(e) ?? "Failed to save quote session");
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const saveQuoteSession = useCallback(
+    async (session: QuoteSession): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const savedSession = await updateQuote(session);
+        setQuoteSession({
+          ...savedSession,
+          thinking: false,
+          unsavedChanges: false,
+        });
+      } catch (e: unknown) {
+        setError(getErrorMessage(e) ?? "Failed to save quote session");
+        throw e;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   const loadInitialQuoteSession = useCallback(async () => {
     setLoading(true);

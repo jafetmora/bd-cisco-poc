@@ -1,7 +1,10 @@
 export interface Product {
-  sku: string;
-  family: string;
-  dimension: string;
-  description: string;
+  id: number;
+  name?: string | null;
+  sku?: string | null;
+  product_type?: string | null; // corresponds to DB column "type"
+  category?: string | null;
   price: number;
+  description?: string | null;
+  partner_discount?: number | null;
 }
