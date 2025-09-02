@@ -30,7 +30,7 @@ services:
       - ./api:/app/api
     environment:
       AGENT_BASE_URL: "http://agent:8002/turns"
-      CORS_ORIGINS: '["http://localhost:5173"]'
+      CORS_ORIGINS: '["*"]'
       APP_ENV: "dev"
       REDIS_URL: "redis://redis:6379/0"
       REDIS_MAX_CONNECTIONS: "50"
@@ -39,6 +39,7 @@ services:
       REDIS_HEALTHCHECK_SECS: "30"
       REDIS_CLUSTER_MODE: "false"
       DEBUG_REDIS_ENDPOINTS: "true"
+      DATABASE_URL: ""
     depends_on:
       redis:
         condition: service_healthy
