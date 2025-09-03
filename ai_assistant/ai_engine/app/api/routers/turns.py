@@ -1,10 +1,11 @@
 from __future__ import annotations
-from fastapi import APIRouter, Depends
-from typing import Any, Dict, List
+from fastapi import APIRouter, Depends, Header
+from typing import Any, Dict, List, Optional
 from ai_engine.app.domain.models import TurnIn, TurnOut
 from ai_engine.app.domain.services import QuoteService
 from ai_engine.app.adapters.graph_client import GraphPort
 from ai_engine.app.api.deps import get_graph_client
+from ai_engine.app.api.compat import ai_invoke
 
 
 router = APIRouter(prefix="/turns", tags=["turns"])
@@ -19,9 +20,11 @@ _service = QuoteService()
 async def create_turn(
     body: TurnIn,
     graph: GraphPort = Depends(get_graph_client),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> TurnOut:
+    session_id = x_session_id or "api-session"
     # Call the graph
-    final_state: Dict[str, Any] = graph.invoke({"user_query": body.message})
+    final_state: Dict[str, Any] = await ai_invoke(body.message, session_id=session_id)
 
     # Missing info path
     if _service.looks_like_missing(final_state):

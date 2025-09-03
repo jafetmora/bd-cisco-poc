@@ -7,7 +7,6 @@ Demonstrates:
 """
 from sys import argv
 
-# App
 from ai_engine.app.core.graph import app
 from ai_engine.app.gateway import analyze
 from ai_engine.app.schemas.models import AgentState
@@ -15,24 +14,24 @@ from ai_engine.app.core.memory import ChatMemory
 from ai_engine.app.schemas.models import AgentState
 from ai_engine.app.schemas.models import SolutionDesign, AgentRoutingDecision
 #from services.ai_engine.app.core.memory import memory
-import ai_engine.settings as s
 
 # A simple summarizer chain (you can define this with your other LLM chains)
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+import ai_engine.settings as s
 
 summarizer_prompt = ChatPromptTemplate.from_template(
     """Condense the following chat history into a concise summary, retaining key facts, user preferences, and decisions.
-        Combine it with the previous summary if one exists.
+Combine it with the previous summary if one exists.
 
-        Previous Summary:
-        {summary}
+Previous Summary:
+{summary}
 
-        New Chat History:
-        {new_messages}
+New Chat History:
+{new_messages}
 
-        New Condensed Summary:"""
-    )
+New Condensed Summary:"""
+)
 
 # You'll need an LLM instance for this, can be a cheaper/faster one
 summarizer_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0) 
@@ -158,6 +157,12 @@ def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
         "conversation_window": _format_chat_window(window),
         "conversation_summary": summary or "",
     })
+    new_users_count = persisted.get("users_count")  # o valor que veio da nova interação
+    old_users_count = memory.get_state().get("users_count")  # pega o que está salvo no Redis
+    if new_users_count is None or new_users_count == old_users_count:
+    	persisted["users_count"] = old_users_count  # mantém o valor antigo
+    else:
+    	persisted["users_count"] = new_users_count
 
     # 5. Run the graph with robust error handling
     try:

@@ -6,8 +6,8 @@ services:
       - cisco-agent-network
     build:
       context: ./ai_assistant
-      dockerfile: Dockerfile   # tu Dockerfile se llama "dockerfile"
-      target: dev              # usa "prod" para prod
+      dockerfile: Dockerfile
+      target: dev
     container_name: cisco-agent-ai
     ports:
       - "8002:8002"
