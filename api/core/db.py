@@ -32,7 +32,7 @@ def _build_ssl_context() -> ssl.SSLContext:
     if not bundle_path.exists():
         raise RuntimeError(f"RDS CA bundle not found at: {bundle_path}")
     ctx = ssl.create_default_context(cafile=str(bundle_path))
-    ctx.check_hostname = True
+    ctx.check_hostname = True  # explícito
     return ctx
 
 
@@ -44,13 +44,11 @@ def get_engine() -> AsyncEngine:
 
         ssl_ctx = _build_ssl_context()
 
-        print("SETTING UP THE DB URL", settings.DATABASE_URL)
-
         _engine = create_async_engine(
             settings.DATABASE_URL,
             connect_args={
-                "ssl": ssl_ctx,
-                "timeout": 5.0,
+                "ssl": ssl_ctx,  # <- usa SSLContext (no sslmode en URL con asyncpg)
+                "timeout": 5.0,  # timeout de conexión asyncpg
             },
             pool_size=5,
             max_overflow=5,

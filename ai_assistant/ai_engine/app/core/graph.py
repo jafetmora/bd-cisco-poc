@@ -2801,4 +2801,3 @@ app = workflow.compile()
 print("\n✅ LangGraph workflow compilado com sucesso!")
 print("   - Rota 'question': orch -> context_collector -> nba_agent -> synth -> END")
 print("   - Rota 'quote'/'revision': orch -> context_collector -> llm_designer -> price -> nba_agent -> synth -> END")
-

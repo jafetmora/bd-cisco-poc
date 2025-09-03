@@ -7,12 +7,15 @@ on:
       - 'client/**'
       - '.github/workflows/deploy-client.yml'
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: us-east-2
   S3_BUCKET: bd-cisco-poc-client-ohio-7438c2
-  # Pasa la URL de tu API App Runner:
-  VITE_API_URL: https://tnru88f9bk.us-east-2.awsapprunner.com
-  VITE_WS_URL: wss://tnru88f9bk.us-east-2.awsapprunner.com/ws
+  VITE_API_URL: https://d2xwx7ojpy08cy.cloudfront.net
+  VITE_WS_URL: wss://d2xwx7ojpy08cy.cloudfront.net/ws
 
 jobs:
   build-and-upload:
