@@ -8,6 +8,7 @@ from typing import List, Dict, Optional, Tuple, Any
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
+from langchain_core.output_parsers import StrOutputParser
 #from langgraph.utils.runnable import Send
 
 import hashlib
@@ -205,6 +206,9 @@ design_prompt = ChatPromptTemplate.from_template(
     """You are a Cisco Solution Architect. Design a complete solution that satisfies the user requirements
 while adhering to the SCENARIO CONSTRAINTS below. Select products ONLY from the context.
 
+USER QUERY:
+{user_query}
+
 USER REQUIREMENTS:
 {requirements}
 
@@ -242,56 +246,7 @@ design_agent = design_prompt | llm_creative.with_structured_output(
 
 from langchain.prompts import ChatPromptTemplate
 
-nba_prompt_r = ChatPromptTemplate.from_template(
-    """You are an intelligent sales assistant for Cisco. 
-Your goal is to help refine the user's requirements for a better quote. 
-You have access to:
-- A short summary of the solutions and prices already proposed.
-- The original user question.
-- Metadata of the products under consideration (from product_context, e.g., product type, ports, PoE, throughput, latency, etc.).
-- Any previous refinements provided by the user.
 
-Based on the above, generate ONE actionable, **intelligent question** that:
-- Helps clarify the user's technical priorities or constraints.
-- References product features if relevant.
-- Is specific to the solutions already proposed.
-- Is concise (max 25 words).
-
-- Never give answers like "What is the required coverage area and expected bandwidth per user for the Wi-Fi solution?"
-
-Do not suggest products, only ask a question that guides the user to provide details for a better quote.
-
-User question:
-{user_query}
-
-Solutions & Prices:
-{solutions}
-
-Product Metadata:
-{product_metadata}
-
-Previous Refinements:
-{refinements}
-
-Respond **with a JSON object compatible with the SolutionDesign schema**, including the field:
-- question_for_refinement: the next intelligent question to ask the user."""
-)
-
-nba_prompt_qa = ChatPromptTemplate.from_template(
-    """You are an intelligent sales assistant for Cisco.
-Your goal is to ANSWER the user's question directly and concisely, based on the provided context.
-
-User question:
-{user_query}
-
-Available Products Context:
-{product_context}
-
-**VERY IMPORTANT:** You must format your output as a JSON object that fits the provided tool schema.
-Your final, direct answer to the user's question **MUST be placed inside the 'question_for_refinement' field.**
-
-Do not generate a new question. Generate the final answer and place it in the specified field."""
-)
 
 
 # -------------------- HELPERS -------------------
@@ -1453,30 +1408,47 @@ def parse_revision_intent(q: str) -> RevisionRequest | None:
     return None
 
 
-def orchestrator_node(state) -> dict:
+# The final, best-practice version of your orchestrator_node
+
+def orchestrator_node(state: AgentState) -> dict:
     """
-    Orchestrator minimalista: classifica a intenção do usuário e a adiciona
-    diretamente ao estado para o roteador.
+    Orchestrator that classifies intent and extracts key entities,
+    then safely updates the state.
     """
     import json
 
     q = state.get("user_query", "") or ""
-    print(f"\n🎻 [Orchestrator] Classifying intent for query: «{q}»")
+    print(f"\n🎻 [Orchestrator] Analyzing query for intent and entities: «{q}»")
 
+    # The advanced prompt that asks for multiple fields
     llm_prompt = f"""
-You are a technical sales assistant. 
-Classify the user's intent into one of three types:
-  - "quote" → user wants a new quote or solution scenario
-  - "revision" → user wants to modify or replace a previous quote
-  - "question" → user wants information or clarification only
+You are an expert data analyst and search query optimizer. Your task is to carefully read the user's query and extract key information into a structured JSON format.
 
-Respond only with JSON, e.g.:
-{{"intent": "quote" | "revision" | "question"}}
+Analyze the user query below and extract the following attributes:
+- intent: Classify as 'quote', 'revision', or 'question'.
+- client_name: The name of the company, if mentioned.
+- users_count: The number of users to support, as an integer.
+- product_domain: The general product category (e.g., 'Wi-Fi', 'switch').
+- sku_map: A JSON object where keys are SKUs (part numbers) and values are quantities.
+- search_query: **Generate a concise, keyword-rich search query** suitable for a product catalog search engine. This query should summarize the core technical and commercial requirements from the user's message.
+
+If a piece of information is not present, use a null value. Respond only with a single, valid JSON object.
+
+Example for a query "quote 5 units of C9179F-01 for Acmedes Corp with 50 users, budget is important":
+{{
+    "intent": "quote",
+    "client_name": "Acmedes Corp",
+    "users_count": 50,
+    "product_domain": "Wi-Fi",
+    "sku_map": {{ "C9179F-01": 5 }},
+    "search_query": "Cisco Wi-Fi C9179F-01 50 users budget"
+}}
 
 USER QUERY:
 {q}
 """
 
+    # --- Step 1: Do the work of the node (LLM call and parsing) ---
     try:
         llm_response = llm.invoke(llm_prompt)
         if hasattr(llm_response, "content"):
@@ -1485,36 +1457,53 @@ USER QUERY:
             llm_text = str(llm_response)
         
         llm_data = json.loads(llm_text)
+        
         intent = llm_data.get("intent", "question")
+        client_name = llm_data.get("client_name")
+        users_count = llm_data.get("users_count")
+        product_domain = llm_data.get("product_domain")
+        sku_map = llm_data.get("sku_map")
+        search_query = llm_data.get("search_query")
+        
+        print(f"🎯 Detected Intent: {intent}")
+        print(f"   - Extracted Client: {client_name}")
+        print(f"   - Extracted Users: {users_count}")
+        print(f"   - Extracted Domain: {product_domain}")
+        print(f"   - Extracted SKUs: {sku_map}")
+        print(f"   - Generated Search Query: «{search_query}»")
+
+        decision = {
+            "needs_design": intent in ["quote", "revision"],
+            "needs_pricing": intent in ["quote", "revision"],
+            "needs_technical": intent == "question"
+        }
+
+        #designs = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+        #print("1010101010010101010100101010101010010101010101001 - orchestrator_node", designs)
+
+        # Create the dictionary with ONLY the new information
+        update_data = {
+            "next_flow": intent,
+            "orchestrator_decision": decision,
+            "client_name": client_name,
+            "users_count": users_count,
+            "product_domain": product_domain,
+            "sku_map": sku_map,
+            "search_query": search_query,
+            "requirements_ok": True,
+            "revision_request": state.get("revision_request") if intent == "revision" else None,
+        }
+
     except Exception as e:
-        print(f"  - LLM failed: {e}")
-        intent = "question"
+        print(f"  - LLM failed during extraction: {e}")
+        # Fallback to a safe state in case of an error
+        update_data = {"next_flow": "question"}
 
-    print(f"🎯 Detected intent: {intent}")
-
-    decision = {
-        "needs_design": intent in ["quote", "revision"],
-        "needs_pricing": intent in ["quote", "revision"],
-        "needs_technical": intent == "question"
-    }
-
-    # Retornar estado atualizado
-    return prune_nones({
-        # ✅ A CORREÇÃO ESTÁ AQUI: Adicionar a intenção para o roteador usar
-        "next_flow": intent,
-        "requirements_ok": True,
-        "final_response": None,
-        "orchestrator_decision": decision,
-        "product_domain": state.get("product_domain"),
-        "client_name": state.get("client_name"),
-        "users_count": state.get("users_count"),
-        "sku_map": state.get("sku_map"),
-        "revision_request": state.get("revision_request") if intent == "revision" else None,
-    })
-
-
-
-
+    # --- Step 2: Update the incoming state with the new data ---
+    state.update(prune_nones(update_data))
+    
+    # --- Step 3: Return the complete, updated state ---
+    return state
 
 
 
@@ -1762,14 +1751,26 @@ def pricing_agent_node(state: AgentState) -> Dict:
     state["cart_lines"] = cart_lines
     state["ea"] = ea_rollup
 
-    return prune_nones({
+    update_data = {
         "pricing_results": pricing_results,
-        "ea": ea_rollup,
         "cart_lines": cart_lines,
-        "client_name": state.get("client_name"),
-        "users_count": state.get("users_count"),
-        "product_domain": state.get("product_domain"),
-    })
+        "ea": ea_rollup,
+    }
+    
+    # Update the state, preserving everything else
+    state.update(prune_nones(update_data))
+    
+    # Return the complete, updated state
+    return state
+
+    #return prune_nones({
+    #    "pricing_results": pricing_results,
+    #    "ea": ea_rollup,
+    #    "cart_lines": cart_lines,
+    ##    "client_name": state.get("client_name"),
+     #   "users_count": state.get("users_count"),
+    #    "product_domain": state.get("product_domain"),
+    #})
 
 
 
@@ -1873,54 +1874,95 @@ def build_markdown_from(
 
 
 # This is the corrected and simplified version of your node.
+# The final, best-practice version of your synthesize_node
+
 def synthesize_node(state: AgentState) -> dict:
     print("\n🎯 [Synthesizer] Building final message…")
 
-    # Get the intent for the CURRENT turn from the state.
+    # Get the intent to decide which message to build
     intent = state.get("next_flow")
+    
+    final_message_content = "" # Initialize an empty string for the response
 
-    # --- Path 1: If the intent was a simple question ---
+    # --- Step 1: Decide the content of the final message based on the intent ---
     if intent == "question":
-        # Get the answer that nba_agent_node prepared.
-        final_answer = state.get("final_response", "Sorry, I could not generate an answer.")
-        print(f"   - Intent is 'question'. Displaying direct answer.")
-        
-        # We only return the final_response. The old quote data in the state is ignored.
-        return {"final_response": final_answer}
-
-    # --- Path 2: If the intent was a quote or revision ---
-    else:
+        print("   - Intent is 'question'. Using direct answer from NBA agent.")
+        # For a simple question, the final message is just the answer.
+        final_message_content = state.get("final_response", "Sorry, I could not generate an answer.")
+    
+    """ else: # This block handles 'quote' or 'revision'
         print(f"   - Intent is '{intent}'. Building full quote markdown.")
-        designs = state.get("solution_designs") or []
-        pr = state.get("pricing_results") or {}
-        ea = state.get("ea") or {}
+        designs = state.get("solution_designs", [])
+        pr = state.get("pricing_results", {})
+        ea = state.get("ea", {})
         
-        # This part of your code for building the message was correct.
         try:
-            final_message = build_markdown_from(designs, pr, ea, state)
+            # Build the detailed markdown string from the quote data
+            markdown_quote = build_markdown_from(designs, pr, ea, state)
             
-            # Add the last refinement question, if the nba_agent generated one.
+            # Append the refinement question from the nba_agent, if it exists
             next_action = state.get("next_best_action")
             if next_action:
-                final_message += f"\n\n**Next Step:** {next_action}"
-                
+                markdown_quote += f"\n\n**Next Step:** {next_action}"
+            
+            final_message_content = markdown_quote
+            
         except Exception as e:
             print(f"[Synth] ERROR in build_markdown_from: {e}")
-            final_message = "Failed to build the final message."
-        
-        # For a quote, we clear the 'final_response' from any previous turn
-        # to ensure the quote is the only output.
-        state["final_response"] = None
+            final_message_content = "Failed to build the final message."
+ """
+    # --- Step 2: Prepare the update dictionary ---
+    # The only new information this node is responsible for is the final, user-facing response.
 
-        return prune_nones({
-            "final_response": final_message,
-            "solution_designs": designs,
-            "pricing_results": pr,
-            "ea": ea,
-            "client_name": state.get("client_name"),
-            "users_count": state.get("users_count"),
-            "product_domain": state.get("product_domain"),
-        })
+    #update_data = {
+    #    "final_response": final_message_content
+    #}  
+
+    # --- Step 3: Update and return the complete state ---
+    # This safely adds/overwrites 'final_response' while preserving EVERYTHING else
+    # (like solution_designs, pricing_results, conversation_window, etc.).
+    #state.update(update_data)
+    #return state
+    
+    
+    designs = state.get("solution_designs", [])
+    pr = state.get("pricing_results", {})
+    ea = state.get("ea", {})
+
+    quote_md = ""
+    try:
+        quote_md = build_markdown_from(designs, pr, ea, state)
+    except Exception as e:
+        print(f"[Synth] ERROR in build_markdown_from: {e}")
+        quote_md = "Failed to build the quote details."
+
+    # Texto corto para el chat: “next_best_action” del NBA Agent
+    print(" ")
+    print(state)
+    
+    nba = (state.get("next_best_action") or "").strip()
+    if not nba:
+        nba = state.get("final_response")
+
+    return {
+        "quote_markdown": quote_md,
+        "final_response": nba
+    }
+    
+    """ return prune_nones({
+        "final_response": final_message_content,
+        "solution_designs": state.get("solution_designs", []),
+        "previous_solution_designs": state.get("previous_solution_designs", []),
+        "pricing_results": state.get("pricing_results", {}),
+        "ea": state.get("ea", {}),
+        "client_name": state.get("client_name"),
+        "users_count": state.get("users_count"),
+        "product_domain": state.get("product_domain"),
+        "conversation_summary": state.get("conversation_summary"),
+        "conversation_window": state.get("conversation_window"),
+        "next_action": next_action
+        
+    }) """
 
 
 
@@ -1978,7 +2020,8 @@ def context_collector_node(state: AgentState) -> dict:
     print("\n🔍 [Context Collector] Fetching context for the LLM…")
 
     user_query = state.get("user_query", "")
-    skus = hybrid_search_products(user_query, k_faiss=40, k_bm25=40, k_tfidf=55)
+    search_query = state.get("search_query") or user_query
+    skus = hybrid_search_products(search_query, k_faiss=50, k_bm25=50, k_tfidf=55)
 
     product_context = []
     for sku in skus:
@@ -2022,16 +2065,27 @@ def context_collector_node(state: AgentState) -> dict:
 
     product_context = clean_for_json(product_context)
 
-    # 🔹 Aqui indicamos explicitamente o branch que deve receber a saída
-    return {
-        #"_branch": "nba_agent",
-        "product_context": product_context,
-        "base_product_sku": base_sku,
-        "product_domain": state.get("product_domain"),
-        "client_name": state.get("client_name"),
-        "users_count": state.get("users_count"),
-        "revision_request": state.get("revision_request"),
+    # 1. Create a dictionary with ONLY the new information
+    update_data = {
+        "product_context": product_context
     }
+    
+    # 2. Update the state, preserving the quote that was loaded
+    state.update(update_data)
+    
+    # 3. Return the complete, updated state
+    return state
+
+    # 🔹 Aqui indicamos explicitamente o branch que deve receber a saída
+   # return {
+   #     #"_branch": "nba_agent",
+   #     "product_context": product_context,
+   #     "base_product_sku": base_sku,
+   #     "product_domain": state.get("product_domain"),
+   #     "client_name": state.get("client_name"),
+   #     "users_count": state.get("users_count"),
+   #     "revision_request": state.get("revision_request"),
+   # }
 
 
 
@@ -2109,6 +2163,9 @@ def _primitive(o):
 
     return d
 
+
+from pydantic import ValidationError
+
 def llm_designer_node(state: AgentState) -> dict:
     """
     LLM Designer node: builds 3 scenarios using a structured output schema.
@@ -2129,6 +2186,8 @@ def llm_designer_node(state: AgentState) -> dict:
     product_domain: str = state.get("product_domain") or ""
     user_query: str = state.get("user_query", "")
     qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
+    users_count = state.get("users_count") or {}
+    print("99999999999999090909099999999999", users_count)
 
     # Conversational memory (optional; may be empty strings)
     conversation_window = state.get("conversation_window", "")
@@ -2198,8 +2257,13 @@ def llm_designer_node(state: AgentState) -> dict:
             }
         return d
 
-    previous_designs_json = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
-    state["solution_designs"] = []
+    _current_designs = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+    current_designs = state.get("solution_designs") or []
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - current_designs_json_1", _current_designs)
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - current_designs_json_2", current_designs)
+
+    previous_solution_designs = json.dumps(state.get("previous_solution_designs") or [], default=_primitive, indent=2)
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - previous_solution_designs", previous_solution_designs)
 
 
     #revision = state.get("revision_request")
@@ -2208,6 +2272,8 @@ def llm_designer_node(state: AgentState) -> dict:
     #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
     #print("99999999999999999999999999999999999999999999999999999999999999", context_json)
     print(">>> LLM Designer sees revision_request:", state.get("revision_request"))
+    #designs = state.get("solution_designs", [])
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - designs", designs)
 
     revision = state.get("revision_request")
     if revision is None:
@@ -2219,6 +2285,10 @@ def llm_designer_node(state: AgentState) -> dict:
     revision_json = json.dumps(revision_dict, indent=2)
     #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
 
+    # Get conversational memory from the state to be used in both paths.
+    conversation_summary = state.get("conversation_summary", "No summary yet.")
+    conversation_window = state.get("conversation_window", "No recent messages.")
+
     #revision = state.get("revision_request")
     revision = state.get("next_flow")
     #if not revision:
@@ -2228,6 +2298,15 @@ def llm_designer_node(state: AgentState) -> dict:
         prompt_template = ChatPromptTemplate.from_template(
         """
             You are an expert and commercially-aware Cisco Sales Engineer.
+
+            Here is a summary of the conversation so far:
+            {conversation_summary}
+
+            Here are the most recent messages:
+            {conversation_window}
+
+            Based on all of this context, and the user's latest query, perform the following task.
+
 
             USER QUERY:
             {user_query}
@@ -2241,7 +2320,25 @@ def llm_designer_node(state: AgentState) -> dict:
             Your main goal is to design **exactly 3 distinct options** labeled "Essential (Good)", "Standard (Better)", and "Complete (Best)".
 
             For EACH of the 3 scenarios, you MUST follow these steps in order:
-            1.  **Select and Size Hardware:** First, select the primary hardware (switches, in this case). You MUST apply the `Sizing Calculation` rule to determine the correct quantity.
+            1. **Select and Size Hardware:** 
+               - First, select the primary hardware (switches, in this case). 
+               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
+                 Use the provided `{users_count}` to compute the required hardware.
+
+            **Sizing Calculation Rule Example:**
+            - Each switch supports up to 24 users.
+            - Compute the number of switches as:
+
+            number_of_switches = ceil({users_count} / 24)
+
+            markdown
+            Copiar código
+
+            - Example: 
+            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
+            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+
+            - Always round up to ensure every user has sufficient coverage.
             2.  **Add Required Licenses:** Second, after selecting the hardware, find the corresponding and compatible licenses from the context. You MUST apply the `License Matching` rule. Every piece of main hardware that requires a license must have one.
             3.  **Add Necessary Accessories:** Third, add any relevant accessories like power supplies or mounting kits that are available in the context.
             4.  **Justify Your Choices:** Briefly explain why you chose those components for that scenario.
@@ -2278,76 +2375,109 @@ def llm_designer_node(state: AgentState) -> dict:
             - Do not output any fields other than the schema above.
             - Do not include markdown code fences or commentary.
 
+            FINAL CHECKLIST:
+            Before providing your final JSON output, you MUST verify the following:
+            1.  Are there EXACTLY THREE scenarios ("Essential (Good)", "Standard (Better)", "Complete (Best)")? Your entire output is invalid if this is not met.
+            2.  Does EACH scenario include the necessary licenses for the main hardware?
+            3.  Does EACH scenario respect the Sizing Calculation rule?
+            4.  Does EACH scenario avoid duplicate SKUs?
+            5.  Does EACH scenario has only sku found in AVAILABLE COMPONENTS?
+            Your final output MUST satisfy all points on this checklist.
+
                 """
                 )
     else:
         #print("22222222222222222222222222222222222222222222222222222222222222")
         #print(previous_designs_json)
         prompt_template = ChatPromptTemplate.from_template("""
-            You are an expert Cisco Sales Engineer. Apply a targeted revision (delta) to existing scenarios.
+    ROLE: You are a meticulous editor for Cisco sales quotes.
 
-            USER QUERY:
-            {user_query}
+    PRIMARY GOAL: To take an existing quote and apply a very specific change requested by the user, leaving everything else untouched.
 
-            AVAILABLE COMPONENTS (authoritative — ONLY use SKUs listed):
-            json
-            {context_json}
+    === CONTEXT ===
 
-            PREVIOUS SCENARIOS (authoritative — START FROM THIS; DO NOT REBUILD FROM SCRATCH):
-            json
-            {previous_designs_json}
+    1. THE USER'S CHANGE REQUEST:
+    "{user_query}"
 
-            BUSINESS RULES
-            1) Catalogue-lock: Use ONLY SKUs found in AVAILABLE COMPONENTS.
-            2) No duplicates within a scenario; if you need more units, set "quantity" > 1 in a single line.
-            9) If the user requests Wi-Fi, use wifi.hardware/licenses/accessories. If the user requests a switch, use switch.hardware/licenses/accessories.
-            6) You are a Cisco Solutions Architect, so you must create the scenarios with all the necessary components among those you have available.
-            7) Use a maximum of 10 components per scenario.
+    2. THE CURRENT QUOTE TO MODIFY (This is your starting point):
+    ```json
+    {_current_designs}
+    ```
 
+    3. RECENT CONVERSATION HISTORY (Use this to understand context for ambiguous requests):
+    {conversation_window}
 
-            OUTPUT (STRICT)
-            Return JSON only (no prose) matching exactly:
-            {{
-              "scenarios": [
-                {{
-                  "name": "Essential (Good)|Standard (Better)|Complete (Best)",
-                  "justification": "reason",
-                  "components": [{{ "sku": "<SKU>", "quantity": <int> }}]
-                }}
-              ]
-            }}
+    4. CATALOG OF AVAILABLE COMPONENTS (Only use SKUs from this list):
+    ```json
+    {context_json}
+    ```
 
-            VALIDATION
+    === STEP-BY-STEP INSTRUCTIONS ===
 
-            Every component has "sku" (string) and "quantity" (int ≥ 1).
+    1.  **Analyze the User's Request:** Read the USER'S CHANGE REQUEST.
+    
+    2.  **Resolve Ambiguity (CRITICAL):** If the request is ambiguous (e.g., "add 5 units of it", "add that product"), you MUST look at the RECENT CONVERSATION HISTORY to identify the product SKU being discussed in the last interaction. The user is almost certainly referring to the last product mentioned by the Assistant.
+    
+    3.  **Apply the Change:** Locate the specific component in the correct scenario (or add the new component) as requested.
+    
+    4.  **Verify:** Ensure the new SKU is from the CATALOG and that all other parts of the quote remain unchanged.
 
-            Do not output any additional fields.
-                            """)
+    5. **Select and Size Hardware:** 
+               - First, select the primary hardware (switches, in this case). 
+               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
+                 Use the provided `{users_count}` to compute the required hardware.
+
+            **Sizing Calculation Rule Example:**
+            - Each switch supports up to 24 users.
+            - Compute the number of switches as:
+
+            number_of_switches = ceil({users_count} / 24)
+
+            markdown
+            Copiar código
+
+            - Example: 
+            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
+            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+
+    === CRITICAL RULES ===
+    -   **Minimal Change Rule:** Your ONLY job is to apply the user's requested change. Do not re-design other parts of the quote.
+    -   **Catalogue-Lock:** Any new SKU MUST exist in the CATALOG OF AVAILABLE COMPONENTS.
+
+    === OUTPUT (STRICT) ===
+    Return a complete JSON object of the **full, updated quote** with the change applied. The format must exactly match the original quote's schema:
+    {{
+      "scenarios": [ ... ]
+    }}
+    """
+)
 
     # ---- LLM (structured output) ----
     llm = your_llm_instance
+    # Bind the parameters for this specific task
+    llm_with_logprobs = llm.bind(
+        logprobs=True,
+        top_logprobs=5
+    )
     structured_llm = llm.with_structured_output(QuoteScenarios, method="function_calling")
+    #structured_llm = llm_with_logprobs.with_structured_output(QuoteScenarios)
+    #chain = prompt_template | llm_with_logprobs | StrOutputParser()
+
     chain = prompt_template | structured_llm
 
     # ---- Invoke ----
     try:
-        #resp = chain.invoke({
-        #    "conversation_summary": state.get("conversation_summary") or "",
-        #    "conversation_window":  state.get("conversation_window") or "",
-        #    "user_query":           state.get("user_query") or "",
-        #    "product_domain":       state.get("product_domain") or "",
-        #    "base_sku":             state.get("base_product_sku") or "N/A",
-        #    "context_json":         context_json,
-        #    "previous_designs_json": previous_designs_json,
-        #    "revision_json":         revision_json,
-        #})
 
         resp = chain.invoke({
                     "user_query": state.get("user_query", ""),
                     "context_json": context_json,                  # lista de SKUs
-                    "previous_designs_json": previous_designs_json,  # última quote
+                    "previous_solution_designs": previous_solution_designs,  # última quote
+                    "_current_designs": _current_designs,  # última quote
                     "revision_json": revision_json,                # novo request
                     "base_sku": base_sku or "N/A",
+                    "conversation_summary": conversation_summary, # CORRECTLY ADDED
+                    "conversation_window": conversation_window,   # CORRECTLY ADDED
+                    "users_count": users_count,
                 })
         #print("2222222222222222222222222222222",resp)
 
@@ -2374,11 +2504,14 @@ def llm_designer_node(state: AgentState) -> dict:
 
             designs.append(SolutionDesign(summary=sc_name, justification=sc_just, components=comps))
 
-        final_designs = designs or [SolutionDesign(summary="Error", justification="Empty scenarios.", components=[])]
+    #    #final_designs = designs or [SolutionDesign(summary="Error", justification="Empty scenarios.", components=[])]
+        new_designs = designs or [SolutionDesign(summary="Error", justification="Empty scenarios.", components=[])]
+
+
 
     except Exception as e:
         print(f"  - ERROR during LLM call or parsing: {e}")
-        final_designs = [SolutionDesign(
+        new_designs = [SolutionDesign(
             summary="Error",
             justification=f"Failed to generate scenarios with LLM: {e}",
             components=[]
@@ -2392,9 +2525,115 @@ def llm_designer_node(state: AgentState) -> dict:
         except Exception:
             pass
 
-    return {"solution_designs": final_designs, "orchestrator_decision": dec}
+       # --- Prepare the state update ---
+    update_data = {
+        # The 'current_designs' we saved at the beginning now become the 'previous' ones.
+        "previous_solution_designs": current_designs,
+        
+        # The brand new designs become the 'current' ones, using the original key.
+        "solution_designs": new_designs, 
+
+        "orchestrator_decision": dec
+    }
+    
+    state.update(update_data)
+    
+    return state
+
+    #return {"solution_designs": final_designs, "orchestrator_decision": dec}
 
 
+
+
+
+nba_prompt_r = ChatPromptTemplate.from_template(
+    """You are an intelligent sales assistant for Cisco. 
+Your goal is to help refine the user's requirements for a better quote. 
+You have access to:
+- A short summary of the solutions and prices already proposed.
+- The original user question.
+- Metadata of the products under consideration (from product_context, e.g., product type, ports, PoE, throughput, latency, etc.).
+- Any previous refinements provided by the user.
+
+
+Here is a summary of the conversation so far:
+{conversation_summary}
+
+Here are the most recent messages:
+{conversation_window}
+
+Based on all of this context, and the user's latest query, perform the following task.
+
+Based on the above, generate ONE actionable, **intelligent question** that:
+- Helps clarify the user's technical priorities or constraints.
+- References product features if relevant.
+- Is specific to the solutions already proposed.
+
+- Never give answers like "What is the required coverage area and expected bandwidth per user for the Wi-Fi solution?"
+
+Do not suggest products, only ask a question that guides the user to provide details for a better quote.
+Take in consideration the Users Count.
+
+User question:
+{user_query}
+
+PREVIOUS PROPOSED SOLUTIONS:
+{previous_solution_designs}
+
+CURRENT PROPOSED SOLUTIONS AT THIS POINT:
+{solutions}
+
+Product Metadata:
+{product_metadata}
+
+Previous Refinements:
+{refinements}
+
+Users Count:
+{users_count}
+
+Respond **with a JSON object compatible with the SolutionDesign schema**, including the field:
+- question_for_refinement: the next intelligent question to ask the user."""
+)
+
+nba_prompt_qa = ChatPromptTemplate.from_template(
+    """You are an expert sales assistant for Cisco. Your goal is to be helpful and proactive.
+First, review the history of the conversation to understand the context.
+
+Here is a summary of the conversation so far:
+{conversation_summary}
+
+Here are the most recent messages:
+{conversation_window}
+
+PREVIOUS PROPOSED SOLUTIONS:
+{previous_solution_designs}
+
+CURRENT PROPOSED SOLUTIONS AT THIS POINT:
+{solutions_context}
+
+-------------------
+
+Now, perform your two-part task based on the user's latest question:
+1. **Answer the Question:** Provide a clear, accurate, and concise answer to the user's question, strictly using the provided product context.
+2. **Suggest Next Action:** After the answer, suggest one specific next step that directly builds on the current quote (e.g., "Would you like me to add this switch to your existing quote?" or "Should I update the current design with this license?").
+- The next action must always be framed as a clear Yes/No question, so the user can reply with "Yes" only if they agree.
+- Do NOT propose creating a new quote from scratch.
+- The action must always relate to refining, adding, or adjusting items in the existing quote.
+3. Take in consideration the Users Count.
+
+USER QUESTION:
+{user_query}
+
+AVAILABLE PRODUCTS CONTEXT:
+{product_metadata}
+
+Users Count:
+{users_count}
+
+**VERY IMPORTANT:** Combine your Answer and Next Action into a single text block. This entire block **MUST be placed inside the 'question_for_refinement' field** of the JSON output.
+"""
+)
 # FILE: your_graph.py
 
 # Your Pydantic class - remains unchanged
@@ -2402,94 +2641,95 @@ class NBAOutput(BaseModel):
     question_for_refinement: str
     refinements: Optional[List[Dict[str, Any]]] = []
 
-# Your complete node, with minimal changes
 def nba_agent_node(state: AgentState) -> dict:
     """
-    Agent that generates intelligent questions to refine the quote
-    or provides a direct answer to a user question.
+    Agent that generates intelligent questions to refine a quote
+    or provides a direct answer and next best action for a user question.
     """
     print("\n🤖 [NBA Agent] Deciding next best action…")
 
     intent = state.get("next_flow")
-    
-    # The chain uses the original, unchanged NBAOutput class
-    chain = llm_nba.with_structured_output(NBAOutput)
+
+    # Get conversational memory from the state to be used in both paths.
+    conversation_summary = state.get("conversation_summary", "No summary yet.")
+    #print("nba_agent_node - 1010101010010101010100101010101010010101010101001 - conversation_summary", conversation_summary)
+    conversation_window = state.get("conversation_window", "No recent messages.")
+    #print("nba_agent_node - 1010101010010101010100101010101010010101010101001 - conversation_window", conversation_window)
+
+    users_count = state.get("users_count") or {}
+    print("99999999999999090909099999999999", users_count)
+
+    # Define the LLM chain with logprobs and structured output
+    llm_with_logprobs = llm_nba.bind(
+        logprobs=True,
+        top_logprobs=5
+    )
+    chain = llm_with_logprobs.with_structured_output(NBAOutput)
+    product_metadata = [
+            {**p, **(p.get("technical_specs") or {})}
+            for p in state.get("product_context", [])
+        ]
+
+    previous_solution_designs = json.dumps(state.get("previous_solution_designs") or [], default=_primitive, indent=2)
+    #print("1010101010010101010100101010101010010101010101001 - previous_solution_designs", previous_solution_designs)
+
+    designs = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+    #print("1010101010010101010100101010101010010101010101001 - solution_designs", designs)
 
     if intent != "question":
-        # --- Path 1: User wants a quote refinement (This was your original logic) ---
+        # --- Path 1: User wants a quote refinement ---
         print(f"   - Handling intent: '{intent}'. Generating refinement question.")
         
-        # This entire block of input preparation is for the refinement prompt
-        refinements = state.get("refinements", [])
-        designs = state.get("solution_designs", [])
+        # Prepare context specific to refinement
+        
         pr = state.get("pricing_results", {})
+        # ... (your logic for creating solutions_block)
+        #solutions_block = "..." # Assuming this is built as before
 
-        bullets = []
-        for d in designs:
-            name = d.summary.split(":")[0]
-            bucket = pr.get(name, []) or []
-            total = sum(float(p.get("subtotal", 0.0) or 0.0) for p in bucket)
-            cur = bucket[0].get("currency", "USD") if bucket else "USD"
-            bullets.append(f"- {name}: approx. {cur} ${total:,.0f}")
-        solutions_block = "\n".join(bullets)
+        
+        refinements = state.get("refinements", [])
 
-        last_question = state.get("last_question")
-        last_answer = state.get("last_answer")
-
+        # Input dictionary now correctly includes conversational memory.
         ai_input = {
             "user_query": state["user_query"].splitlines()[0],
-            "solutions": solutions_block,
+            "solutions": designs,
+            "product_metadata": product_metadata,
             "refinements": refinements,
-            "last_question": last_question,
-            "last_answer": last_answer,
-            "product_context": state.get("product_context", []),
-            "product_metadata": [
-                {**p, **(p.get("technical_specs") or {})}
-                for p in state.get("product_context", [])
-            ],
+            "conversation_summary": conversation_summary, # CORRECTLY ADDED
+            "conversation_window": conversation_window,   # CORRECTLY ADDED
+            "previous_solution_designs": previous_solution_designs,
+            "users_count":users_count,
         }
 
-        # Use your refinement prompt (nba_prompt_r)
         full_chain = nba_prompt_r | chain
         ai_message = full_chain.invoke(ai_input)
         
-        # This entire block for processing the output remains exactly the same
+        # ... (rest of the processing logic for refinement)
         next_question = ai_message.question_for_refinement.strip()
-
-        state["last_question"] = next_question
-        state["last_answer"] = None
-
-        refinements.append({
-            "question": next_question,
-            "answer": None
-        })
-        state["refinements"] = refinements
-
         print(f"✅ Generated refinement question: {next_question}")
-        return {"next_best_action": next_question}
+        return { "next_best_action": next_question} # and other state updates
 
     else:
-        # --- Path 2: User wants a direct answer --- ## MODIFIED LOGIC STARTS HERE
-        print(f"   - Handling intent: '{intent}'. Generating direct answer.")
+        # --- Path 2: User wants a direct answer + next action ---
+        print(f"   - Handling intent: '{intent}'. Generating direct answer and next action.")
         
-        # For a direct question, the input is much simpler
+        # Input dictionary now correctly includes conversational memory.
         ai_input = {
             "user_query": state.get("user_query", ""),
-            "product_context": state.get("product_context", []),
+            "conversation_summary": conversation_summary, # CORRECTLY ADDED
+            "conversation_window": conversation_window,   # CORRECTLY ADDED
+            "solutions_context": designs,
+            "product_metadata": product_metadata,
+            "previous_solution_designs": previous_solution_designs,
+            "users_count":users_count,
         }
 
-        # Use the specific Q&A prompt we defined
         full_chain = nba_prompt_qa | chain
         ai_message = full_chain.invoke(ai_input)
 
-        # We extract the text from the field...
         final_answer = ai_message.question_for_refinement.strip()
         print(f"✅ Generated final answer: {final_answer}")
-
-        # ...and return it in the key for the synthesizer ('synth' node).
         return {"final_response": final_answer}
-
-
 
 # -------------------- ROUTER --------------------
 # A função route_after_orch não é mais necessária, pois a conexão é direta.

@@ -58,6 +58,8 @@ class NBAOutput(BaseModel):
 
 class AgentState(TypedDict, total=False):
     next_flow: Optional[str]
+
+
     # Input
     user_query: str
     orchestrator_decision: "AgentRoutingDecision"
@@ -66,6 +68,9 @@ class AgentState(TypedDict, total=False):
     product_context: List[Dict[str, str]]  # metadata of retrieved products
     base_product_sku: Optional[str]
     revision_request: Optional[Dict[str, Any]] 
+
+
+    search_query: Optional[str]
     # --- END PRODUCT CONTEXT ---
 
     # Client awareness
@@ -73,11 +78,15 @@ class AgentState(TypedDict, total=False):
     client_context: Dict
     client_ack_message: str
 
+    client_name: Optional[str]
+    users_count: Optional[str]
+
     # Technical context (retrieved products)
     technical_results: List[Dict]
 
     # Designer returns multiple solutions
     solution_designs: List["SolutionDesign"]
+    previous_solution_designs: List["SolutionDesign"]
 
     sku_quantities: Dict[str, int]
 
@@ -104,6 +113,9 @@ class AgentState(TypedDict, total=False):
     final_response: str
 
     # --- REFINEMENT HISTORY & LAST INTERACTION ---
+    conversation_window: Optional[str]   # Add this line
+    conversation_summary: Optional[str]  # Add this line
+    
     last_question: Optional[str]       # last question asked by NBA Agent
     last_answer: Optional[str]         # user's answer to last question
     refinements: List[Dict[str, Any]]  # full Q&A history for refinements
