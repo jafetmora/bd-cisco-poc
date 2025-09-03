@@ -1890,7 +1890,7 @@ def synthesize_node(state: AgentState) -> dict:
         # For a simple question, the final message is just the answer.
         final_message_content = state.get("final_response", "Sorry, I could not generate an answer.")
     
-    else: # This block handles 'quote' or 'revision'
+    """ else: # This block handles 'quote' or 'revision'
         print(f"   - Intent is '{intent}'. Building full quote markdown.")
         designs = state.get("solution_designs", [])
         pr = state.get("pricing_results", {})
@@ -1910,19 +1910,59 @@ def synthesize_node(state: AgentState) -> dict:
         except Exception as e:
             print(f"[Synth] ERROR in build_markdown_from: {e}")
             final_message_content = "Failed to build the final message."
-
+ """
     # --- Step 2: Prepare the update dictionary ---
     # The only new information this node is responsible for is the final, user-facing response.
 
-    update_data = {
-        "final_response": final_message_content
-    }
+    #update_data = {
+    #    "final_response": final_message_content
+    #}  
 
     # --- Step 3: Update and return the complete state ---
     # This safely adds/overwrites 'final_response' while preserving EVERYTHING else
     # (like solution_designs, pricing_results, conversation_window, etc.).
-    state.update(update_data)
-    return state
+    #state.update(update_data)
+    #return state
+    
+    
+    designs = state.get("solution_designs", [])
+    pr = state.get("pricing_results", {})
+    ea = state.get("ea", {})
+
+    quote_md = ""
+    try:
+        quote_md = build_markdown_from(designs, pr, ea, state)
+    except Exception as e:
+        print(f"[Synth] ERROR in build_markdown_from: {e}")
+        quote_md = "Failed to build the quote details."
+
+    # Texto corto para el chat: “next_best_action” del NBA Agent
+    print(" ")
+    print(state)
+    
+    nba = (state.get("next_best_action") or "").strip()
+    if not nba:
+        nba = state.get("final_response")
+
+    return {
+        "quote_markdown": quote_md,
+        "final_response": nba
+    }
+    
+    """ return prune_nones({
+        "final_response": final_message_content,
+        "solution_designs": state.get("solution_designs", []),
+        "previous_solution_designs": state.get("previous_solution_designs", []),
+        "pricing_results": state.get("pricing_results", {}),
+        "ea": state.get("ea", {}),
+        "client_name": state.get("client_name"),
+        "users_count": state.get("users_count"),
+        "product_domain": state.get("product_domain"),
+        "conversation_summary": state.get("conversation_summary"),
+        "conversation_window": state.get("conversation_window"),
+        "next_action": next_action
+        
+    }) """
 
 
 
@@ -2146,6 +2186,8 @@ def llm_designer_node(state: AgentState) -> dict:
     product_domain: str = state.get("product_domain") or ""
     user_query: str = state.get("user_query", "")
     qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
+    users_count = state.get("users_count") or {}
+    print("99999999999999090909099999999999", users_count)
 
     # Conversational memory (optional; may be empty strings)
     conversation_window = state.get("conversation_window", "")
@@ -2278,7 +2320,25 @@ def llm_designer_node(state: AgentState) -> dict:
             Your main goal is to design **exactly 3 distinct options** labeled "Essential (Good)", "Standard (Better)", and "Complete (Best)".
 
             For EACH of the 3 scenarios, you MUST follow these steps in order:
-            1.  **Select and Size Hardware:** First, select the primary hardware (switches, in this case). You MUST apply the `Sizing Calculation` rule to determine the correct quantity.
+            1. **Select and Size Hardware:** 
+               - First, select the primary hardware (switches, in this case). 
+               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
+                 Use the provided `{users_count}` to compute the required hardware.
+
+            **Sizing Calculation Rule Example:**
+            - Each switch supports up to 24 users.
+            - Compute the number of switches as:
+
+            number_of_switches = ceil({users_count} / 24)
+
+            markdown
+            Copiar código
+
+            - Example: 
+            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
+            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+
+            - Always round up to ensure every user has sufficient coverage.
             2.  **Add Required Licenses:** Second, after selecting the hardware, find the corresponding and compatible licenses from the context. You MUST apply the `License Matching` rule. Every piece of main hardware that requires a license must have one.
             3.  **Add Necessary Accessories:** Third, add any relevant accessories like power supplies or mounting kits that are available in the context.
             4.  **Justify Your Choices:** Briefly explain why you chose those components for that scenario.
@@ -2362,6 +2422,24 @@ def llm_designer_node(state: AgentState) -> dict:
     
     4.  **Verify:** Ensure the new SKU is from the CATALOG and that all other parts of the quote remain unchanged.
 
+    5. **Select and Size Hardware:** 
+               - First, select the primary hardware (switches, in this case). 
+               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
+                 Use the provided `{users_count}` to compute the required hardware.
+
+            **Sizing Calculation Rule Example:**
+            - Each switch supports up to 24 users.
+            - Compute the number of switches as:
+
+            number_of_switches = ceil({users_count} / 24)
+
+            markdown
+            Copiar código
+
+            - Example: 
+            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
+            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+
     === CRITICAL RULES ===
     -   **Minimal Change Rule:** Your ONLY job is to apply the user's requested change. Do not re-design other parts of the quote.
     -   **Catalogue-Lock:** Any new SKU MUST exist in the CATALOG OF AVAILABLE COMPONENTS.
@@ -2399,6 +2477,7 @@ def llm_designer_node(state: AgentState) -> dict:
                     "base_sku": base_sku or "N/A",
                     "conversation_summary": conversation_summary, # CORRECTLY ADDED
                     "conversation_window": conversation_window,   # CORRECTLY ADDED
+                    "users_count": users_count,
                 })
         #print("2222222222222222222222222222222",resp)
 
@@ -2493,6 +2572,7 @@ Based on the above, generate ONE actionable, **intelligent question** that:
 - Never give answers like "What is the required coverage area and expected bandwidth per user for the Wi-Fi solution?"
 
 Do not suggest products, only ask a question that guides the user to provide details for a better quote.
+Take in consideration the Users Count.
 
 User question:
 {user_query}
@@ -2508,6 +2588,9 @@ Product Metadata:
 
 Previous Refinements:
 {refinements}
+
+Users Count:
+{users_count}
 
 Respond **with a JSON object compatible with the SolutionDesign schema**, including the field:
 - question_for_refinement: the next intelligent question to ask the user."""
@@ -2537,12 +2620,16 @@ Now, perform your two-part task based on the user's latest question:
 - The next action must always be framed as a clear Yes/No question, so the user can reply with "Yes" only if they agree.
 - Do NOT propose creating a new quote from scratch.
 - The action must always relate to refining, adding, or adjusting items in the existing quote.
+3. Take in consideration the Users Count.
 
 USER QUESTION:
 {user_query}
 
 AVAILABLE PRODUCTS CONTEXT:
 {product_metadata}
+
+Users Count:
+{users_count}
 
 **VERY IMPORTANT:** Combine your Answer and Next Action into a single text block. This entire block **MUST be placed inside the 'question_for_refinement' field** of the JSON output.
 """
@@ -2568,6 +2655,9 @@ def nba_agent_node(state: AgentState) -> dict:
     #print("nba_agent_node - 1010101010010101010100101010101010010101010101001 - conversation_summary", conversation_summary)
     conversation_window = state.get("conversation_window", "No recent messages.")
     #print("nba_agent_node - 1010101010010101010100101010101010010101010101001 - conversation_window", conversation_window)
+
+    users_count = state.get("users_count") or {}
+    print("99999999999999090909099999999999", users_count)
 
     # Define the LLM chain with logprobs and structured output
     llm_with_logprobs = llm_nba.bind(
@@ -2608,6 +2698,7 @@ def nba_agent_node(state: AgentState) -> dict:
             "conversation_summary": conversation_summary, # CORRECTLY ADDED
             "conversation_window": conversation_window,   # CORRECTLY ADDED
             "previous_solution_designs": previous_solution_designs,
+            "users_count":users_count,
         }
 
         full_chain = nba_prompt_r | chain
@@ -2630,6 +2721,7 @@ def nba_agent_node(state: AgentState) -> dict:
             "solutions_context": designs,
             "product_metadata": product_metadata,
             "previous_solution_designs": previous_solution_designs,
+            "users_count":users_count,
         }
 
         full_chain = nba_prompt_qa | chain
@@ -2710,4 +2802,3 @@ print("\n✅ LangGraph workflow compilado com sucesso!")
 print("   - Rota 'question': orch -> context_collector -> nba_agent -> synth -> END")
 print("   - Rota 'quote'/'revision': orch -> context_collector -> llm_designer -> price -> nba_agent -> synth -> END")
 
-    
