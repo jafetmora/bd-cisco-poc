@@ -3,7 +3,6 @@ from typing import Any, Dict, List
 
 
 class TurnIn(BaseModel):
-    session_id: str = Field(..., min_length=1)
     message: str = Field(..., min_length=1)
     quote_state: Dict[str, Any] = Field(default_factory=dict)
 
