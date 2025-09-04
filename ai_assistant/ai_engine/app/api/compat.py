@@ -82,7 +82,6 @@ def _to_legacy_final_state(lean: Dict[str, Any], final_msg: str) -> Dict[str, An
 
 def invoke_and_fetch_legacy_state(user_query: str, session_id: str) -> Dict[str, Any]:
     final_msg: str = _invoke_graph(user_query, session_id=session_id)
-
     mem = ChatMemory(redis_url=s.REDIS_URL, session_id=session_id)
     lean = mem.get_state() or {}
 

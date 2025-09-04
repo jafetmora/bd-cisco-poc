@@ -219,6 +219,10 @@ def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
     
     #print(json.dumps(lean_state_to_persist, indent=2, ensure_ascii=False))
     #print("="*70)
+    
+    print("DEBUGGING final_msg")
+    print(final_msg)
+    print("DEBUGGING final_msg")
 
     return final_msg
 
