@@ -13,7 +13,7 @@ type Props = {
 export default function QuotationTable({
   items,
   summary,
-  onDelete,
+  //onDelete,
   onUpdate,
 }: Props) {
   const [editingQtyId, setEditingQtyId] = useState<string | null>(null);
@@ -186,10 +186,10 @@ export default function QuotationTable({
               <div className="absolute right-0 mt-2 bg-white shadow border border-gray-200 rounded-md text-sm z-10 w-44">
                 <div
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
+                  /*onClick={() => {
                     onDelete(selectedIds);
                     setShowMenu(false);
-                  }}
+                  }}*/
                 >
                   Delete
                 </div>
@@ -250,11 +250,11 @@ export default function QuotationTable({
                   </td>
                   <td
                     className={`px-4 py-2 ${cell.qty ? "flash-once" : ""}`}
-                    onClick={() => {
+                    /*onClick={() => {
                       setEditingQtyId(it.id);
                       setEditingQtyValue(String(it.quantity));
                     }}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer" }}*/
                   >
                     {editingQtyId === it.id ? (
                       <input

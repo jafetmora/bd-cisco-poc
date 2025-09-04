@@ -1,13 +1,17 @@
 import "./spinner.css";
 import { useQuote } from "../../store/useQuote";
 import QuoteTab from "../Quote/QuoteTab";
-import QuoteStatusBar from "../Quote/QuoteStatusBar";
+//import QuoteStatusBar from "../Quote/QuoteStatusBar";
 import Chat from "../Chat/Chat";
 import { useDisplayMode } from "../../store/DisplayModeContext";
 
 export default function MainPanelContainer() {
-  const { quoteSession, loading, error, sendQuoteUpdate, saveQuoteSession } =
-    useQuote();
+  const {
+    quoteSession,
+    loading,
+    error,
+    sendQuoteUpdate /*, saveQuoteSession */,
+  } = useQuote();
   const { mode, setMode } = useDisplayMode();
 
   const handleSendText = (text: string) => {
@@ -81,6 +85,7 @@ export default function MainPanelContainer() {
               title={quoteSession?.title || ""}
             />
           </div>
+          {/*
           <QuoteStatusBar
             modified={quoteSession?.unsavedChanges || false}
             onSave={() => {
@@ -88,6 +93,7 @@ export default function MainPanelContainer() {
               saveQuoteSession(quoteSession);
             }}
           />
+          */}
         </>
       )}
     </div>

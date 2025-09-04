@@ -128,7 +128,7 @@ export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
             <FiSend className="w-6 h-6" />
           </button>
         </div>
-        {/* Dropdown de sugestões */}
+        {/* Products Dropdown */}
         {showDropdown && (
           <div className="relative left-1/4 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9999] w-1/2">
             {dropdownItems.length > 0 ? (
@@ -155,7 +155,7 @@ export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
               ))
             ) : (
               <div className="px-4 py-2 text-gray-500 text-center text-sm">
-                Nenhum produto encontrado
+                No products found.
               </div>
             )}
           </div>

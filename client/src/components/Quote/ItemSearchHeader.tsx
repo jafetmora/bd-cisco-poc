@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent } from "react";
-import { getProducts } from "../../services/api";
+import { useState /*type ChangeEvent*/ } from "react";
+//import { getProducts } from "../../services/api";
 import type { Product } from "../../types/Product";
 import { FaChevronDown, FaFileImport, FaSearch } from "react-icons/fa";
 
@@ -15,6 +15,7 @@ export default function ItemSearchHeader({
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>([]);
 
+  /*
   async function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     setQuery(val);
@@ -25,6 +26,7 @@ export default function ItemSearchHeader({
       setResults([]);
     }
   }
+  */
 
   function handleProductSelect(product: Product) {
     if (onProductSelect) onProductSelect(product);
@@ -46,7 +48,7 @@ export default function ItemSearchHeader({
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             value={query}
-            onChange={handleInputChange}
+            //onChange={handleInputChange}
           />
           {isFocused && results.length > 0 && (
             <ul className="absolute z-10 left-0 right-0 top-full bg-white border border-gray-200 rounded shadow mt-1 max-h-60 overflow-y-auto">
