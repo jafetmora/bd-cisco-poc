@@ -1,12 +1,6 @@
-import axios, {
-  type AxiosResponse,
-  type AxiosError,
-  type InternalAxiosRequestConfig,
-} from "axios";
-import type { QuoteSession } from "../types/Quotes";
-import type { Product } from "../types/Product";
+import axios from "axios";
 
-const API_BASE_URL = import.meta.env?.VITE_API_URL ?? "http://localhost:8000";
+const API_BASE_URL = import.meta.env?.VITE_API_URL ?? "http://localhost:8002";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,7 +23,7 @@ export function setUnauthorizedHandler(handler: () => void) {
   onUnauthorized = handler;
 }
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+api.interceptors.request.use((config) => {
   if (AUTH_TOKEN) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${AUTH_TOKEN}`;
@@ -38,14 +32,16 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 api.interceptors.response.use(
-  (resp: AxiosResponse) => resp,
-  (error: AxiosError) => {
+  (resp) => resp,
+  (error) => {
     if (error?.response?.status === 401 && onUnauthorized) {
       onUnauthorized();
     }
     return Promise.reject(error);
   },
 );
+
+import type { QuoteSession } from "../types/Quotes";
 
 export async function getQuote(sessionId?: string): Promise<QuoteSession> {
   const response = await api.get("/quote", {
@@ -54,25 +50,4 @@ export async function getQuote(sessionId?: string): Promise<QuoteSession> {
     },
   });
   return response.data;
-}
-
-export async function updateQuote(
-  session: QuoteSession,
-): Promise<QuoteSession> {
-  const response = await api.post("/quote", session);
-  return response.data;
-}
-
-export async function getProducts(q: string): Promise<Product[]> {
-  try {
-    const response = await api.get<Product[]>("/products", { params: { q } });
-    return response.data;
-  } catch (err: unknown) {
-    if (axios.isAxiosError(err)) {
-      if (err.response?.status === 404) {
-        return [];
-      }
-    }
-    throw err;
-  }
 }

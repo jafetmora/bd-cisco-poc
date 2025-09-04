@@ -68,7 +68,6 @@ export interface QuoteSession {
   scenarios: Scenario[];
   title: string;
   thinking: boolean;
-  unsavedChanges: boolean;
 }
 
 export interface Quote {
