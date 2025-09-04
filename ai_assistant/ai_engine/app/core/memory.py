@@ -46,7 +46,7 @@ def _to_jsonable(obj):
 
 
 class ChatMemory:
-    def __init__(self, redis_url: str, session_id: str, prefix: str = "cqa:chat", ttl_seconds: Optional[int] = 60*60*24*14):
+    def __init__(self, redis_url: str, session_id: str, prefix: str = "cqa:chat", ttl_seconds: Optional[int] = 300):
         self.r = redis.from_url(redis_url)
         self.key_msgs = f"{prefix}:{session_id}:msgs"
         self.key_meta = f"{prefix}:{session_id}:meta"
