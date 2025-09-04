@@ -1,6 +1,4 @@
-import React, { useState, useRef } from "react";
-import { getProducts } from "../../services/api";
-import type { Product } from "../../types/Product";
+import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 
 interface NewEmptyChatProps {
@@ -9,11 +7,6 @@ interface NewEmptyChatProps {
 
 export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
   const [text, setText] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [dropdownItems, setDropdownItems] = useState<Product[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [mentionQuery, setMentionQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
   const suggestions: string[] = [
     "Build a quote with access switch for...",
     "Create a quote with Hypershield subscription with high speed core switch",
@@ -28,78 +21,7 @@ export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
     const value = text.trim();
     if (!value) return;
     setText("");
-    setShowDropdown(false);
     await onSendText(value);
-  };
-
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-    const value = e.target.value;
-    const cursorPos = inputRef.current?.selectionStart || 0;
-    const textBeforeCursor = value.slice(0, cursorPos);
-    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
-    if (lastAtIndex !== -1) {
-      const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
-      setMentionQuery(textAfterAt);
-      if (!textAfterAt.includes(" ") && textAfterAt.length >= 0) {
-        setShowDropdown(true);
-        if (textAfterAt.length > 0) {
-          try {
-            const products = await getProducts(textAfterAt);
-            setDropdownItems(products.slice(0, 5));
-            setSelectedIndex(-1);
-          } catch {
-            setDropdownItems([]);
-          }
-        } else {
-          setDropdownItems([]);
-        }
-      } else {
-        setShowDropdown(false);
-      }
-    } else {
-      setShowDropdown(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showDropdown && dropdownItems.length > 0) {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < dropdownItems.length - 1 ? prev + 1 : 0,
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : dropdownItems.length - 1,
-        );
-      } else if (e.key === "Enter" && selectedIndex >= 0) {
-        e.preventDefault();
-        handleSelect(dropdownItems[selectedIndex]);
-      } else if (e.key === "Escape") {
-        setShowDropdown(false);
-        setSelectedIndex(-1);
-      }
-    }
-    if (e.key === "Enter" && !showDropdown) {
-      handleSend();
-    }
-  };
-
-  const handleSelect = (product: Product) => {
-    const productText = `${product.sku || `ID-${product.id}`} - ${product.description || product.name || ""}`;
-    const beforeMention = text.slice(0, text.lastIndexOf("@"));
-    const afterMention = text.slice(
-      text.lastIndexOf("@") + mentionQuery.length + 1,
-    );
-    const newText = `${beforeMention}@${productText} ${afterMention}`;
-    setText(newText);
-    setShowDropdown(false);
-    setSelectedIndex(-1);
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
   };
 
   return (
@@ -114,12 +36,11 @@ export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
       <div className="w-full px-6">
         <div className="max-w-3xl mx-auto bg-white rounded-full shadow flex items-center px-6 py-3">
           <input
-            ref={inputRef}
             className="flex-1 min-w-0 w-full bg-transparent text-base placeholder-gray-400 focus:outline-none"
             placeholder="Type..."
             value={text}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <button
             onClick={handleSend}
@@ -128,38 +49,6 @@ export default function NewEmptyChat({ onSendText }: NewEmptyChatProps) {
             <FiSend className="w-6 h-6" />
           </button>
         </div>
-        {/* Products Dropdown */}
-        {showDropdown && (
-          <div className="relative left-1/4 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-[9999] w-1/2">
-            {dropdownItems.length > 0 ? (
-              dropdownItems.map((product, idx) => (
-                <div
-                  key={product.id}
-                  className={`px-4 py-2 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-blue-50 ${
-                    idx === selectedIndex ? "bg-blue-100" : ""
-                  }`}
-                  onClick={() => handleSelect(product)}
-                >
-                  <div className="text-xs text-gray-500 mb-1">
-                    {product.category && (
-                      <span className="text-blue-600 font-medium mr-2">
-                        {product.category}
-                      </span>
-                    )}
-                    {product.sku || `ID-${product.id}`}
-                  </div>
-                  <div className="text-sm text-gray-800 font-medium">
-                    {product.description || product.name || "No description"}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-gray-500 text-center text-sm">
-                No products found.
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       <div className="flex flex-wrap gap-3 justify-center px-4">

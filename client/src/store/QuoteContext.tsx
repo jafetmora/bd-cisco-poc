@@ -7,7 +7,6 @@ export type QuoteContextValue = {
   error: string | null;
   loadExistingQuoteSession: (sessionId: string) => Promise<void>;
   loadInitialQuoteSession: () => Promise<void>;
-  saveQuoteSession: (session: QuoteSession) => Promise<void>;
   connectSocket: () => void;
   disconnectSocket: () => void;
   applyQuoteUpdate: (payload: QuoteSession) => void;

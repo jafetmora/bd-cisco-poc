@@ -1,36 +1,16 @@
 import { useState } from "react";
-import { useQuote } from "../../store/useQuote";
 import type { Scenario } from "../../types/Quotes";
-import QuoteComponent from "./Quote";
+import Quote from "./Quote";
 import QuoteCompare from "./QuoteCompare";
-import type { Quote } from "../../types/Quotes";
 
 interface QuoteTabProps {
   scenarios: Scenario[];
   title: string;
 }
 
-export default function QuoteTab({
-  scenarios: propScenarios,
-  title,
-}: QuoteTabProps) {
-  const { applyQuoteUpdate, quoteSession } = useQuote();
-  const scenarios = quoteSession?.scenarios ?? propScenarios;
+export default function QuoteTab({ scenarios, title }: QuoteTabProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   if (!scenarios || scenarios.length === 0) return null;
-
-  function updateQuote(updatedQuote: Quote, idx: number) {
-    if (!quoteSession) return;
-    // Update the quote for the correct scenario
-    const updatedScenarios = quoteSession.scenarios.map((scenario, i) =>
-      i === idx ? { ...scenario, quote: updatedQuote } : scenario,
-    );
-    applyQuoteUpdate({
-      ...quoteSession,
-      scenarios: updatedScenarios,
-      unsavedChanges: true,
-    });
-  }
 
   return (
     <div className="w-full">
@@ -71,11 +51,10 @@ export default function QuoteTab({
       ) : (
         <div>
           {scenarios[activeIndex].quote ? (
-            <QuoteComponent
+            <Quote
               quote={scenarios[activeIndex].quote}
               scenarioLabel={scenarios[activeIndex].label}
               title={title}
-              onUpdateQuote={(quote) => updateQuote(quote, activeIndex)}
             />
           ) : (
             <div className="text-gray-400 text-center">
