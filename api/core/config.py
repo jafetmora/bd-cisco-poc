@@ -9,7 +9,7 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("AGENT_BASE_URL"),
     )
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:5173"],
+        default=["*"],
         validation_alias=AliasChoices("CORS_ORIGINS"),
     )
     CORS_ALLOW_CREDENTIALS: bool = Field(
