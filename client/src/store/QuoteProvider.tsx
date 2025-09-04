@@ -8,7 +8,7 @@ import {
 import type { QuoteSession } from "../types/Quotes";
 import { socket } from "../services/socket";
 import { QuoteContext, type QuoteContextValue } from "./QuoteContext";
-import { getQuote, updateQuote } from "../services/api";
+import { getQuote } from "../services/api";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "../hooks/useAuth";
 
@@ -53,27 +53,6 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const saveQuoteSession = useCallback(
-    async (session: QuoteSession): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const savedSession = await updateQuote(session);
-        setQuoteSession({
-          ...savedSession,
-          thinking: false,
-          unsavedChanges: false,
-        });
-      } catch (e: unknown) {
-        setError(getErrorMessage(e) ?? "Failed to save quote session");
-        throw e;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [],
-  );
-
   const loadInitialQuoteSession = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -85,7 +64,6 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         scenarios: [],
         title: "New Session",
         thinking: false,
-        unsavedChanges: false,
       };
       setQuoteSession(emptySession);
     } catch (e: unknown) {
@@ -128,7 +106,6 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       error,
       loadExistingQuoteSession,
       loadInitialQuoteSession,
-      saveQuoteSession,
       connectSocket: () => {},
       disconnectSocket: () => {},
       applyQuoteUpdate,

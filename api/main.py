@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from api.core.config import settings
-from api.routers import health, ws, quotes, auth, products
+from api.routers import health, ws, quotes, auth
 
 from api.core.db import wait_for_db, create_schema_if_needed
 
@@ -34,4 +34,3 @@ app.include_router(health.router)
 app.include_router(ws.router)
 app.include_router(quotes.router)
 app.include_router(auth.router)
-app.include_router(products.router)
