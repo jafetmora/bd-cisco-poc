@@ -5,8 +5,11 @@ Demonstrates:
 1) Handling vague queries (asks for missing info)
 2) Handling specific queries (full quote/design)
 """
+import os
 from sys import argv
+import json
 
+# App
 from ai_engine.app.core.graph import app
 from ai_engine.app.gateway import analyze
 from ai_engine.app.schemas.models import AgentState
@@ -18,6 +21,7 @@ from ai_engine.app.schemas.models import SolutionDesign, AgentRoutingDecision
 # A simple summarizer chain (you can define this with your other LLM chains)
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+
 import ai_engine.settings as s
 
 summarizer_prompt = ChatPromptTemplate.from_template(
@@ -122,7 +126,7 @@ def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
     """
     Handles the entire process of memory management and graph invocation for a single turn.
     """
-    memory = ChatMemory(redis_url=s.REDIS_URL, session_id=session_id)
+    memory = ChatMemory(redis_url=s.REDIS_URL, session_id=session_id, ttl_seconds=300)
     DEFAULT_WINDOW_TURNS = 15
     
     # 1. Log the new user message to the conversation history
@@ -219,12 +223,10 @@ def _invoke_graph(user_query: str, session_id: str = "local-cli") -> str:
     
     #print(json.dumps(lean_state_to_persist, indent=2, ensure_ascii=False))
     #print("="*70)
-    
-    print("DEBUGGING final_msg")
-    print(final_msg)
-    print("DEBUGGING final_msg")
 
     return final_msg
+
+
 
 
 def run_sales_quote(query: str) -> str:
@@ -260,3 +262,5 @@ if __name__ == "__main__":
         print(run_sales_quote(query))
     else:
         main_interactive()
+
+

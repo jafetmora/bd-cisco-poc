@@ -1,4 +1,5 @@
 from typing import Protocol, Optional, Dict, Tuple, List, Any
+import uuid
 import httpx
 
 
@@ -16,7 +17,6 @@ class HttpAgentClient(AgentPort):
         default_quote_state: Optional[Dict[str, Any]] = None,
         follow_redirects: bool = True,
     ) -> None:
-        # normaliza base_url para que termine en /turns/
         base = base_url.rstrip("/")
         self.base_url = base if base.endswith("/turns") else f"{base}/turns"
         self.timeout = timeout
@@ -29,18 +29,19 @@ class HttpAgentClient(AgentPort):
         message: str,
         prior_quote_state: Optional[Dict[str, Any]],
     ) -> Tuple[str, List[dict]]:
+        sid = session_id or str(uuid.uuid4())
         payload: Dict[str, Any] = {
-            "session_id": session_id,
             "message": message,
             # NUNCA mandar null: 422 si el modelo espera dict
             "quote_state": prior_quote_state or self.default_quote_state or {},
         }
+        headers = {"X-Session-Id": sid}
         async with httpx.AsyncClient(
             timeout=self.timeout, follow_redirects=self.follow_redirects
         ) as client:
             # el endpoint real del agente es POST /turns/
             url = f"{self.base_url}/"
-            resp = await client.post(url, json=payload)
+            resp = await client.post(url, json=payload, headers=headers)
 
             try:
                 resp.raise_for_status()
