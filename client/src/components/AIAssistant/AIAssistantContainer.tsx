@@ -81,8 +81,8 @@ export default function AIAssistantContainer() {
             <FiSidebar className="w-[30px] h-[30px]" />
           </button>
         </div>
-        {/* Content */}
-        <div className="overflow-y-auto space-y-6 min-h-0">
+        {/* Content: make Chat fill height so its footer sticks to bottom */}
+        <div className="min-h-0 h-full overflow-hidden flex flex-col">
           {mode === "detailed" ? (
             <Chat
               chatMessages={quoteSession?.chatMessages || []}

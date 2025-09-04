@@ -1,17 +1,41 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaChevronDown, FaChevronRight, FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaSearch } from "react-icons/fa";
+import "./QuoteTable.css";
 import type { QuoteLineItem, QuotePricingSummary } from "../../types/Quotes";
 
 type Props = {
   items: QuoteLineItem[];
   summary?: QuotePricingSummary;
+  onDelete: (selectedIds: Set<string>) => void;
+  onUpdate: (updatedItems: QuoteLineItem[]) => void;
 };
 
-export default function QuotationTable({ items, summary }: Props) {
+export default function QuotationTable({
+  items,
+  summary,
+  //onDelete,
+  onUpdate,
+}: Props) {
+  const [editingQtyId, setEditingQtyId] = useState<string | null>(null);
+  const [editingQtyValue, setEditingQtyValue] = useState<string>("");
+
+  function handleQtyEditCommit(item: QuoteLineItem) {
+    const newQty = parseInt(editingQtyValue, 10);
+    if (!isNaN(newQty) && newQty > 0 && newQty !== item.quantity) {
+      const updatedItems = items.map((it) =>
+        it.id === item.id ? { ...it, quantity: newQty } : it,
+      );
+      onUpdate(updatedItems);
+    }
+    setEditingQtyId(null);
+    setEditingQtyValue("");
+  }
+
+  function cancelQtyEdit() {
+    setEditingQtyId(null);
+    setEditingQtyValue("");
+  }
   const [showMenu, setShowMenu] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<
-    Record<string, boolean>
-  >({});
   const [search, setSearch] = useState("");
   const [showSweep, setShowSweep] = useState(false);
   const prevItemsRef = useRef<QuoteLineItem[] | null>(null);
@@ -80,34 +104,42 @@ export default function QuotationTable({ items, summary }: Props) {
     prevSummaryRef.current = summary ?? null;
   }, [summary]);
 
-  const grouped = useMemo(() => {
-    const g: Record<string, QuoteLineItem[]> = {};
-    for (const it of items) {
-      if (!g[it.category]) g[it.category] = [];
-      g[it.category].push(it);
-    }
-    return g;
-  }, [items]);
+  // Filter items by search
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const toggleCategory = (c: string) =>
-    setExpandedCategories((prev) => ({ ...prev, [c]: !prev[c] }));
-
-  const filteredGrouped = Object.entries(grouped)
-    .map(([category, its]) => {
-      const q = search.trim().toLowerCase();
-      const filtered = q
-        ? its.filter((i) =>
-            `${i.product} ${i.productCode ?? ""}`.toLowerCase().includes(q),
-          )
-        : its;
-      return [category, filtered] as [string, QuoteLineItem[]];
-    })
-    .filter(([, its]) => its.length > 0);
+  const filteredItems = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((i) =>
+      `${i.product} ${i.productCode ?? ""}`.toLowerCase().includes(q),
+    );
+  }, [items, search]);
 
   const currency = summary?.currency ?? items[0]?.currency ?? "USD";
-  const computedTotal = filteredGrouped
-    .flatMap(([, its]) => its)
-    .reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+  const computedTotal = filteredItems.reduce(
+    (acc, it) => acc + it.unitPrice * it.quantity,
+    0,
+  );
+
+  // Checkbox logic
+  const allSelected =
+    filteredItems.length > 0 &&
+    filteredItems.every((it) => selectedIds.has(it.id));
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredItems.map((it) => it.id)));
+    }
+  };
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const displayLead = (lt: QuoteLineItem["leadTime"]) =>
     lt.kind === "instant"
@@ -122,10 +154,19 @@ export default function QuotationTable({ items, summary }: Props) {
 
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <FaSearch className="text-gray-400 w-4 h-4" />
+        <div className="relative flex items-center">
           <input
-            className="text-sm focus:outline-none placeholder:text-gray-400"
+            type="checkbox"
+            className="mr-4 w-4 h-4 accent-blue-600 cursor-pointer"
+            checked={allSelected}
+            onChange={toggleSelectAll}
+            aria-label="Select all products"
+          />
+          <span className="absolute left-10 top-1/2 -translate-y-1/2">
+            <FaSearch className="text-gray-400 w-4 h-4" />
+          </span>
+          <input
+            className="text-sm focus:outline-none placeholder:text-gray-400 rounded-full border border-gray-300 pl-9 pr-2 py-1 bg-white"
             placeholder="Search Quote Line Items"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -143,11 +184,14 @@ export default function QuotationTable({ items, summary }: Props) {
             </button>
             {showMenu && (
               <div className="absolute right-0 mt-2 bg-white shadow border border-gray-200 rounded-md text-sm z-10 w-44">
-                <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Action A
-                </div>
-                <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Action B
+                <div
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  /*onClick={() => {
+                    onDelete(selectedIds);
+                    setShowMenu(false);
+                  }}*/
+                >
+                  Delete
                 </div>
               </div>
             )}
@@ -157,86 +201,89 @@ export default function QuotationTable({ items, summary }: Props) {
 
       {/* Table */}
       <div className="px-4 py-2">
-        {filteredGrouped.map(([category, its]) => (
-          <div
-            key={category}
-            className="mb-4 border rounded-md border-gray-200"
-          >
-            <button
-              onClick={() => toggleCategory(category)}
-              className="w-full flex justify-between items-center bg-gray-50 px-4 py-2 text-left font-medium text-gray-700 hover:bg-gray-100"
-            >
-              <span>{category}</span>
-              {expandedCategories[category] ? (
-                <FaChevronDown />
-              ) : (
-                <FaChevronRight />
-              )}
-            </button>
-
-            {expandedCategories[category] && (
-              <table className="w-full text-sm text-left border-t border-gray-100">
-                <thead className="text-gray-500 bg-white">
-                  <tr>
-                    <th className="px-4 py-2 font-medium">Product</th>
-                    <th className="px-4 py-2 font-medium">
-                      Estimated Lead Time
-                    </th>
-                    <th className="px-4 py-2 font-medium">
-                      Unit List Price ({currency})
-                    </th>
-                    <th className="px-4 py-2 font-medium">Quantity</th>
-                    <th className="px-4 py-2 font-medium">
-                      Extended List Price
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-700">
-                  {its.map((it) => {
-                    const rowChanged = changedRowIds.has(it.id);
-                    const cell = changedCells[it.id] ?? {};
-                    return (
-                      <tr
-                        key={it.id}
-                        className={`border-t border-gray-100 ${rowChanged ? "flash-once" : ""}`}
-                      >
-                        <td className="px-4 py-2">
-                          {it.product}
-                          {it.productCode ? (
-                            <span className="text-gray-400 ml-1">
-                              ({it.productCode})
-                            </span>
-                          ) : null}
-                        </td>
-                        <td className="px-4 py-2">
-                          {displayLead(it.leadTime)}
-                        </td>
-                        <td
-                          className={`px-4 py-2 ${cell.price ? "flash-once" : ""}`}
-                        >
-                          {it.unitPrice.toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
-                        <td
-                          className={`px-4 py-2 ${cell.qty ? "flash-once" : ""}`}
-                        >
-                          {it.quantity}
-                        </td>
-                        <td className="px-4 py-2">
-                          {(it.unitPrice * it.quantity).toLocaleString(
-                            undefined,
-                            { minimumFractionDigits: 2 },
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            )}
-          </div>
-        ))}
+        <table className="w-full text-sm text-left">
+          <thead className="text-gray-500 bg-white">
+            <tr>
+              <th className="px-2 py-2 font-medium w-8"></th>
+              <th className="px-4 py-2 font-medium">
+                Hardware, Software and Service
+              </th>
+              <th className="px-4 py-2 font-medium">Estimated Lead Time</th>
+              <th className="px-4 py-2 font-medium">
+                Unit List Price ({currency})
+              </th>
+              <th className="px-4 py-2 font-medium">Quantity</th>
+              <th className="px-4 py-2 font-medium">Extended List Price</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-700">
+            {filteredItems.map((it) => {
+              const rowChanged = changedRowIds.has(it.id);
+              const cell = changedCells[it.id] ?? {};
+              return (
+                <tr
+                  key={it.id}
+                  className={`border-t border-gray-100 ${rowChanged ? "flash-once" : ""}`}
+                >
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 accent-blue-600 cursor-pointer"
+                      checked={selectedIds.has(it.id)}
+                      onChange={() => toggleSelectOne(it.id)}
+                      aria-label={`Select product ${it.product}`}
+                    />
+                  </td>
+                  <td className="px-4 py-2">
+                    {it.product}
+                    {it.productCode ? (
+                      <span className="text-gray-400 ml-1">
+                        ({it.productCode})
+                      </span>
+                    ) : null}
+                  </td>
+                  <td className="px-4 py-2">{displayLead(it.leadTime)}</td>
+                  <td className={`px-4 py-2 ${cell.price ? "flash-once" : ""}`}>
+                    {it.unitPrice.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td
+                    className={`px-4 py-2 ${cell.qty ? "flash-once" : ""}`}
+                    /*onClick={() => {
+                      setEditingQtyId(it.id);
+                      setEditingQtyValue(String(it.quantity));
+                    }}
+                    style={{ cursor: "pointer" }}*/
+                  >
+                    {editingQtyId === it.id ? (
+                      <input
+                        type="number"
+                        min={1}
+                        className="w-16 px-2 py-1 border rounded focus:outline-none hide-arrows"
+                        value={editingQtyValue}
+                        autoFocus
+                        onChange={(e) => setEditingQtyValue(e.target.value)}
+                        onBlur={() => handleQtyEditCommit(it)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleQtyEditCommit(it);
+                          if (e.key === "Escape") cancelQtyEdit();
+                        }}
+                      />
+                    ) : (
+                      it.quantity
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {(it.unitPrice * it.quantity).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       {/* Total */}

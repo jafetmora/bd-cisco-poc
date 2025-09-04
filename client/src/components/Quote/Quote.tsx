@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ItemSearchHeader from "./ItemSearchHeader";
 import QuoteHeaderBar from "./QuoteHeaderBar";
 import StepHeader from "./StepHeader";
 import TabSection from "./TabSection";
 import QuotationTable from "./QuoteTable";
 import type { DisplayMode } from "../../store/DisplayModeContext";
-import type { Quote as QuoteType } from "../../types/Quotes";
+import type {
+  Quote as QuoteType,
+  QuotePricingSummary,
+} from "../../types/Quotes";
+import type { Product } from "../../types/Product";
+import type { QuoteLineItem } from "../../types/Quotes";
 
 interface QuoteProps {
   quote?: QuoteType | null;
@@ -14,8 +20,8 @@ interface QuoteProps {
   loading?: boolean;
   error?: string | null;
   mode?: DisplayMode;
+  onUpdateQuote?: (quote: QuoteType) => void;
 }
-
 export default function Quote({
   quote,
   scenarioLabel,
@@ -23,8 +29,73 @@ export default function Quote({
   loading = false,
   error = null,
   mode,
+  onUpdateQuote,
 }: QuoteProps) {
   const [activeTab, setActiveTab] = useState("Items");
+  const [items, setItems] = useState<QuoteLineItem[]>(quote?.items ?? []);
+
+  // Sync items state with quote prop whenever quote changes (e.g. tab switch)
+  useEffect(() => {
+    setItems(quote?.items ?? []);
+  }, [quote]);
+
+  function recalculateSummary(items: QuoteLineItem[]): QuotePricingSummary {
+    const subtotal = items.reduce(
+      (acc, it) => acc + it.unitPrice * it.quantity,
+      0,
+    );
+    return {
+      currency: (items[0]?.currency ??
+        "USD") as import("../../types/Quotes").CurrencyCode,
+      subtotal,
+      total: subtotal,
+    };
+  }
+
+  function addProductToQuote(product: Product) {
+    if (!quote || !onUpdateQuote) return;
+    const prev = quote.items ?? [];
+    const productCode = product.sku ?? `ID-${product.id}`;
+    const existingIdx = prev.findIndex(
+      (item) => item.productCode === productCode,
+    );
+    let updatedItems;
+    if (existingIdx !== -1) {
+      // Increment quantity if SKU exists
+      updatedItems = prev.map((item, idx) =>
+        idx === existingIdx ? { ...item, quantity: item.quantity + 1 } : item,
+      );
+    } else {
+      // Add new item
+      const newItem: QuoteLineItem = {
+        id: uuidv4(),
+        category: product.category ?? "Unknown",
+        productCode: productCode,
+        product: product.description ?? product.name ?? "",
+        leadTime: { kind: "na" },
+        unitPrice: product.price,
+        quantity: 1,
+        currency: "USD",
+      };
+      updatedItems = [...prev, newItem];
+    }
+    const summary = recalculateSummary(updatedItems);
+    onUpdateQuote({ ...quote, items: updatedItems, summary });
+  }
+
+  function updateProductsFromQuote(updatedItems: QuoteLineItem[]) {
+    if (!quote || !onUpdateQuote) return;
+    const summary = recalculateSummary(updatedItems);
+    onUpdateQuote({ ...quote, items: updatedItems, summary });
+  }
+
+  function deleteProductsFromQuote(selectedIds: Set<string>) {
+    if (!quote || !onUpdateQuote) return;
+    const prev = quote.items ?? [];
+    const updatedItems = prev.filter((item) => !selectedIds.has(item.id));
+    const summary = recalculateSummary(updatedItems);
+    onUpdateQuote({ ...quote, items: updatedItems, summary });
+  }
 
   if (quote !== undefined) {
     if (!quote)
@@ -44,10 +115,12 @@ export default function Quote({
           <TabSection activeTab={activeTab} onChange={setActiveTab} />
           {activeTab === "Items" && (
             <>
-              <ItemSearchHeader />
+              <ItemSearchHeader onProductSelect={addProductToQuote} />
               <QuotationTable
-                items={quote?.items ?? []}
+                items={items}
                 summary={quote?.summary}
+                onDelete={deleteProductsFromQuote}
+                onUpdate={updateProductsFromQuote}
               />
             </>
           )}
@@ -98,8 +171,13 @@ export default function Quote({
       <TabSection activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === "Items" && (
         <>
-          <ItemSearchHeader />
-          <QuotationTable items={q.items ?? []} summary={q.summary} />
+          <ItemSearchHeader onProductSelect={addProductToQuote} />
+          <QuotationTable
+            items={items}
+            summary={q.summary}
+            onDelete={deleteProductsFromQuote}
+            onUpdate={updateProductsFromQuote}
+          />
         </>
       )}
     </main>
