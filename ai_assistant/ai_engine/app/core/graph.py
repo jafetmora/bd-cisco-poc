@@ -1890,7 +1890,7 @@ def synthesize_node(state: AgentState) -> dict:
         # For a simple question, the final message is just the answer.
         final_message_content = state.get("final_response", "Sorry, I could not generate an answer.")
     
-    """ else: # This block handles 'quote' or 'revision'
+    else: # This block handles 'quote' or 'revision'
         print(f"   - Intent is '{intent}'. Building full quote markdown.")
         designs = state.get("solution_designs", [])
         pr = state.get("pricing_results", {})
@@ -1910,46 +1910,20 @@ def synthesize_node(state: AgentState) -> dict:
         except Exception as e:
             print(f"[Synth] ERROR in build_markdown_from: {e}")
             final_message_content = "Failed to build the final message."
- """
+
     # --- Step 2: Prepare the update dictionary ---
     # The only new information this node is responsible for is the final, user-facing response.
 
     #update_data = {
     #    "final_response": final_message_content
-    #}  
+    #}
 
     # --- Step 3: Update and return the complete state ---
     # This safely adds/overwrites 'final_response' while preserving EVERYTHING else
     # (like solution_designs, pricing_results, conversation_window, etc.).
     #state.update(update_data)
     #return state
-    
-    
-    designs = state.get("solution_designs", [])
-    pr = state.get("pricing_results", {})
-    ea = state.get("ea", {})
-
-    quote_md = ""
-    try:
-        quote_md = build_markdown_from(designs, pr, ea, state)
-    except Exception as e:
-        print(f"[Synth] ERROR in build_markdown_from: {e}")
-        quote_md = "Failed to build the quote details."
-
-    # Texto corto para el chat: “next_best_action” del NBA Agent
-    print(" ")
-    print(state)
-    
-    nba = (state.get("next_best_action") or "").strip()
-    if not nba:
-        nba = state.get("final_response")
-
-    return {
-        "quote_markdown": quote_md,
-        "final_response": nba
-    }
-    
-    """ return prune_nones({
+    return prune_nones({
         "final_response": final_message_content,
         "solution_designs": state.get("solution_designs", []),
         "previous_solution_designs": state.get("previous_solution_designs", []),
@@ -1960,9 +1934,7 @@ def synthesize_node(state: AgentState) -> dict:
         "product_domain": state.get("product_domain"),
         "conversation_summary": state.get("conversation_summary"),
         "conversation_window": state.get("conversation_window"),
-        "next_action": next_action
-        
-    }) """
+    })
 
 
 

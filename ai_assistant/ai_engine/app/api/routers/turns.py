@@ -4,8 +4,10 @@ from typing import Any, Dict, List, Optional
 from ai_engine.app.domain.models import TurnIn, TurnOut
 from ai_engine.app.domain.services import QuoteService
 from ai_engine.app.adapters.graph_client import GraphPort
-from ai_engine.app.api.deps import get_graph_client
+from ai_engine.app.api.deps import get_session_id
 from ai_engine.app.api.compat import ai_invoke
+
+import re
 
 
 router = APIRouter(prefix="/turns", tags=["turns"])
@@ -19,10 +21,8 @@ _service = QuoteService()
 )
 async def create_turn(
     body: TurnIn,
-    graph: GraphPort = Depends(get_graph_client),
-    x_session_id: Optional[str] = Header(default=None),
+    session_id: str = Depends(get_session_id),
 ) -> TurnOut:
-    session_id = x_session_id or "api-session"
     # Call the graph
     final_state: Dict[str, Any] = await ai_invoke(body.message, session_id=session_id)
 
@@ -54,6 +54,14 @@ async def create_turn(
     # Keep outward compatibility (dicts) for scenarios
     scenarios_dicts: List[Dict[str, Any]] = [dict(s) for s in scenarios]
 
+    def extract_next_step_or_full(text: str) -> str:
+        match = re.search(r"Next Step:\*\*\s*(.+)", text, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+        return text
+
+    final_message = extract_next_step_or_full(assistant_text)
+
     return TurnOut(
-        assistant_message=assistant_text, scenarios=scenarios_dicts, events=events
+        assistant_message=final_message, scenarios=scenarios_dicts, events=events
     )
