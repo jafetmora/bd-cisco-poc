@@ -1,10 +1,13 @@
 from __future__ import annotations
-from fastapi import APIRouter, Depends
-from typing import Any, Dict, List
+from fastapi import APIRouter, Depends, Header
+from typing import Any, Dict, List, Optional
 from ai_engine.app.domain.models import TurnIn, TurnOut
 from ai_engine.app.domain.services import QuoteService
 from ai_engine.app.adapters.graph_client import GraphPort
-from ai_engine.app.api.deps import get_graph_client
+from ai_engine.app.api.deps import get_session_id
+from ai_engine.app.api.compat import ai_invoke
+
+import re
 
 
 router = APIRouter(prefix="/turns", tags=["turns"])
@@ -18,10 +21,10 @@ _service = QuoteService()
 )
 async def create_turn(
     body: TurnIn,
-    graph: GraphPort = Depends(get_graph_client),
+    session_id: str = Depends(get_session_id),
 ) -> TurnOut:
     # Call the graph
-    final_state: Dict[str, Any] = graph.invoke({"user_query": body.message})
+    final_state: Dict[str, Any] = await ai_invoke(body.message, session_id=session_id)
 
     # Missing info path
     if _service.looks_like_missing(final_state):
@@ -29,15 +32,20 @@ async def create_turn(
         events = [
             {"type": "missing_info", "fields": final_state.get("missing_info", [])}
         ]
+        nba_q = final_state.get("next_best_action")
         return TurnOut(assistant_message=assistant_text, scenarios=[], events=events)
 
     # Build scenarios
     scenarios = _service.scenarios_from_state(final_state)
     if not scenarios:
+        final_reponse = final_state.get("final_response")
+
+        if final_reponse:
+            return TurnOut(assistant_message=final_reponse, scenarios=[], events=[])
         assistant_text = "I couldn’t assemble scenarios yet. Please share the SKU(s), quantity, and client name to build a quote."
         return TurnOut(assistant_message=assistant_text, scenarios=[], events=[])
 
-    assistant_text = _service.build_summary_message(final_state, scenarios)
+    assistant_text = final_state.get("next_best_action")
     events: List[Dict[str, Any]] = []
 
     if isinstance(final_state.get("logs"), list):
@@ -46,6 +54,14 @@ async def create_turn(
     # Keep outward compatibility (dicts) for scenarios
     scenarios_dicts: List[Dict[str, Any]] = [dict(s) for s in scenarios]
 
+    def extract_next_step_or_full(text: str) -> str:
+        match = re.search(r"Next Step:\*\*\s*(.+)", text, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+        return text
+
+    final_message = extract_next_step_or_full(assistant_text)
+
     return TurnOut(
-        assistant_message=assistant_text, scenarios=scenarios_dicts, events=events
+        assistant_message=final_message, scenarios=scenarios_dicts, events=events
     )

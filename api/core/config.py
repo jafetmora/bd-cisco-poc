@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AliasChoices, Field, field_validator
 
@@ -9,7 +9,7 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("AGENT_BASE_URL"),
     )
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:5173"],
+        default=["*"],
         validation_alias=AliasChoices("CORS_ORIGINS"),
     )
     CORS_ALLOW_CREDENTIALS: bool = Field(
@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(default="dev-secret-change-me")
     ALGORITHM: str = Field(default="HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=120)
+    DATABASE_URL: Optional[str] = Field(
+        default=None, validation_alias=AliasChoices("DATABASE_URL")
+    )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

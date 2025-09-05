@@ -19,3 +19,4 @@ LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_ENDPOINT", "default")
 assert LANGCHAIN_API_KEY not in (None, "", "default"), (
     "❌ LANGCHAIN_API_KEY is not set. Please configure it in your .env or environment variables."
 )
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")

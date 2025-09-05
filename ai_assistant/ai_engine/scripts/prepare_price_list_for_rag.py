@@ -36,45 +36,129 @@ def normalize_col(c: str) -> str:
     c = c.replace("\n", " ").replace("\r", " ")
     c = re.sub(r"\s+", " ", c).strip()
     c = c.lower()
-    if c == "product":
-        c = "sku"
-    c = c.replace("qty unit of measure", "qty_uom")
-    c = c.replace("price unit of measure", "price_uom")
-    c = c.replace("product description", "description")
-    c = c.replace("product_family", "product_family") # <-- ADICIONE ESTA LINHA
-    c = c.replace("product_dimension", "product_dimension") # 
-    c = c.replace("price in usd", "list_price_usd")
-    c = c.replace("global list price", "list_price_usd")
-    c = c.replace("global us price list in us dollars", "global_us_price_list")
-    c = c.replace("end of sale date", "eos_date")
-    c = c.replace("category base discount name", "category_discount_name")
-    c = c.replace("item identifier", "item_identifier")
-    c = c.replace("service program", "service_program")
-    c = c.replace("rate table name", "rate_table_name")
-    c = c.replace("rate table (copy  in web browser)/", "rate_table_url")
-    c = c.replace("rate table (copy in web browser)/", "rate_table_url")
-    c = c.replace("pricing term", "pricing_term")
-    c = c.replace("subscription type", "subscription_type")
-    c = c.replace("offer type", "offer_type")
-    c = c.replace("buying program", "buying_program")
-    c = c.replace("quantity from", "qty_from")
-    c = c.replace("quantity to", "qty_to")
-    c = c.replace("quantity min", "qty_min")
-    c = c.replace("quantity max", "qty_max")
-    c = c.replace("service category", "service_category")
-    c = re.sub(r"[^a-z0-9]+", "_", c).strip("_")
-    return c
+
+    mapping = {
+        # Identificação
+        "item no": "item_no",
+        "item": "item",
+        "sku": "sku",
+        "qty": "qty",
+        "description": "description",
+        "product name": "product_name",
+        "commercial_name": "commercial_name",
+
+        # Família / produto
+        "product_family": "product_family",
+        #"family": "product_family",
+        "product_type": "product_type",
+
+        # Switches
+        "ports": "ports",
+        "port speed": "port_speed",
+        "poe type": "poe_type",
+        "stacking": "stacking",
+        "management": "management",
+        "switch layer": "switch_layer",
+        "power consumption": "power_consumption",
+        "flash memory": "flash_memory",
+        "buffer memory": "buffer_memory",
+        "throughput": "throughput",
+        "latency": "latency",
+        "management interface": "management_interface",
+        "network interface": "network_interface",
+        "performance tier": "performance_tier",
+        "service category": "service_category",
+
+        # Wireless
+        "standard": "wifi_standard",
+        "indoor_outdoor": "indoor_outdoor",
+        "indoor/outdoor": "indoor_outdoor",
+        "antenna": "antenna",
+        "radios": "radios",
+        "max_throughput": "max_throughput",
+        "poe": "poe",
+        "controller compat": "controller_compat",
+        "controller_compat": "controller_compat",
+
+        # Preços
+        "list_price_usd": "list_price_usd",
+        "street_price_usd": "street_price_usd",
+        "partner_price_usd": "partner_price_usd",
+
+        # Garantia / suporte
+        "warranty period": "warranty_period",
+        "support type": "support_type",
+        "processor": "processor",
+
+        # Ambiental
+        "operating temp": "operating_temp",
+        "storage temp": "storage_temp",
+        "humidity": "humidity",
+        "compliance": "compliance",
+
+        # Ciclo de vida
+        "availability": "availability",
+        "end_of_sale": "end_of_sale",
+        "end of sale": "end_of_sale",
+        "eol_status": "eol_status",
+        "eol status": "eol_status",
+        "release year": "release_year",
+        "release_year": "release_year",
+
+        # Packaging
+        "package contents": "package_contents",
+        "width": "width",
+        "depth": "depth",
+        "height": "height",
+        "weight_kg": "weight_kg",
+
+        # Extra
+        "orderability": "orderability",
+        "duration": "duration",
+        "item_identifier": "item_identifier",
+        "service_program": "service_program",
+        "product dimension": "product_dimension",
+        "product_dimension": "product_dimension",
+    }
+
+    return mapping.get(c, re.sub(r"[^a-z0-9]+", "_", c).strip("_"))
+
+
 
 def parse_money(x) -> float | None:
-    if pd.isna(x): return None
-    s = str(x)
-    s = s.replace("USD", "").replace("$", "").replace(",", "").strip()
-    if s == "" or s.upper() == "N/A": return None
+    if pd.isna(x):
+        return None
+    s = str(x).strip()
+    if s == "" or s.upper() == "N/A":
+        return None
+    # remove símbolos e espaços
+    s = re.sub(r"[^\d,.\-]", "", s)
+
+    # Casos:
+    # - "1.234,56"  -> usa vírgula como decimal (pt-BR)
+    # - "1,234.56"  -> usa ponto como decimal (en-US, com milhar)
+    # - "1567,47"   -> vírgula decimal (pt-BR, sem milhar)
+    # - "1567.47"   -> ponto decimal (en-US, sem milhar)
+    if "," in s and "." in s:
+        # se a última vírgula vem depois do último ponto, trate vírgula como decimal
+        if s.rfind(",") > s.rfind("."):
+            s = s.replace(".", "")      # remove milhares
+            s = s.replace(",", ".")     # vírgula -> decimal
+        else:
+            s = s.replace(",", "")      # remove milhares
+            # ponto já é decimal
+    elif "," in s and "." not in s:
+        # só vírgula -> decimal pt-BR
+        s = s.replace(",", ".")
+    else:
+        # só ponto ou nenhum separador -> remove vírgulas de milhar
+        s = s.replace(",", "")
+
     try:
         return float(s)
     except Exception:
-        s = re.sub(r"[^0-9\.\-]", "", s)
-        return float(s) if s else None
+        return None
+
 
 def parse_duration(s) -> int | None:
     if pd.isna(s): return None
@@ -116,7 +200,7 @@ def _detect_header_row(df: pd.DataFrame, max_scan: int = 40) -> int | None:
 
 def read_all_sheets(xlsx: Path) -> Dict[str, pd.DataFrame]:
     """Read all sheets; auto-detect header row; drop unnamed/empty columns robustly."""
-    xl = pd.read_excel(xlsx, sheet_name=None, header=None, dtype=object)
+    xl = pd.read_excel(xlsx, sheet_name=None, header=None, dtype=object, engine="openpyxl")
     cleaned: Dict[str, pd.DataFrame] = {}
     for name, raw in xl.items():
         df = raw.copy().dropna(axis=1, how="all")
@@ -184,18 +268,42 @@ def tidy_price_sheet(df: pd.DataFrame, sheet_name: str, workbook_name: str) -> p
     df = normalize_headers(df)
 
     wanted = [
-        "sku", "description", "service_category", "list_price_usd",
-        "qty_min", "qty_max", "qty_from", "qty_to",
-        "duration", "pricing_term",
-        "orderability", "item_identifier", "service_program",
-        "category_discount_name", "eos_date",
-        "subscription_type", "offer_type",
-        "qty_uom", "price_uom",
-        "rate_table_name", "rate_table_url",
-        "buying_program",
-        "product_family", "product_dimension",  # <-- ADICIONADO AQUI
-        "category_l1", "category_l2",
-    ]
+	    "item_no", "item", "sku", "qty", "description",
+	    "product_name", "product_family", "product_type","product_dimension", "dimension",
+
+	    # Switches
+	    "ports", "port_speed", "poe_type", "stacking", "management",
+	    "switch_layer", "power_consumption", "flash_memory", "buffer_memory",
+	    "throughput", "latency", "management_interface", "network_interface",
+	    "performance_tier", "service_category",
+
+	    # Wireless
+	    "wifi_standard", "indoor_outdoor", "antenna", "radios", "max_throughput",
+	    "poe", "controller_compat",
+
+	    # Preços
+	    "list_price_usd", "street_price_usd", "partner_price_usd",
+
+	    # Garantia / suporte
+	    "warranty_period", "support_type", "processor",
+
+	    # Ambiental
+	    "operating_temp", "storage_temp", "humidity", "compliance",
+	    "package_contents", "width", "depth", "height", "weight_kg",
+
+	    # Ciclo de vida
+	    "availability", "end_of_sale", "eol_status", "release_year",
+
+	    # Extra
+	    "orderability", "duration", "item_identifier", "service_program",
+	]
+
+    # Renomes pontuais pós-normalização (ex.: "standard" -> "wifi_standard")
+    if "standard" in df.columns and "wifi_standard" not in df.columns:
+        df = df.rename(columns={"standard": "wifi_standard"})
+
+
+    # preserve as 2 primeiras colunas não-mapeadas como categorias extras
     extra_cats: List[str] = []
     for c in df.columns[:2]:
         if c not in wanted and c not in ("sku", "description") and c not in extra_cats:
@@ -213,18 +321,44 @@ def tidy_price_sheet(df: pd.DataFrame, sheet_name: str, workbook_name: str) -> p
         df["sku"] = df["sku"].astype(str)
         df = df[~df["sku"].str.contains(r"global\s+us\s+price\s+list", case=False, na=False)]
 
-    # coerções
-    if "list_price_usd" in df.columns:
-        df["list_price_usd"] = df["list_price_usd"].apply(parse_money)
+    # ---------- coerções ----------
+    # pré-normalização de preço com vírgula decimal (ex.: "1.567,47" ou "1567,47")
+    def _normalize_money_text(x):
+        if pd.isna(x):
+            return x
+        s = str(x).strip()
+        if "," in s and not re.search(r"\.\d{1,2}$", s):
+            s = s.replace(".", "").replace(",", ".")
+        return s
+
+    for price_col in ("list_price_usd", "street_price_usd", "partner_price_usd"):
+        if price_col in df.columns:
+            df[price_col] = df[price_col].apply(_normalize_money_text).apply(parse_money)
+
+    # números inteiros / ano etc.
+    for icol in ("ports", "release_year"):
+        if icol in df.columns:
+            df[icol] = pd.to_numeric(df[icol], errors="coerce").astype("Int64")
+
+    # normalizações para lower/strings
+    for scol in (
+        "availability", "eol_status", "management", "poe_type", "poe",
+        "switch_layer", "performance_tier", "indoor_outdoor", "wifi_standard"
+    ):
+        if scol in df.columns:
+            df[scol] = df[scol].apply(to_lower_clean)
+
     for dcol in ("duration", "pricing_term"):
         if dcol in df.columns:
             df[dcol] = df[dcol].apply(parse_duration)
 
-    # Note que product_family e product_dimension foram adicionados aqui
-    for col in ("orderability", "subscription_type", "offer_type", "service_category",
-                "item_identifier", "service_program", "category_discount_name",
-                "buying_program", "rate_table_name", "category_l1", "category_l2",
-                "product_family", "product_dimension"):
+    # normalizações gerais
+    for col in (
+        "orderability", "subscription_type", "offer_type", "service_category",
+        "item_identifier", "service_program", "category_discount_name",
+        "buying_program", "rate_table_name", "category_l1", "category_l2",
+        "product_family", "product_dimension"
+    ):
         if col in df.columns:
             df[col] = df[col].apply(to_lower_clean)
 
@@ -234,32 +368,38 @@ def tidy_price_sheet(df: pd.DataFrame, sheet_name: str, workbook_name: str) -> p
 
     if "eos_date" in df.columns:
         def _parse_date(x):
-            if pd.isna(x): return None
-            if isinstance(x, (pd.Timestamp, datetime)): return pd.to_datetime(x).date()
+            if pd.isna(x): 
+                return None
+            if isinstance(x, (pd.Timestamp, datetime)):
+                return pd.to_datetime(x).date()
             s = str(x).strip()
-            if s.upper() in ("N/A", ""): return None
+            if s.upper() in ("N/A", ""):
+                return None
             for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y", "%b %d, %Y"):
-                try: return datetime.strptime(s, fmt).date()
-                except Exception: continue
+                try:
+                    return datetime.strptime(s, fmt).date()
+                except Exception:
+                    continue
             return None
         df["eos_date"] = df["eos_date"].apply(_parse_date)
 
-    # inferências
+    # ---------- inferências ----------
     df["sheet"] = sheet_name
     df["workbook"] = workbook_name
-    
-    # LÓGICA DE INFERÊNCIA ATUALIZADA
-    # Inicializa a coluna 'family' que será usada no RAG
+
+    # family: tenta coluna explícita; senão heurística anterior
     df["family"] = None
-    
-    # 1. Tenta usar a coluna explícita 'product_family'
     if "product_family" in df.columns:
-        # Mapeia os valores para um formato padronizado (ex: 'switches' -> 'meraki_ms')
-        # Isso mantém a consistência com a lógica antiga, se desejado.
-        # Ou simplesmente use o valor direto. Vamos usar direto por enquanto.
         df["family"] = df["product_family"]
 
-    # 2. Se a coluna 'product_family' não existir ou estiver vazia, usa a heurística antiga como fallback
+    # commercial_name: tenta product_name; senão description
+    if "commercial_name" not in df.columns or df["commercial_name"].isna().all():
+        if "product_name" in df.columns:
+            df["commercial_name"] = df["product_name"]
+        else:
+            df["commercial_name"] = df.get("description", None)
+
+    # fallback de family (heurística antiga)
     if "family" not in df.columns or df["family"].isna().all():
         cat_hint = ""
         if "category_l1" in df.columns and not df["category_l1"].empty:
@@ -272,7 +412,7 @@ def tidy_price_sheet(df: pd.DataFrame, sheet_name: str, workbook_name: str) -> p
         elif "duo" in txt:
             df["family"] = "duo"
 
-    # Define product_line usando category_l2 ou category_l1
+    # product_line
     if "category_l2" in df.columns:
         df["product_line"] = df["category_l2"]
     elif "category_l1" in df.columns:
@@ -280,88 +420,132 @@ def tidy_price_sheet(df: pd.DataFrame, sheet_name: str, workbook_name: str) -> p
     else:
         df["product_line"] = None
 
-    # EXTRAI A DIMENSÃO (Hardware, Accessory, License)
+    # dimension (hardware/accessory/license)
     if "product_dimension" in df.columns:
-        # Extrai a palavra-chave do texto (ex: de "meraki ms hardware" para "hardware")
-        df["dimension"] = df["product_dimension"].str.extract(r"(hardware|accessory|license)", flags=re.IGNORECASE, expand=False)
+        df["dimension"] = df["product_dimension"].str.extract(
+            r"(hardware|accessory|license)", flags=re.IGNORECASE, expand=False
+        )
     else:
         df["dimension"] = None
 
-
-    # filtra sem SKU
+    # filtra sem SKU e faz deduplicação segura
     if "sku" in df.columns:
         df = df[~df["sku"].isna() & (df["sku"].astype(str).str.strip() != "")]
-
-    # chave de granularidade
-    for c in ("duration", "subscription_type", "offer_type", "service_program"):
-        if c not in df.columns:
-            df[c] = None
-    df = df.drop_duplicates(subset=["sku", "duration", "subscription_type", "offer_type", "service_program"])
+        for c in ("duration", "subscription_type", "offer_type", "service_program"):
+            if c not in df.columns:
+                df[c] = None
+        subset_cols = [c for c in ["sku", "duration", "subscription_type", "offer_type", "service_program"] if c in df.columns]
+        if subset_cols:
+            df = df.drop_duplicates(subset=subset_cols)
 
     return df.reset_index(drop=True)
 
+
+
 def to_rag_facts(df: pd.DataFrame) -> pd.DataFrame:
     fields: List[dict] = []
+
     for _, r in df.iterrows():
         parts = []
-        sku = str(r.get("sku", "")).strip()
-        if sku: parts.append(f"SKU {sku}")
-        
-        # Informações de Categoria Melhoradas
-        p_fam = r.get("product_family")
-        dim = r.get("dimension")
-        if p_fam: parts.append(f"Family: {p_fam}")
-        if dim: parts.append(f"Type: {dim}")
 
-        pl = r.get("product_line") or ""
-        if pl: parts.append(f"Product Line: {pl}")
-        
-        desc = str(r.get("description") or "").strip()
-        if desc: parts.append(f"Description: {desc}")
-        
-        lp = r.get("list_price_usd")
-        if pd.notna(lp): parts.append(f"List price USD {lp:.2f}")
-        
-        uom = r.get("qty_uom") or r.get("price_uom")
-        if uom: parts.append(f"Unit {uom}")
-        
-        dur = r.get("duration") or r.get("pricing_term")
-        if pd.notna(dur): parts.append(f"Duration {int(dur)} months")
-        
-        ordy = r.get("orderability")
-        if ordy: parts.append(f"Orderability {ordy}")
-        
-        sub = r.get("subscription_type")
-        if sub: parts.append(f"Subscription {sub}")
-        
-        off = r.get("offer_type")
-        if off: parts.append(f"Offer {off}")
-        
-        sp = r.get("service_program")
-        if sp: parts.append(f"Service program {sp}")
-        
-        catdisc = r.get("category_discount_name")
-        if catdisc: parts.append(f"Category discount {catdisc}")
-        
-        eos = r.get("eos_date")
-        if pd.notna(eos): parts.append(f"End-of-sale {eos}")
+        # Identificação
+        sku = str(r.get("sku") or "").strip()
+        if sku: parts.append(f"SKU {sku}")
+        if pd.notna(r.get("product_name")): parts.append(f"Name: {r['product_name']}")
+        if pd.notna(r.get("description")): parts.append(f"Description: {r['description']}")
+
+        # Família / produto
+        if pd.notna(r.get("product_family")): parts.append(f"Family: {r['product_family']}")
+        if pd.notna(r.get("product_type")): parts.append(f"Type: {r['product_type']}")
+        if pd.notna(r.get("product_dimension")): parts.append(f"Type: {r['product_dimension']}")
+
+        dim = r.get("dimension") or r.get("product_dimension")
+        if pd.notna(dim) and dim:
+        	parts.append(f"Type: {dim}")
+
+        # Switches
+        for col, label in [
+            ("ports", "Ports"), ("port_speed", "Port speed"), ("poe_type", "PoE type"),
+            ("stacking", "Stacking"), ("management", "Management"), ("switch_layer", "Layer"),
+            ("power_consumption", "Power consumption"), ("flash_memory", "Flash memory"),
+            ("buffer_memory", "Buffer memory"), ("throughput", "Throughput"), ("latency", "Latency"),
+            ("management_interface", "Mgmt IF"), ("network_interface", "Net IF"),
+            ("performance_tier", "Performance tier"), ("service_category", "Service category"),
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
+
+        # Wireless
+        for col, label in [
+            ("wifi_standard", "Wi-Fi"), ("indoor_outdoor", "Indoor/Outdoor"),
+            ("antenna", "Antenna"), ("radios", "Radios"),
+            ("max_throughput", "Max throughput"), ("poe", "PoE"),
+            ("controller_compat", "Controller"), ("release_year", "Release year"),
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
+
+        # Preços
+        for col, label in [
+            ("list_price_usd", "List price USD"), ("street_price_usd", "Street price USD"),
+            ("partner_price_usd", "Partner price USD")
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label} {val}")
+
+        # Garantia / suporte
+        for col, label in [
+            ("warranty_period", "Warranty"), ("support_type", "Support"), ("processor", "Processor")
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
+
+        # Ambiental
+        for col, label in [
+            ("operating_temp", "Operating temp"), ("storage_temp", "Storage temp"),
+            ("humidity", "Humidity"), ("compliance", "Compliance"),
+            ("package_contents", "Package"), ("width", "Width"),
+            ("depth", "Depth"), ("height", "Height"), ("weight_kg", "Weight (kg)")
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
+
+        # Ciclo de vida
+        for col, label in [
+            ("availability", "Availability"), ("end_of_sale", "End of sale"),
+            ("eol_status", "EoL status")
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
+
+        # Extra
+        for col, label in [
+            ("orderability", "Orderability"), ("duration", "Duration"),
+            ("item_identifier", "Item identifier"), ("service_program", "Service program")
+        ]:
+            val = r.get(col)
+            if pd.notna(val): parts.append(f"{label}: {val}")
 
         text = " | ".join(parts)
+
         fields.append({
-            "id": f"{sku}__{int(dur) if pd.notna(dur) else 'na'}__{off or 'na'}",
+            "id": sku,
             "source_file": "price_list_excel",
             "workbook": r.get("workbook"),
             "sheet": r.get("sheet"),
-            "family": r.get("family"), # A coluna 'family' da heurística/product_family
-            "product_family": p_fam or None, # A coluna original 'product_family'
-            "dimension": dim or None, # A nova coluna 'dimension'
-            "product_line": pl or None,
+            "sku": sku,
             "text": text,
             "text_norm": normalize_ascii_lower(text),
-            "sku": sku,
-            "list_price_usd": float(lp) if pd.notna(lp) else None,
+            "list_price_usd": r.get("list_price_usd"),
+            "family": r.get("product_family"),
+            "product_type": r.get("product_type"),
+            "product_dimension": r.get("product_dimension"),
         })
+
     return pd.DataFrame(fields)
+
+
+
 
 def write_jsonl(path: Path, records: List[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -410,6 +594,7 @@ def main():
         if not base.exists():
             raise FileNotFoundError(f"Input directory not found: {base}")
         excel_paths = collect_excel_files(base, recursive=args.recursive)
+        excel_paths = [p for p in excel_paths if not p.name.startswith("~$")]
 
     if not excel_paths:
         raise RuntimeError("No Excel files found. Provide --input_dir or --excel.")
@@ -435,6 +620,10 @@ def main():
     # 1) structured catalog
     catalog_out_parquet = out_dir / "catalog_products_clean.parquet"
     catalog_out_csv     = out_dir / "catalog_products_clean.csv"
+
+
+    print("[DEBUG] Columns in final catalog:", list(catalog.columns))
+    print("[DEBUG] Example row:", catalog.iloc[0].to_dict())
     save_parquet(catalog_out_parquet, catalog)
     catalog.to_csv(catalog_out_csv, index=False)
 

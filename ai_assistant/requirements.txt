@@ -27,3 +27,4 @@ pandas
 scipy
 scikit-learn
 pyarrow>=16.0
+redis
