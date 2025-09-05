@@ -27,7 +27,7 @@ app.add_middleware(
         "localhost",
         "cisco-poc-alb-640338878.us-east-2.elb.amazonaws.com",
         "d2xwx7ojpy08cy.cloudfront.net",
-        "*.cloudfront.net"
+        "*.cloudfront.net",
     ],
 )
 
