@@ -41,12 +41,14 @@ export class QuoteSocket<Events extends Record<string, unknown>> {
     this.ws = new WebSocket(urlWithToken);
 
     this.ws.onopen = () => {
+      console.log("[WS] ✅ Connected:", urlWithToken);
       const queued = [...this.pendingQueue];
       this.pendingQueue = [];
       queued.forEach(({ event, data }) => this._send(event, data));
     };
 
     this.ws.onmessage = (event) => {
+      console.log("[WS] 📩 Message received:", event.data);
       try {
         const parsed = JSON.parse(event.data) as {
           event?: keyof Events;
@@ -54,23 +56,24 @@ export class QuoteSocket<Events extends Record<string, unknown>> {
         };
         const evt = parsed.event;
         if (evt && this.handlers[evt]) {
-          // type cast seguro porque sabemos que evt es keyof Events
           this.handlers[evt]!.forEach((cb) =>
             cb(parsed.data as Events[typeof evt]),
           );
         }
       } catch (error) {
-        console.error(error);
+        console.error("[WS] ❌ Failed to parse message:", error);
       }
     };
 
     this.ws.onclose = (e) => {
-      console.error(e);
+      console.warn(
+        `[WS] 🔌 Connection closed. Code=${e.code}, Reason=${e.reason || "N/A"}`,
+      );
       this.ws = null;
     };
 
-    this.ws.onerror = () => {
-      // noop
+    this.ws.onerror = (e) => {
+      console.error("[WS] ⚠️ Connection error:", e);
     };
   }
 

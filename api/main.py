@@ -21,16 +21,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="IA-Agent API", version="0.1.0")
 
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=[
-        "localhost",
-        "cisco-poc-alb-640338878.us-east-2.elb.amazonaws.com",
-        "d2xwx7ojpy08cy.cloudfront.net",
-        "*.cloudfront.net",
-    ],
-)
-
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
