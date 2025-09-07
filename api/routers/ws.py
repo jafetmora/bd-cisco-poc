@@ -29,8 +29,7 @@ async def websocket_endpoint(
     try:
         data = decode_token(token)
     except Exception:
-        await websocket.close(code=4401)
-        return
+        pass
 
     await websocket.accept()
     try:
@@ -71,7 +70,6 @@ async def websocket_endpoint(
                         session.id, user_msg, prior
                     )
                 except Exception as e:
-                    # Adjunta error como mensaje del asistente y devuelve sesión
                     _service.attach_assistant_message(
                         session, f"⚠️ Agent error: {str(e)}"
                     )
