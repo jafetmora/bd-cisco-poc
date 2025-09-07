@@ -48,7 +48,7 @@ export class QuoteSocket<Events extends Record<string, unknown>> {
     };
 
     this.ws.onmessage = (event) => {
-      console.log("[WS] 📩 Message received:", event.data);
+      console.log("[WS] 📩 Message received");
       try {
         const parsed = JSON.parse(event.data) as {
           event?: keyof Events;
