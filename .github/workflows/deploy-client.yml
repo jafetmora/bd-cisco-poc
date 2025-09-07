@@ -40,5 +40,27 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sync to S3
-        run: aws s3 sync client/dist s3://${{ env.S3_BUCKET }} --delete
+      - name: Empty bucket (force re-upload)
+        run: |
+          aws s3 rm s3://${{ env.S3_BUCKET }} --recursive
+
+      - name: Upload ALL (no-cache)
+        run: |
+          aws s3 cp client/dist s3://${{ env.S3_BUCKET }} \
+            --recursive \
+            --cache-control "no-store, no-cache, must-revalidate"
+
+      - name: Upload HTML (no-cache)
+        run: |
+          aws s3 cp client/dist s3://${{ env.S3_BUCKET }} \
+            --recursive \
+            --exclude "*" --include "*.html" \
+            --cache-control "no-store, no-cache, must-revalidate" \
+            --content-type "text/html"
+
+      - name: Invalidate CloudFront (all)
+        if: env.CF_DIST_ID != ''
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ env.CF_DIST_ID }}" \
+            --paths "/*"
