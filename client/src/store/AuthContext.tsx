@@ -109,6 +109,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (username: string, password: string) => {
+      if (username !== "demo" || password !== "12demo34") {
+        throw new Error("Invalid credentials");
+      }
+
       const fakePayload = makeFakePayload({
         sub: `${username} ${password}`,
       });
