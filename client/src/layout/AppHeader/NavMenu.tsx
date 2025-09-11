@@ -109,9 +109,9 @@ export default function NavMenu() {
       </button>
       {/* User name and partner */}
       <div className="flex flex-col leading-tight">
-        <span className="text-xs text-light font-segoe">Patricia Hamilton</span>
+        <span className="text-xs text-light font-segoe">Jane Doe</span>
         <span className="text-xs text-light font-segoe">
-          Magna technologies
+          Cisco Account Manager
         </span>
       </div>
     </div>

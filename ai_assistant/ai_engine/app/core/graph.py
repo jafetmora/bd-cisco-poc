@@ -28,14 +28,21 @@ from ai_engine.app.core.tools import (
     get_products_info,
     get_product_price,
     get_technical_specs,
-    extract_sku_mentions,
+    #extract_sku_mentions,
     extract_sku_quantities,
     _compute_client_adjusted_price,
     resolve_sku,
-    parse_duration_months_simple,
-    parse_global_quantity_from_text,
-    infer_meraki_ms_license_sku,
+    #parse_duration_months_simple,
+    #parse_global_quantity_from_text,
+    #infer_meraki_ms_license_sku,
 )
+
+#from services.ai_engine.app.core.tools import (
+#    product_search_tool,
+#    get_product_info,
+#    get_products_info,
+#    resolve_sku
+#)
 
 from ai_engine.app.ea_recommender import run as ea_recommender_node
 
@@ -52,7 +59,7 @@ from dataclasses import dataclass, field
 # Ground-truth dicts agora vêm do tools (price list preparado)
 from ai_engine.app.core.tools import (
     PRODUCT_DICT as product_dict,
-    CLIENTS_DICT as clients_dict,
+#    CLIENTS_DICT as clients_dict,
 )
 
 # -------------------- LLMs --------------------
@@ -1420,30 +1427,68 @@ def orchestrator_node(state: AgentState) -> dict:
     q = state.get("user_query", "") or ""
     print(f"\n🎻 [Orchestrator] Analyzing query for intent and entities: «{q}»")
 
+        # Get conversational memory from the state to be used in both paths.
+    conversation_summary = state.get("conversation_summary", "No summary yet.")
+    conversation_window = state.get("conversation_window", "No recent messages.")
+
+    _current_designs = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+
     # The advanced prompt that asks for multiple fields
     llm_prompt = f"""
-You are an expert data analyst and search query optimizer. Your task is to carefully read the user's query and extract key information into a structured JSON format.
+You are an expert orchestrator AI. Your main task is to analyze an incoming user query, understand its intent and context from the conversation history, and then prepare a structured command for another specialized AI agent.
 
-Analyze the user query below and extract the following attributes:
+Previous Conversation *****************************************
+The current quote **************** High important, You Always should start and considerer this:
+{_current_designs}
+
+conversation summary:
+{conversation_summary}
+
+conversation_window:
+{conversation_window}
+
+End of Previous Conversation **********************************
+
+Analyze the user query below and the previous conversation above to extract the following attributes into a single, valid JSON object:
 - intent: Classify as 'quote', 'revision', or 'question'.
 - client_name: The name of the company, if mentioned.
 - users_count: The number of users to support, as an integer.
 - product_domain: The general product category (e.g., 'Wi-Fi', 'switch').
 - sku_map: A JSON object where keys are SKUs (part numbers) and values are quantities.
-- search_query: **Generate a concise, keyword-rich search query** suitable for a product catalog search engine. This query should summarize the core technical and commercial requirements from the user's message.
+- search_query: Generate a concise, keyword-rich query for a vector database search. This should summarize the core technical requirements.
+- query_refined: **This is the most important field.** Re-write the user's original query into a clear, complete, and unambiguous command for another AI agent. The format depends on the 'intent':
+    - If intent is 'quote' or 'revision', formulate a direct command for a quote-building agent. Start with an action verb like "Generate a quote..." or "Revise the quote...". Include all extracted details (SKUs, quantities, client) to make the command self-contained. If The client already is working in a quote, you should consider this in the comand.
+    - If intent is 'question', transform the user's (often informal) question into a precise, well-structured question for a technical expert agent. Add context where necessary.
 
-If a piece of information is not present, use a null value. Respond only with a single, valid JSON object.
+If a piece of information is not present, use a null value. Respond ONLY with the JSON object.
 
-Example for a query "quote 5 units of C9179F-01 for Acmedes Corp with 50 users, budget is important":
+---
+Example 1 (Quote Request):
+USER QUERY: "quote 5 units of C9179F-01 for Acmedes Corp with 50 users, budget is important"
 {{
     "intent": "quote",
     "client_name": "Acmedes Corp",
     "users_count": 50,
     "product_domain": "Wi-Fi",
     "sku_map": {{ "C9179F-01": 5 }},
-    "search_query": "Cisco Wi-Fi C9179F-01 50 users budget"
+    "search_query": "Cisco Wi-Fi C9179F-01 50 users budget",
+    "query_refined": "Generate a quote with 3 options (baseline, budget, value-added) for Acmedes Corp, including 5 units of SKU C9179F-01. The solution should be suitable for 50 users and consider budget constraints."
 }}
 
+---
+Example 2 (Question):
+USER QUERY: "do the new meraki APs support wifi 6e?"
+{{
+    "intent": "question",
+    "client_name": null,
+    "users_count": null,
+    "product_domain": "Wi-Fi",
+    "sku_map": null,
+    "search_query": "Meraki access points Wi-Fi 6E support",
+    "query_refined": "What is the Wi-Fi standard support, specifically including Wi-Fi 6E, for the latest Cisco Meraki MR series of access points? Provide details on which models support it, if applicable."
+}}
+
+---
 USER QUERY:
 {q}
 """
@@ -1464,6 +1509,7 @@ USER QUERY:
         product_domain = llm_data.get("product_domain")
         sku_map = llm_data.get("sku_map")
         search_query = llm_data.get("search_query")
+        query_refined = llm_data.get("query_refined")
         
         print(f"🎯 Detected Intent: {intent}")
         print(f"   - Extracted Client: {client_name}")
@@ -1471,6 +1517,7 @@ USER QUERY:
         print(f"   - Extracted Domain: {product_domain}")
         print(f"   - Extracted SKUs: {sku_map}")
         print(f"   - Generated Search Query: «{search_query}»")
+        print(f"   - Generated query_refined: «{query_refined}»")
 
         decision = {
             "needs_design": intent in ["quote", "revision"],
@@ -1484,6 +1531,7 @@ USER QUERY:
         # Create the dictionary with ONLY the new information
         update_data = {
             "next_flow": intent,
+            "user_query": query_refined,
             "orchestrator_decision": decision,
             "client_name": client_name,
             "users_count": users_count,
@@ -1988,19 +2036,30 @@ def clean_for_json(obj):
 
 from typing import Optional
 
+
 def context_collector_node(state: AgentState) -> dict:
+    """
+    Busca SKUs relevantes para a consulta e coleta seus dados detalhados
+    para formar o contexto que será enviado ao LLM.
+    """
     print("\n🔍 [Context Collector] Fetching context for the LLM…")
 
     user_query = state.get("user_query", "")
     search_query = state.get("search_query") or user_query
-    skus = hybrid_search_products(search_query, k_faiss=50, k_bm25=50, k_tfidf=55)
+    
+    # Busca uma lista de SKUs relevantes usando a busca híbrida
+    skus = hybrid_search_products(search_query, k_faiss=15, k_bm25=15, k_tfidf=15)
 
     product_context = []
+    
+    # Para cada SKU encontrado, busca os detalhes completos no dicionário pré-carregado
     for sku in skus:
+        # A variável 'info' agora contém todos os campos em um único nível (estrutura "plana")
         info = product_dict.get(sku)
         if not info:
             continue
-        tech = info.get("technical_specs", {}) or {}
+        
+        # Monta o dicionário para este produto com os campos corretos e atualizados
         product_context.append({
             "sku": sku,
             "commercial_name": info.get("commercial_name") or info.get("description") or sku,
@@ -2009,43 +2068,32 @@ def context_collector_node(state: AgentState) -> dict:
             "category": info.get("dimension") or info.get("product_dimension"),
             "product_dimension": info.get("product_dimension"),
             "product_type": info.get("product_type"),
-            "pricing_model": info.get("pricing_model"),
-            "ports": tech.get("ports"),
-            "port_speed": tech.get("port_speed"),
-            "poe_type": tech.get("poe_type") or tech.get("poe"),
-            "stacking": tech.get("stacking"),
-            "switch_layer": tech.get("switch_layer"),
-            "throughput": tech.get("throughput") or tech.get("max_throughput"),
-            "latency": tech.get("latency"),
-            "network_interface": tech.get("network_interface"),
-            "performance_tier": tech.get("performance_tier"),
-            "wifi_standard": tech.get("wifi_standard"),
-            "indoor_outdoor": tech.get("indoor_outdoor"),
-            "antenna": tech.get("antenna"),
-            "radios": tech.get("radios"),
-            "max_throughput": tech.get("max_throughput"),
-            "controller_compat": tech.get("controller_compat"),
-            "processor": tech.get("processor"),
-            "warranty": tech.get("warranty"),
-            "support": tech.get("support"),
+            "list_price_usd": info.get("list_price_usd"),
+            
+            # --- Campos Técnicos lidos diretamente de 'info' ---
+            "poe_type": info.get("poe_type"),
+            "stacking": info.get("stacking"),
+            "network_interface": info.get("network_interface"),
+            "indoor_outdoor": info.get("indoor_outdoor"),
+            "usage": info.get("usage"),
+            "uplinks": info.get("uplinks"),
+            "power_configuration": info.get("power_configuration"),
+            "routing_capabilities": info.get("routing_capabilities"),
+            "radio_specification": info.get("radio_specification"),
+            "spatial_streams": info.get("spatial_streams"),
         })
 
     print(f"  - Collected {len(product_context)} products for LLM context.")
 
-    qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
-    base_sku: Optional[str] = next(iter(qty_map.keys())) if qty_map else None
-
+    # Lógica subsequente da sua função (mantida como no seu original)
     product_context = clean_for_json(product_context)
 
-    # 1. Create a dictionary with ONLY the new information
     update_data = {
         "product_context": product_context
     }
     
-    # 2. Update the state, preserving the quote that was loaded
     state.update(update_data)
     
-    # 3. Return the complete, updated state
     return state
 
     # 🔹 Aqui indicamos explicitamente o branch que deve receber a saída
@@ -2173,36 +2221,44 @@ def llm_designer_node(state: AgentState) -> dict:
     product_context_json = json.dumps(product_context, indent=2)
     context_json = json.dumps(product_context, indent=2)
 
+
     def _role_from_dim(p: dict) -> str:
+        """Determina se o produto é hardware, licença ou acessório."""
         dim = (p.get("product_dimension") or p.get("category") or "").strip().casefold()
-        name = (p.get("commercial_name") or p.get("product_name") or "").strip().casefold()
+        
+        # MUDANÇA: Removemos a referência a 'product_name', que não existe mais no product_context.
+        # 'commercial_name' é o campo correto agora.
+        name = (p.get("commercial_name") or "").strip().casefold()
 
         if "license" in dim or "licen" in name:
             return "license"
-        if "access" in dim or re.search(r"\b(kit|mount|cable|adapter|adaptor|bracket|antenna|psu|power)\b", name):
-            return "accessory"
         return "hardware"
 
     def _domain_from_family(p: dict) -> str:
+        """Determina se o produto é switch ou wifi a partir da família."""
         fam = (p.get("family") or "").strip().casefold()
-        # regra simples: se mencionar "switch", é switch; caso contrário, tratamos como wifi
+        # Esta regra simples continua funcional com os novos dados ("switches" ou "wireless")
         return "switch" if "switch" in fam else "wifi"
 
     def build_context_by_family(products: list[dict], limit_per_bucket: int = 40) -> dict:
+        """Organiza uma lista de produtos em 'buckets' por domínio e função."""
         buckets = {
-            "wifi":   {"hardware": [], "licenses": [], "accessories": []},
-            "switch": {"hardware": [], "licenses": [], "accessories": []},
+            "wifi":   {"hardware": [], "licenses": []},
+            "switch": {"hardware": [], "licenses": []},
         }
         for p in products or []:
             dom = _domain_from_family(p)
             role = _role_from_dim(p)
-            key  = "accessories" if role == "accessory" else ("licenses" if role == "license" else "hardware")
-            buckets[dom][key].append(p)
+            # A chave 'role' já está no formato correto dos buckets
+            key = role + "s" if role != "hardware" else role # accessories, licenses, hardware
+            if key in buckets[dom]:
+                buckets[dom][key].append(p)
 
-        # limitar quantidade por bucket (opcional)
+        # Limita a quantidade de itens em cada bucket
         for dom in buckets:
             for k in buckets[dom]:
                 buckets[dom][k] = buckets[dom][k][:limit_per_bucket]
+        
         return buckets
 
     # === uso ===
@@ -2210,6 +2266,8 @@ def llm_designer_node(state: AgentState) -> dict:
     context_buckets = build_context_by_family(product_context)
 
     context_json = json.dumps(context_buckets, indent=2)
+
+    print("8930843749837658746528746584276548765487658427", context_json)
 
 
 
@@ -2292,41 +2350,71 @@ def llm_designer_node(state: AgentState) -> dict:
             Your main goal is to design **exactly 3 distinct options** labeled "Essential (Good)", "Standard (Better)", and "Complete (Best)".
 
             For EACH of the 3 scenarios, you MUST follow these steps in order:
-            1. **Select and Size Hardware:** 
-               - First, select the primary hardware (switches, in this case). 
-               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
-                 Use the provided `{users_count}` to compute the required hardware.
 
-            **Sizing Calculation Rule Example:**
-            - Each switch supports up to 24 users.
-            - Compute the number of switches as:
+            1. **Select and Size Hardware:**
+               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
+               - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
 
-            number_of_switches = ceil({users_count} / 24)
+            2. **Select Corresponding License:**
+               - After determining the hardware and quantity, find the corresponding license from the candidate list (e.g., find `LIC-MS250-48-5Y` for `MS250-48-HW`).
 
-            markdown
-            Copiar código
+            3. **Justify Your Choices:**
+               - Briefly explain why you chose those components for that scenario, considering price and performance.
 
-            - Example: 
-            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
-            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+            ---
+            **Sizing Calculation Rules:**
 
-            - Always round up to ensure every user has sufficient coverage.
-            2.  **Add Required Licenses:** Second, after selecting the hardware, find the corresponding and compatible licenses from the context. You MUST apply the `License Matching` rule. Every piece of main hardware that requires a license must have one.
-            3.  **Add Necessary Accessories:** Third, add any relevant accessories like power supplies or mounting kits that are available in the context.
-            4.  **Justify Your Choices:** Briefly explain why you chose those components for that scenario.
+            ### For Switches:
+            The calculation is based on providing enough physical ports for all devices with a buffer for growth.
+
+            1.  **Determine Ports per Switch:** Extract the number of ports from the `network_interface` field (e.g., "24 x 1GbE RJ45" means 24 ports).
+            2.  **Estimate Total Devices:** Calculate this as `Total_Devices = ({users_count} * 1.15)`. This adds a 15% buffer for non-user devices (APs, printers, etc.).
+            3.  **Plan for Future Growth:** Calculate the total required ports as `Required_Ports = (Total_Devices * 1.25)`. This adds a 25% capacity buffer.
+            4.  **Calculate Number of Switches:** `Number_of_Switches = ceil(Required_Ports / Ports_per_Switch)`. **Always round up.**
+
+            *Example for `{users_count}` = 500 and a 24-port switch:*
+            - Total_Devices = (500 * 1.15) = 575
+            - Required_Ports = (575 * 1.25) = 718.75
+            - Number_of_Switches = ceil(718.75 / 24) = ceil(29.95) = 30 switches
+
+            ### For Wi-Fi Access Points (APs):
+            The calculation is an estimate based on user density.
+
+            1.  **Estimate Users per AP:** Infer this from the `Usage` field of the product. Use these heuristics:
+                - If `Usage` mentions "high-density", assume **25 users per AP**.
+                - If `Usage` mentions "medium-density" or is a general office use case, assume **45 users per AP**.
+                - If `Usage` mentions "low-density" (like a warehouse), assume **65 users per AP**.
+                - If unclear, default to **40 users per AP**.
+            2.  **Calculate Number of APs:** `Number_of_APs = ceil({users_count} / Estimated_Users_per_AP)`. **Always round up.**
+
+            *Example for `{users_count}` = 500 and a "medium-density" AP:*
+            - Estimated_Users_per_AP = 45
+            - Number_of_APs = ceil(500 / 45) = ceil(11.11) = 12 APs
+            ---
+
+            **Core Selection Principles:**
+
+            1.  **Prioritize User's Explicit Keywords:** Your primary goal is to satisfy the user's specific request.
+                -   Carefully identify any explicit product families, lines, or attributes mentioned in the `USER REQUEST` (e.g., "Catalyst", "Meraki", "switch", "outdoor").
+                -   These keywords are the **most important factor** in your selection. You MUST give strong preference to candidate products from the list that directly match these keywords. The "Essential (Good)" option, at a minimum, should match these criteria.
+
+            2.  **Justify All Deviations:**
+                -   If you propose a product that does **not** match a user's explicit keyword (for example, suggesting a "Meraki" product when "Catalyst" was requested), you MUST provide a clear and compelling reason in the `Justification` section.
+                -   A valid reason could be a significant cost saving for similar performance, or if no suitable product matching the user's criteria was found in the candidate list.
+
+            3.  **Ensure Logical Progression:**
+                -   After applying the user's preferences, select the hardware and licenses for the "Essential", "Standard", and "Complete" tiers.
+                -   Ensure these tiers demonstrate a clear and logical progression in both **performance/features and price**. The "Standard" option should be a justifiable upgrade from "Essential", and "Complete" should be the premium choice.
+
+            4.  **Handle Insufficient Options:**
+                -   If, after prioritizing the user's keywords, you cannot find enough suitable products to create three distinct tiers, **do not invent irrelevant options**.
+                -   Present the options you have logically. If only one product is a perfect match, present it as the "Recommended Option" and explain why it's the best fit for the user's request.
 
             BUSINESS RULES
             1)  **Sizing Calculation:** You MUST carefully read the `{user_query}` to identify the required number of users. The total number of ports from all combined switches MUST be equal to or greater than that number of users.
 
-            2)  **License and Accessory Matching:**
-                -   Licenses MUST perfectly match the hardware model. A license for a 24-port switch (`...-24-...`) CANNOT be used with a 48-port switch (`...-48-HW`).
-                -   Assume a standard **3-year or 5-year license term** for all quotes. AVOID 1-day licenses (`-1D`).
-
-            3)  **Logical Progression:** Create a meaningful difference between the 3 scenarios.
-                -   "Essential": Meets the minimum requirements with standard licenses.
-                -   "Standard": Could improve upon "Essential" by adding redundant power supplies for reliability or using longer-term licenses (e.g., 5-year instead of 3-year).
-                -   "Complete": Should be the best option. Use a more powerful switch model (if available in context), include the longest-term licenses, and all necessary accessories for a full deployment. **If you cannot create a meaningful upgrade for "Standard" or "Complete", create a variation of "Essential" but clearly state why.**
-
+            3)  **Logical Progression:** Create a meaningful difference between the 3 scenarios even about the prices, but also related to the perfomance.
+                
             4)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
 
             OUTPUT FORMAT (STRICT)
@@ -2350,7 +2438,6 @@ def llm_designer_node(state: AgentState) -> dict:
             FINAL CHECKLIST:
             Before providing your final JSON output, you MUST verify the following:
             1.  Are there EXACTLY THREE scenarios ("Essential (Good)", "Standard (Better)", "Complete (Best)")? Your entire output is invalid if this is not met.
-            2.  Does EACH scenario include the necessary licenses for the main hardware?
             3.  Does EACH scenario respect the Sizing Calculation rule?
             4.  Does EACH scenario avoid duplicate SKUs?
             5.  Does EACH scenario has only sku found in AVAILABLE COMPONENTS?
@@ -2391,26 +2478,73 @@ def llm_designer_node(state: AgentState) -> dict:
     2.  **Resolve Ambiguity (CRITICAL):** If the request is ambiguous (e.g., "add 5 units of it", "add that product"), you MUST look at the RECENT CONVERSATION HISTORY to identify the product SKU being discussed in the last interaction. The user is almost certainly referring to the last product mentioned by the Assistant.
     
     3.  **Apply the Change:** Locate the specific component in the correct scenario (or add the new component) as requested.
+
+    4. You must guarantee that, if the client request for a Catalyst access point, you only pick those
     
     4.  **Verify:** Ensure the new SKU is from the CATALOG and that all other parts of the quote remain unchanged.
 
     5. **Select and Size Hardware:** 
-               - First, select the primary hardware (switches, in this case). 
-               - You MUST apply the **Sizing Calculation** rule to determine the correct quantity. 
-                 Use the provided `{users_count}` to compute the required hardware.
+            For EACH of the 3 scenarios, you MUST follow these steps in order:
 
-            **Sizing Calculation Rule Example:**
-            - Each switch supports up to 24 users.
-            - Compute the number of switches as:
+            1. **Select and Size Hardware:**
+               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
+               - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
 
-            number_of_switches = ceil({users_count} / 24)
+            2. **Select Corresponding License:**
+               - After determining the hardware and quantity, find the corresponding license from the candidate list (e.g., find `LIC-MS250-48-5Y` for `MS250-48-HW`).
 
-            markdown
-            Copiar código
+            3. **Justify Your Choices:**
+               - Briefly explain why you chose those components for that scenario, considering price and performance.
 
-            - Example: 
-            - If `{users_count}` is 50 → `number_of_switches = ceil(50 / 24) = 3 switches`
-            - If `{users_count}` is 120 → `number_of_switches = ceil(120 / 24) = 5 switches`
+            ---
+            **Sizing Calculation Rules:**
+
+            ### For Switches:
+            The calculation is based on providing enough physical ports for all devices with a buffer for growth.
+
+            1.  **Determine Ports per Switch:** Extract the number of ports from the `network_interface` field (e.g., "24 x 1GbE RJ45" means 24 ports).
+            2.  **Estimate Total Devices:** Calculate this as `Total_Devices = ({users_count} * 1.15)`. This adds a 15% buffer for non-user devices (APs, printers, etc.).
+            3.  **Plan for Future Growth:** Calculate the total required ports as `Required_Ports = (Total_Devices * 1.25)`. This adds a 25% capacity buffer.
+            4.  **Calculate Number of Switches:** `Number_of_Switches = ceil(Required_Ports / Ports_per_Switch)`. **Always round up.**
+
+            *Example for `{users_count}` = 500 and a 24-port switch:*
+            - Total_Devices = (500 * 1.15) = 575
+            - Required_Ports = (575 * 1.25) = 718.75
+            - Number_of_Switches = ceil(718.75 / 24) = ceil(29.95) = 30 switches
+
+            ### For Wi-Fi Access Points (APs):
+            The calculation is an estimate based on user density.
+
+            1.  **Estimate Users per AP:** Infer this from the `Usage` field of the product. Use these heuristics:
+                - If `Usage` mentions "high-density", assume **25 users per AP**.
+                - If `Usage` mentions "medium-density" or is a general office use case, assume **45 users per AP**.
+                - If `Usage` mentions "low-density" (like a warehouse), assume **65 users per AP**.
+                - If unclear, default to **40 users per AP**.
+            2.  **Calculate Number of APs:** `Number_of_APs = ceil({users_count} / Estimated_Users_per_AP)`. **Always round up.**
+
+            *Example for `{users_count}` = 500 and a "medium-density" AP:*
+            - Estimated_Users_per_AP = 45
+            - Number_of_APs = ceil(500 / 45) = ceil(11.11) = 12 APs
+            ---
+
+    **Core Selection Principles:**
+
+1.  **Prioritize User's Explicit Keywords:** Your primary goal is to satisfy the user's specific request.
+    -   Carefully identify any explicit product families, lines, or attributes mentioned in the `USER REQUEST` (e.g., "Catalyst", "Meraki", "switch", "outdoor").
+    -   These keywords are the **most important factor** in your selection. You MUST give strong preference to candidate products from the list that directly match these keywords. The "Essential (Good)" option, at a minimum, should match these criteria.
+
+2.  **Justify All Deviations:**
+    -   If you propose a product that does **not** match a user's explicit keyword (for example, suggesting a "Meraki" product when "Catalyst" was requested), you MUST provide a clear and compelling reason in the `Justification` section.
+    -   A valid reason could be a significant cost saving for similar performance, or if no suitable product matching the user's criteria was found in the candidate list.
+
+3.  **Ensure Logical Progression:**
+    -   After applying the user's preferences, select the hardware and licenses for the "Essential", "Standard", and "Complete" tiers.
+    -   Ensure these tiers demonstrate a clear and logical progression in both **performance/features and price**. The "Standard" option should be a justifiable upgrade from "Essential", and "Complete" should be the premium choice.
+
+4.  **Handle Insufficient Options:**
+    -   If, after prioritizing the user's keywords, you cannot find enough suitable products to create three distinct tiers, **do not invent irrelevant options**.
+    -   Present the options you have logically. If only one product is a perfect match, present it as the "Recommended Option" and explain why it's the best fit for the user's request.
+
 
     === CRITICAL RULES ===
     -   **Minimal Change Rule:** Your ONLY job is to apply the user's requested change. Do not re-design other parts of the quote.
@@ -2773,3 +2907,4 @@ app = workflow.compile()
 print("\n✅ LangGraph workflow compilado com sucesso!")
 print("   - Rota 'question': orch -> context_collector -> nba_agent -> synth -> END")
 print("   - Rota 'quote'/'revision': orch -> context_collector -> llm_designer -> price -> nba_agent -> synth -> END")
+
