@@ -1,0 +1,44 @@
+{
+  "workbooks": [
+    "data\\_raw\\excel_files\\Cisco Switches MS.xlsx",
+    "data\\_raw\\excel_files\\Cisco Wireless Product List.xlsx"
+  ],
+  "rows_catalog": 1024,
+  "rows_rag_facts": 1024,
+  "unique_skus": 1024,
+  "families_counts": {
+    "Switches": 832,
+    "Wi-Fi 6E": 55,
+    "Wi-Fi 6": 55,
+    "Wi-Fi 5": 44,
+    "null": 27,
+    "Wi-Fi 7": 11
+  },
+  "sample_columns": [
+    "item_no",
+    "sku",
+    "qty",
+    "description",
+    "product_family",
+    "product_type",
+    "product_dimension",
+    "ports",
+    "port_speed",
+    "poe_type",
+    "stacking",
+    "management",
+    "switch_layer",
+    "power_consumption",
+    "flash_memory",
+    "buffer_memory",
+    "throughput",
+    "latency",
+    "management_interface",
+    "network_interface",
+    "performance_tier",
+    "service_category",
+    "list_price_usd",
+    "street_price_usd",
+    "partner_price_usd"
+  ]
+}

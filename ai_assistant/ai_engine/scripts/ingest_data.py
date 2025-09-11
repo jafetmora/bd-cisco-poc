@@ -137,6 +137,7 @@ def _load_pdf_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[La
 def _load_price_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[LangChainDocument], list[str], list[str]]:
     """
     Lê rag_facts.parquet|jsonl e retorna estruturas iguais às de PDF.
+    Versão atualizada para refletir as novas colunas da lista de preços.
     """
     if (prep_dir / "rag_facts.parquet").exists():
         df = pd.read_parquet(prep_dir / "rag_facts.parquet")
@@ -147,7 +148,6 @@ def _load_price_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[
         return [], [], [], []
 
     df = df.copy()
-    # campos esperados: id, text, text_norm, sku, list_price_usd, family, product_line, ...
     if "text" not in df.columns:
         raise ValueError("rag_facts.* must contain a 'text' column.")
     if "text_norm" not in df.columns:
@@ -163,53 +163,33 @@ def _load_price_prepared(prep_dir: Path) -> tuple[list[LangChainDocument], list[
     corpus: list[str] = []
 
     for _, r in df.iterrows():
+        # Dicionário de metadados SINCRONIZADO com as novas colunas
         meta = {
             "source_group": "price",
             "workbook": r.get("workbook"),
             "sheet": r.get("sheet"),
             "sku": r.get("sku"),
-            "family": r.get("family"),
-            "product_family": r.get("product_family"),
-            "product_line": r.get("product_line"),
-            "dimension": r.get("dimension"),
-            "list_price_usd": r.get("list_price_usd"),
             "id": r.get("id"),
-            # 🔹 extras técnicos
-            "ports": r.get("ports"),
-            "port_speed": r.get("port_speed"),
-            "poe_type": r.get("poe_type"),
-            "poe": r.get("poe"),
-            "stacking": r.get("stacking"),
-            "management": r.get("management"),
-            "switch_layer": r.get("switch_layer"),
-            "throughput": r.get("throughput"),
-            "latency": r.get("latency"),
-            "management_interface": r.get("management_interface"),
+
+            # Campos principais
+            "family": r.get("family"), # 'family' é o mesmo que 'product_family'
+            "product_dimension": r.get("product_dimension"),
+            "product_type": r.get("product_type"),
+            "list_price_usd": r.get("list_price_usd"),
+            "orderability": r.get("orderability"),
+            
+            # Atributos técnicos (novos)
+            "usage": r.get("usage"),
             "network_interface": r.get("network_interface"),
-            "performance_tier": r.get("performance_tier"),
-            "wifi_standard": r.get("wifi_standard"),
+            "ports": r.get("ports"),
+            "uplinks": r.get("uplinks"),
+            "poe_type": r.get("poe_type"),
+            "power_configuration": r.get("power_configuration"),
+            "stacking": r.get("stacking"),
+            "routing_capabilities": r.get("routing_capabilities"),
+            "radio_specification": r.get("radio_specification"),
+            "spatial_streams": r.get("spatial_streams"),
             "indoor_outdoor": r.get("indoor_outdoor"),
-            "antenna": r.get("antenna"),
-            "radios": r.get("radios"),
-            "max_throughput": r.get("max_throughput"),
-            "controller_compat": r.get("controller_compat"),
-            "processor": r.get("processor"),
-            "release_year": r.get("release_year"),
-            "warranty_period": r.get("warranty_period"),
-            "support_type": r.get("support_type"),
-            "compliance": r.get("compliance"),
-            "package_contents": r.get("package_contents"),
-            "operating_temp": r.get("operating_temp"),
-            "storage_temp": r.get("storage_temp"),
-            "humidity": r.get("humidity"),
-            "weight_kg": r.get("weight_kg"),
-            "width": r.get("width"),
-            "height": r.get("height"),
-            "depth": r.get("depth"),
-            "availability": r.get("availability"),
-            "eol_status": r.get("eol_status"),
-            "end_of_sale": r.get("end_of_sale"),
-            "eos_date": r.get("eos_date"),
         }
         text = str(r["text"])
         text_norm = str(r["text_norm"])
@@ -272,6 +252,7 @@ def _build_faiss(docs: List[LangChainDocument], out_dir: Path, batch_size: int =
     print(f"[INFO] ✅ FAISS salvo em {out_dir} com {len(docs)} documentos")
 
 
+
 def _build_bm25(docs: List[LangChainDocument], out_file: Path):
     if out_file.exists():
         out_file.unlink()
@@ -295,6 +276,10 @@ def _build_tfidf(texts: List[str], keys: List[str], vec_file: Path, mat_file: Pa
 # Pipeline principal (somente artefatos preparados)
 # ──────────────────────────────────────────────────────────────────────────────
 def create_knowledge_base():
+    if not os.getenv("OPENAI_API_KEY"):
+        logging.error("❌ OPENAI_API_KEY not set. Aborting.")
+        return
+
     _ensure_dirs()
     logging.info("▶️  Ingesting prepared datasets (PDF + Price List).")
     all_docs_raw: list[LangChainDocument] = []

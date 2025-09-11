@@ -1,6 +1,19 @@
-version: '3.8'
-
 services:
+  postgres:
+    image: postgres:15
+    container_name: local-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jafet
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: my_local_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - cisco-agent-network
+
   agent:
     networks:
       - cisco-agent-network
@@ -39,6 +52,7 @@ services:
       REDIS_HEALTHCHECK_SECS: "30"
       REDIS_CLUSTER_MODE: "false"
       DEBUG_REDIS_ENDPOINTS: "true"
+      DATABASE_URL: postgresql+asyncpg://jafet:secret123@postgres:5432/my_local_db
     depends_on:
       redis:
         condition: service_healthy
@@ -80,3 +94,6 @@ networks:
   cisco-agent-network:
     name: cisco-agent-net
     driver: bridge
+
+volumes:
+  pg_data:
