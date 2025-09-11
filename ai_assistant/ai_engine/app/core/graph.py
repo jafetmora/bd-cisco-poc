@@ -2048,7 +2048,7 @@ def context_collector_node(state: AgentState) -> dict:
     search_query = state.get("search_query") or user_query
     
     # Busca uma lista de SKUs relevantes usando a busca híbrida
-    skus = hybrid_search_products(search_query, k_faiss=15, k_bm25=15, k_tfidf=15)
+    skus = hybrid_search_products(search_query, k_faiss=10, k_bm25=10, k_tfidf=10)
 
     product_context = []
     
@@ -2074,6 +2074,7 @@ def context_collector_node(state: AgentState) -> dict:
             "poe_type": info.get("poe_type"),
             "stacking": info.get("stacking"),
             "network_interface": info.get("network_interface"),
+            "ports": info.get("ports"),
             "indoor_outdoor": info.get("indoor_outdoor"),
             "usage": info.get("usage"),
             "uplinks": info.get("uplinks"),
@@ -2083,7 +2084,7 @@ def context_collector_node(state: AgentState) -> dict:
             "spatial_streams": info.get("spatial_streams"),
         })
 
-    print(f"  - Collected {len(product_context)} products for LLM context.")
+    print(f"  - Collected {len(product_context)} products for LLM context. Ports")
 
     # Lógica subsequente da sua função (mantida como no seu original)
     product_context = clean_for_json(product_context)
@@ -2091,6 +2092,8 @@ def context_collector_node(state: AgentState) -> dict:
     update_data = {
         "product_context": product_context
     }
+
+    #print(skus)
     
     state.update(update_data)
     
@@ -2207,7 +2210,7 @@ def llm_designer_node(state: AgentState) -> dict:
     user_query: str = state.get("user_query", "")
     qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
     users_count = state.get("users_count") or {}
-    print("99999999999999090909099999999999", users_count)
+    #print("99999999999999090909099999999999", users_count)
 
     # Conversational memory (optional; may be empty strings)
     conversation_window = state.get("conversation_window", "")
@@ -2267,7 +2270,7 @@ def llm_designer_node(state: AgentState) -> dict:
 
     context_json = json.dumps(context_buckets, indent=2)
 
-    print("8930843749837658746528746584276548765487658427", context_json)
+    #print("8930843749837658746528746584276548765487658427", context_json)
 
 
 
@@ -2335,6 +2338,11 @@ def llm_designer_node(state: AgentState) -> dict:
             Here are the most recent messages:
             {conversation_window}
 
+            Here is the current quote if exist (This is your starting point, IF EXIST):
+
+            {_current_designs}
+
+
             Based on all of this context, and the user's latest query, perform the following task.
 
 
@@ -2355,27 +2363,28 @@ def llm_designer_node(state: AgentState) -> dict:
                - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
                - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
 
-            2. **Select Corresponding License:**
-               - After determining the hardware and quantity, find the corresponding license from the candidate list (e.g., find `LIC-MS250-48-5Y` for `MS250-48-HW`).
 
-            3. **Justify Your Choices:**
+            2. **Justify Your Choices:**
                - Briefly explain why you chose those components for that scenario, considering price and performance.
 
             ---
             **Sizing Calculation Rules:**
 
-            ### For Switches:
-            The calculation is based on providing enough physical ports for all devices with a buffer for growth.
+            ### Sizing Calculation for Switches (Simple Method):
+            To determine the correct quantity of switches, you MUST use the following simple calculation.
 
-            1.  **Determine Ports per Switch:** Extract the number of ports from the `network_interface` field (e.g., "24 x 1GbE RJ45" means 24 ports).
-            2.  **Estimate Total Devices:** Calculate this as `Total_Devices = ({users_count} * 1.15)`. This adds a 15% buffer for non-user devices (APs, printers, etc.).
-            3.  **Plan for Future Growth:** Calculate the total required ports as `Required_Ports = (Total_Devices * 1.25)`. This adds a 25% capacity buffer.
-            4.  **Calculate Number of Switches:** `Number_of_Switches = ceil(Required_Ports / Ports_per_Switch)`. **Always round up.**
+            1.  **Identify Inputs:** State the `{users_count}` from the request and the `Ports_per_Switch` from the product's `ports` field.
+            2.  **Calculate Quantity:** The number of switches is `ceil({users_count} / Ports_per_Switch)`. You MUST always round the result up to the next whole number.
 
-            *Example for `{users_count}` = 500 and a 24-port switch:*
-            - Total_Devices = (500 * 1.15) = 575
-            - Required_Ports = (575 * 1.25) = 718.75
-            - Number_of_Switches = ceil(718.75 / 24) = ceil(29.95) = 30 switches
+            **Crucial Example to follow:**
+            *For `{users_count}` = 500 and a 24-port switch:*
+
+            *Internal Thought Process:*
+            "I need to calculate the quantity for a 24-port switch for 500 users.
+            - The formula is `ceil(users_count / Ports_per_Switch)`.
+            - Calculation: `ceil(500 / 24)` = `ceil(20.83)`.
+            - Rounding up, the final quantity is **21 switches**.
+            I will now use the quantity of 21 in my quote."
 
             ### For Wi-Fi Access Points (APs):
             The calculation is an estimate based on user density.
@@ -2490,27 +2499,27 @@ def llm_designer_node(state: AgentState) -> dict:
                - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
                - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
 
-            2. **Select Corresponding License:**
-               - After determining the hardware and quantity, find the corresponding license from the candidate list (e.g., find `LIC-MS250-48-5Y` for `MS250-48-HW`).
-
-            3. **Justify Your Choices:**
+            2. **Justify Your Choices:**
                - Briefly explain why you chose those components for that scenario, considering price and performance.
 
             ---
-            **Sizing Calculation Rules:**
 
-            ### For Switches:
-            The calculation is based on providing enough physical ports for all devices with a buffer for growth.
+            ### Sizing Calculation Rules ##################
+            ### Sizing Calculation for Switches (Simple Method):
+            To determine the correct quantity of switches, you MUST use the following simple calculation.
 
-            1.  **Determine Ports per Switch:** Extract the number of ports from the `network_interface` field (e.g., "24 x 1GbE RJ45" means 24 ports).
-            2.  **Estimate Total Devices:** Calculate this as `Total_Devices = ({users_count} * 1.15)`. This adds a 15% buffer for non-user devices (APs, printers, etc.).
-            3.  **Plan for Future Growth:** Calculate the total required ports as `Required_Ports = (Total_Devices * 1.25)`. This adds a 25% capacity buffer.
-            4.  **Calculate Number of Switches:** `Number_of_Switches = ceil(Required_Ports / Ports_per_Switch)`. **Always round up.**
+            1.  **Identify Inputs:** State the `{users_count}` from the request and the `Ports_per_Switch` from the product's `ports` field.
+            2.  **Calculate Quantity:** The number of switches is `ceil({users_count} / Ports_per_Switch)`. You MUST always round the result up to the next whole number.
 
-            *Example for `{users_count}` = 500 and a 24-port switch:*
-            - Total_Devices = (500 * 1.15) = 575
-            - Required_Ports = (575 * 1.25) = 718.75
-            - Number_of_Switches = ceil(718.75 / 24) = ceil(29.95) = 30 switches
+            **Crucial Example to follow:**
+            *For `{users_count}` = 500 and a 24-port switch:*
+
+            *Internal Thought Process:*
+            "I need to calculate the quantity for a 24-port switch for 500 users.
+            - The formula is `ceil(users_count / Ports_per_Switch)`.
+            - Calculation: `ceil(500 / 24)` = `ceil(20.83)`.
+            - Rounding up, the final quantity is **21 switches**.
+            I will now use the quantity of 21 in my quote."
 
             ### For Wi-Fi Access Points (APs):
             The calculation is an estimate based on user density.
