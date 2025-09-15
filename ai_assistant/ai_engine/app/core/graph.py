@@ -1635,7 +1635,12 @@ def pricing_agent_node(state: AgentState) -> Dict:
             subtotal = float(pr.get("subtotal") or (unit * qty))
             currency = pr.get("currency", "USD")
             raw_disc = pr.get("discount_pct", 0.0) or 0.0
+            if qty >= 10:
+                raw_disc = 0.1
+
             disc = float(raw_disc if raw_disc <= 1 else raw_disc / 100.0)
+            disc = subtotal * disc
+            subtotal = subtotal - disc
             return {"unit": unit, "subtotal": subtotal, "currency": currency, "discount_pct": disc}
 
         # fallback to product_dict
@@ -1723,6 +1728,11 @@ def pricing_agent_node(state: AgentState) -> Dict:
         state["pricing_results"] = pricing_results
         state["cart_lines"] = cart_lines
         state["ea"] = ea_rollup
+
+        #print("7859273482749872987598432795843759734597439857 estoooooooooooooooooou aqui")
+        #print(pricing_results)
+
+        #print("7859273482749872987598432795843759734597439857 estoooooooooooooooooou aqui")
 
         return prune_nones({
             "pricing_results": pricing_results,
@@ -1905,8 +1915,9 @@ def build_markdown_from(
                 unit = float(it.get("unit_price") or 0.0)
                 sub = float(it.get("line_total_usd") or it.get("subtotal") or (unit * qty))
                 currency = it.get("currency", currency)
+                discount_pct = float(it.get("discount_pct"))#"discount_pct": price["discount_pct"]
                 desc = it.get("description") or it.get("part_number")
-                lines.append(f"- {desc} ({qty}x): unit {currency} ${unit:,.2f} → {currency} ${sub:,.2f}")
+                lines.append(f"- {desc} ({qty}x): unit {currency} ${unit:,.2f}, total discount USD ${(discount_pct):,.2f} → {currency} ${sub:,.2f}")
                 total += sub
             lines.append(f"**TOTAL ({scen_name}): {currency} ${total:,.2f}**\n")
 
@@ -2037,22 +2048,13 @@ def clean_for_json(obj):
 from typing import Optional
 
 
-def context_collector_node(state: AgentState) -> dict:
-    """
-    Busca SKUs relevantes para a consulta e coleta seus dados detalhados
-    para formar o contexto que será enviado ao LLM.
-    """
-    print("\n🔍 [Context Collector] Fetching context for the LLM…")
 
-    user_query = state.get("user_query", "")
-    search_query = state.get("search_query") or user_query
-    
-    # Busca uma lista de SKUs relevantes usando a busca híbrida
-    skus = hybrid_search_products(search_query, k_faiss=10, k_bm25=10, k_tfidf=10)
+
+def sku_extract_collector_node(skus: list):
 
     product_context = []
-    
-    # Para cada SKU encontrado, busca os detalhes completos no dicionário pré-carregado
+
+        # Para cada SKU encontrado, busca os detalhes completos no dicionário pré-carregado
     for sku in skus:
         # A variável 'info' agora contém todos os campos em um único nível (estrutura "plana")
         info = product_dict.get(sku)
@@ -2084,6 +2086,24 @@ def context_collector_node(state: AgentState) -> dict:
             "spatial_streams": info.get("spatial_streams"),
         })
 
+    return product_context
+
+def context_collector_node(state: AgentState) -> dict:
+    """
+    Busca SKUs relevantes para a consulta e coleta seus dados detalhados
+    para formar o contexto que será enviado ao LLM.
+    """
+    print("\n🔍 [Context Collector] Fetching context for the LLM…")
+
+    user_query = state.get("user_query", "")
+    search_query = state.get("search_query") or user_query
+    
+    # Busca uma lista de SKUs relevantes usando a busca híbrida
+    skus = hybrid_search_products(search_query, k_faiss=10, k_bm25=10, k_tfidf=10)
+
+    
+    product_context = sku_extract_collector_node(skus)
+
     print(f"  - Collected {len(product_context)} products for LLM context. Ports")
 
     # Lógica subsequente da sua função (mantida como no seu original)
@@ -2098,6 +2118,8 @@ def context_collector_node(state: AgentState) -> dict:
     state.update(update_data)
     
     return state
+
+
 
     # 🔹 Aqui indicamos explicitamente o branch que deve receber a saída
    # return {
@@ -2654,6 +2676,357 @@ def llm_designer_node(state: AgentState) -> dict:
     state.update(update_data)
     
     return state
+
+def llm_designer_node_license(state: AgentState) -> dict:
+    """
+    LLM Designer node: builds 3 scenarios using a structured output schema.
+    - Accepts optional base_sku.
+    - Uses only the provided product_context (no SKU invention).
+    - Keeps state.orchestrator_decision.needs_pricing = True for downstream pricing.
+    """
+    print("\n🤖 [LLM Designer] Asking LLM to create scenarios…")
+
+    # ---- Inputs & guards ----
+    product_context = state.get("product_context") or []
+    if not product_context:
+        print("  - No context at all. Cannot design scenarios.")
+        error_design = [SolutionDesign(summary="Error", justification="No product context available.", components=[])]
+        return {"solution_designs": error_design}
+
+    base_sku: Optional[str] = state.get("base_product_sku")
+    product_domain: str = state.get("product_domain") or ""
+    user_query: str = state.get("user_query", "")
+    qty_map = state.get("sku_map") or state.get("sku_quantities") or {}
+    users_count = state.get("users_count") or {}
+    #print("99999999999999090909099999999999", users_count)
+
+    # Conversational memory (optional; may be empty strings)
+    conversation_window = state.get("conversation_window", "")
+    conversation_summary = state.get("conversation_summary", "")
+
+    if not base_sku:
+        base_sku = None
+        print(f"  - Inferred base_sku from context: {base_sku}")
+
+    # JSON context payload
+    product_context_json = json.dumps(product_context, indent=2)
+    context_json = json.dumps(product_context, indent=2)
+
+
+    def _role_from_dim(p: dict) -> str:
+        """Determina se o produto é hardware, licença ou acessório."""
+        dim = (p.get("product_dimension") or p.get("category") or "").strip().casefold()
+        
+        # MUDANÇA: Removemos a referência a 'product_name', que não existe mais no product_context.
+        # 'commercial_name' é o campo correto agora.
+        name = (p.get("commercial_name") or "").strip().casefold()
+
+        if "license" in dim or "licen" in name:
+            return "license"
+        return "hardware"
+
+    def _domain_from_family(p: dict) -> str:
+        """Determina se o produto é switch ou wifi a partir da família."""
+        fam = (p.get("family") or "").strip().casefold()
+        # Esta regra simples continua funcional com os novos dados ("switches" ou "wireless")
+        return "switch" if "switch" in fam else "wifi"
+
+    def build_context_by_family(products: list[dict], limit_per_bucket: int = 40) -> dict:
+        """Organiza uma lista de produtos em 'buckets' por domínio e função."""
+        buckets = {
+            "wifi":   {"hardware": [], "licenses": []},
+            "switch": {"hardware": [], "licenses": []},
+        }
+        for p in products or []:
+            dom = _domain_from_family(p)
+            role = _role_from_dim(p)
+            # A chave 'role' já está no formato correto dos buckets
+            key = role + "s" if role != "hardware" else role # accessories, licenses, hardware
+            if key in buckets[dom]:
+                buckets[dom][key].append(p)
+
+        # Limita a quantidade de itens em cada bucket
+        for dom in buckets:
+            for k in buckets[dom]:
+                buckets[dom][k] = buckets[dom][k][:limit_per_bucket]
+        
+        return buckets
+
+    # === uso ===
+    product_context = state.get("product_context") or []
+    context_buckets = build_context_by_family(product_context)
+
+    context_json = json.dumps(context_buckets, indent=2)
+
+    #print("8930843749837658746528746584276548765487658427", context_json)
+
+
+
+    base_quantity = int(qty_map.get(base_sku, 1)) if base_sku else 1  # not directly used, but available if needed
+
+
+    prev_designs = state.get("solution_designs") or []
+    # Converta SolutionDesign -> dict para serializar:
+    def _sd_to_dict(d):
+        if isinstance(d, SolutionDesign):
+            return {
+                "summary": d.summary,
+                "justification": d.justification,
+                "components": [
+                    {"sku": c.part_number, "quantity": int(c.quantity)} for c in (d.components or [])
+                ],
+            }
+        return d
+
+    _current_designs = json.dumps(state.get("solution_designs") or [], default=_primitive, indent=2)
+    current_designs = state.get("solution_designs") or []
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - current_designs_json_1", _current_designs)
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - current_designs_json_2", current_designs)
+
+    previous_solution_designs = json.dumps(state.get("previous_solution_designs") or [], default=_primitive, indent=2)
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - previous_solution_designs", previous_solution_designs)
+
+
+    #revision = state.get("revision_request")
+    #revision_dict = revision.__dict__ if revision else {}
+    #revision_json = json.dumps(revision_dict, indent=2)
+    #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
+    #print("99999999999999999999999999999999999999999999999999999999999999", context_json)
+    print(">>> LLM Designer sees revision_request:", state.get("revision_request"))
+    #designs = state.get("solution_designs", [])
+    #print("llm_designer_node - 1010101010010101010100101010101010010101010101001 - designs", designs)
+
+    revision = state.get("revision_request")
+    if revision is None:
+        revision_dict = {}
+    elif isinstance(revision, dict):
+        revision_dict = revision
+    else:
+        revision_dict = revision.__dict__
+    revision_json = json.dumps(revision_dict, indent=2)
+    #print("--------------------------------9999999999999999999999999999999999999999999999999", revision)
+
+    # Get conversational memory from the state to be used in both paths.
+    conversation_summary = state.get("conversation_summary", "No summary yet.")
+    conversation_window = state.get("conversation_window", "No recent messages.")
+
+
+    prompt_template = ChatPromptTemplate.from_template(
+        """
+            You are an expert and commercially-aware Cisco Sales Engineer.
+
+            Here is a summary of the conversation so far:
+            {conversation_summary}
+
+            Here are the most recent messages:
+            {conversation_window}
+
+            Here is the current quote if exist (This is your starting point, IF EXIST):
+
+            {_current_designs}
+
+
+            Based on all of this context, and the user's latest query, perform the following task.
+
+
+            USER QUERY:
+            {user_query}
+
+            AVAILABLE COMPONENTS (authoritative catalogue — ONLY use SKUs listed below; do NOT invent SKUs):
+            ```json
+            {context_json}
+            ```
+
+            TASK
+            Your main goal is to design **exactly 3 distinct options** labeled "Essential (Good)", "Standard (Better)", and "Complete (Best)".
+
+            For EACH of the 3 scenarios, you MUST follow these steps in order:
+
+            1. **Select and Size Hardware:**
+               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
+               - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
+
+
+            2. **Justify Your Choices:**
+               - Briefly explain why you chose those components for that scenario, considering price and performance.
+
+            ---
+            **Sizing Calculation Rules:**
+
+            ### Sizing Calculation for Switches (Simple Method):
+            To determine the correct quantity of switches, you MUST use the following simple calculation.
+
+            1.  **Identify Inputs:** State the `{users_count}` from the request and the `Ports_per_Switch` from the product's `ports` field.
+            2.  **Calculate Quantity:** The number of switches is `ceil({users_count} / Ports_per_Switch)`. You MUST always round the result up to the next whole number.
+
+            **Crucial Example to follow:**
+            *For `{users_count}` = 500 and a 24-port switch:*
+
+            *Internal Thought Process:*
+            "I need to calculate the quantity for a 24-port switch for 500 users.
+            - The formula is `ceil(users_count / Ports_per_Switch)`.
+            - Calculation: `ceil(500 / 24)` = `ceil(20.83)`.
+            - Rounding up, the final quantity is **21 switches**.
+            I will now use the quantity of 21 in my quote."
+
+            ### For Wi-Fi Access Points (APs):
+            The calculation is an estimate based on user density.
+
+            1.  **Estimate Users per AP:** Infer this from the `Usage` field of the product. Use these heuristics:
+                - If `Usage` mentions "high-density", assume **25 users per AP**.
+                - If `Usage` mentions "medium-density" or is a general office use case, assume **45 users per AP**.
+                - If `Usage` mentions "low-density" (like a warehouse), assume **65 users per AP**.
+                - If unclear, default to **40 users per AP**.
+            2.  **Calculate Number of APs:** `Number_of_APs = ceil({users_count} / Estimated_Users_per_AP)`. **Always round up.**
+
+            *Example for `{users_count}` = 500 and a "medium-density" AP:*
+            - Estimated_Users_per_AP = 45
+            - Number_of_APs = ceil(500 / 45) = ceil(11.11) = 12 APs
+            ---
+
+            **Core Selection Principles:**
+
+            1.  **Prioritize User's Explicit Keywords:** Your primary goal is to satisfy the user's specific request.
+                -   Carefully identify any explicit product families, lines, or attributes mentioned in the `USER REQUEST` (e.g., "Catalyst", "Meraki", "switch", "outdoor").
+                -   These keywords are the **most important factor** in your selection. You MUST give strong preference to candidate products from the list that directly match these keywords. The "Essential (Good)" option, at a minimum, should match these criteria.
+
+            2.  **Justify All Deviations:**
+                -   If you propose a product that does **not** match a user's explicit keyword (for example, suggesting a "Meraki" product when "Catalyst" was requested), you MUST provide a clear and compelling reason in the `Justification` section.
+                -   A valid reason could be a significant cost saving for similar performance, or if no suitable product matching the user's criteria was found in the candidate list.
+
+            3.  **Ensure Logical Progression:**
+                -   After applying the user's preferences, select the hardware and licenses for the "Essential", "Standard", and "Complete" tiers.
+                -   Ensure these tiers demonstrate a clear and logical progression in both **performance/features and price**. The "Standard" option should be a justifiable upgrade from "Essential", and "Complete" should be the premium choice.
+
+            4.  **Handle Insufficient Options:**
+                -   If, after prioritizing the user's keywords, you cannot find enough suitable products to create three distinct tiers, **do not invent irrelevant options**.
+                -   Present the options you have logically. If only one product is a perfect match, present it as the "Recommended Option" and explain why it's the best fit for the user's request.
+
+            BUSINESS RULES
+            1)  **Sizing Calculation:** You MUST carefully read the `{user_query}` to identify the required number of users. The total number of ports from all combined switches MUST be equal to or greater than that number of users.
+
+            3)  **Logical Progression:** Create a meaningful difference between the 3 scenarios even about the prices, but also related to the perfomance.
+                
+            4)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
+
+            OUTPUT FORMAT (STRICT)
+            - Respond with JSON only (no prose, no markdown fences).
+            - Must match this exact schema:
+             Output JSON only, matching the schema:
+            {{
+              "scenarios": [
+                {{
+                  "name": "Essential (Good)|Standard (Better)|Complete (Best)",
+                  "justification": "reason",
+                  "components": [{{ "sku": "<SKU>", "quantity": <int> }}]
+                }}
+              ]
+            }}
+            VALIDATION
+            - Every component must include both fields: "sku" (string) and "quantity" (integer ≥ 1).
+            - Do not output any fields other than the schema above.
+            - Do not include markdown code fences or commentary.
+
+            FINAL CHECKLIST:
+            Before providing your final JSON output, you MUST verify the following:
+            1.  Are there EXACTLY THREE scenarios ("Essential (Good)", "Standard (Better)", "Complete (Best)")? Your entire output is invalid if this is not met.
+            3.  Does EACH scenario respect the Sizing Calculation rule?
+            4.  Does EACH scenario avoid duplicate SKUs?
+            5.  Does EACH scenario has only sku found in AVAILABLE COMPONENTS?
+            Your final output MUST satisfy all points on this checklist.
+
+                """
+                )
+
+
+    # ---- LLM (structured output) ----
+    llm = your_llm_instance
+    # Bind the parameters for this specific task
+    llm_with_logprobs = llm.bind(
+        logprobs=True,
+        top_logprobs=5
+    )
+    structured_llm = llm.with_structured_output(QuoteScenarios, method="function_calling")
+    #structured_llm = llm_with_logprobs.with_structured_output(QuoteScenarios)
+    #chain = prompt_template | llm_with_logprobs | StrOutputParser()
+
+    chain = prompt_template | structured_llm
+
+    # ---- Invoke ----
+    try:
+
+        resp = chain.invoke({
+                    "user_query": state.get("user_query", ""),
+                    "context_json": context_json,                  # lista de SKUs
+                    "previous_solution_designs": previous_solution_designs,  # última quote
+                    "_current_designs": _current_designs,  # última quote
+                    "revision_json": revision_json,                # novo request
+                    "base_sku": base_sku or "N/A",
+                    "conversation_summary": conversation_summary, # CORRECTLY ADDED
+                    "conversation_window": conversation_window,   # CORRECTLY ADDED
+                    "users_count": users_count,
+                })
+        #print("2222222222222222222222222222222",resp)
+
+        # Normalize resp.scenarios whether pydantic object or plain dict
+        scenarios = getattr(resp, "scenarios", None) or resp.get("scenarios", [])
+        designs: List[SolutionDesign] = []
+        for sc in scenarios:
+            # Access fields whether object-like or dict-like
+            sc_name = getattr(sc, "name", None) or (sc.get("name") if isinstance(sc, dict) else "Option")
+            sc_just = getattr(sc, "justification", None) or (sc.get("justification") if isinstance(sc, dict) else "")
+            sc_components = getattr(sc, "components", None) or (sc.get("components") if isinstance(sc, dict) else []) or []
+
+            comps = []
+            for c in sc_components:
+                sku = getattr(c, "sku", None) or (c.get("sku") if isinstance(c, dict) else None)
+                qty = getattr(c, "quantity", None) or (c.get("quantity") if isinstance(c, dict) else 1)
+                if not sku:
+                    continue
+                try:
+                    qty = int(qty)
+                except Exception:
+                    qty = 1
+                comps.append({"part_number": sku, "quantity": max(1, qty), "role": ""})
+
+            designs.append(SolutionDesign(summary=sc_name, justification=sc_just, components=comps))
+
+    #    #final_designs = designs or [SolutionDesign(summary="Error", justification="Empty scenarios.", components=[])]
+        new_designs = designs or [SolutionDesign(summary="Error", justification="Empty scenarios.", components=[])]
+
+
+
+    except Exception as e:
+        print(f"  - ERROR during LLM call or parsing: {e}")
+        new_designs = [SolutionDesign(
+            summary="Error",
+            justification=f"Failed to generate scenarios with LLM: {e}",
+            components=[]
+        )]
+
+    # Ensure downstream pricing runs
+    dec = state.get("orchestrator_decision")
+    if dec:
+        try:
+            dec.needs_pricing = True
+        except Exception:
+            pass
+
+       # --- Prepare the state update ---
+    update_data = {
+        # The 'current_designs' we saved at the beginning now become the 'previous' ones.
+        "previous_solution_designs": current_designs,
+        
+        # The brand new designs become the 'current' ones, using the original key.
+        "solution_designs": new_designs, 
+
+        "orchestrator_decision": dec
+    }
+    
+    state.update(update_data)
+    
+    return state
+
 
     #return {"solution_designs": final_designs, "orchestrator_decision": dec}
 
