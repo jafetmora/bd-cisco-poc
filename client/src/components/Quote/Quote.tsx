@@ -16,13 +16,23 @@ interface QuoteProps {
   mode?: DisplayMode;
 }
 
+function formatCurrency(value: number, currency: string) {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `${currency} ${value.toFixed(2)}`;
+  }
+}
+
 export default function Quote({
   quote,
-  scenarioLabel,
   title,
   loading = false,
   error = null,
-  mode,
 }: QuoteProps) {
   const [activeTab, setActiveTab] = useState("Items");
 
@@ -50,6 +60,34 @@ export default function Quote({
                 summary={quote?.summary}
               />
             </>
+          )}
+          {activeTab === "Discounts & Credits" && (
+            <div className="relative bg-white mx-8 mt-4 rounded-xl shadow border border-gray-200">
+              <div className="p-4">
+                {quote?.summary?.discount !== undefined &&
+                quote.header?.priceList?.currency ? (
+                  <div className="flex justify-start">
+                    <div className="w-full max-w-md">
+                      <div className="border-t border-gray-100 bg-gray-50 rounded-b-xl px-4 py-4">
+                        <div className="flex flex-col items-start">
+                          <div className="text-gray-500 text-sm">
+                            Total Discount
+                          </div>
+                          <div className="text-blue-700 text-2xl font-bold tabular-nums">
+                            {formatCurrency(
+                              quote.summary.discount ?? 0,
+                              quote.header.priceList.currency,
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-400">No discounts available.</div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </section>
@@ -80,28 +118,4 @@ export default function Quote({
         No quote for this scenario.
       </div>
     );
-
-  // From here on, `quote` is definitely a QuoteType
-  const q: QuoteType = quote as QuoteType;
-
-  return (
-    <main className="bg-[#F9FAFB] w-full py-0">
-      {/* Display mode for demonstration */}
-      <div className="text-xs text-gray-400 text-right pb-1">Mode: {mode}</div>
-      <StepHeader currentStep={1} />
-      {scenarioLabel && (
-        <div className="text-lg font-semibold mb-2 text-primary">
-          {scenarioLabel}
-        </div>
-      )}
-      {q.header && <QuoteHeaderBar data={q.header} noMargins />}
-      <TabSection activeTab={activeTab} onChange={setActiveTab} />
-      {activeTab === "Items" && (
-        <>
-          <ItemSearchHeader />
-          <QuotationTable items={q.items ?? []} summary={q.summary} />
-        </>
-      )}
-    </main>
-  );
 }
