@@ -18,12 +18,12 @@ class QuoteService:
         designs = final_state.get("solution_designs") or []
         prices_map: Dict[str, List[Dict[str, Any]]] = final_state.get("pricing_results") or {}
 
-
         if designs:
             for d in designs:
                 summary = getattr(d, "summary", None) if hasattr(d, "summary") else (d.get("summary") if isinstance(d, dict) else None)
                 scen_key = scenario_key_from_summary(summary)
                 price_items = prices_map.get(scen_key, [])
+                
                 api_items: List[QuoteItem] = price_items_to_api_items(price_items)
                 scenarios_out.append(new_scenario(scen_key, api_items))
         else:
@@ -80,15 +80,9 @@ class QuoteService:
         for scen_name, price_items in pricing_map.items():
             if not price_items:
                 continue
+            
             total = summarize(price_items_to_api_items(price_items))["total"]
             curr = (price_items[0].get("currency") or "USD")
             totals_txt.append(f"{scen_name}: {curr} ${total:,.2f}")
-
-
-        parts = []
-        
-        print("FINAL STATE")
-        print(final_state)
-        print("FINAL STATE")
         
         return final_state.get("next_best_action")

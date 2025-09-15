@@ -25,6 +25,7 @@ class QuoteItem(TypedDict):
     unitPrice: float
     quantity: int
     currency: Currency
+    discount: float
 
 
 class QuoteHeader(TypedDict, total=False):

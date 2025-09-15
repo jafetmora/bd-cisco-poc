@@ -41,6 +41,7 @@ def price_items_to_api_items(items: List[Dict[str, Any]]) -> List[QuoteItem]:
         cat = p.get("category") or "Hardware"
         lt_val = p.get("lead_time_days")
         lead_time = {"kind": "instant"} if lt_val is None else {"kind": "days", "value": _int(lt_val, 0)}
+        discount = p.get("discount_pct", 0.0)
         out.append({
             "id": f"item-{idx}",
             "category": cat,
@@ -50,6 +51,7 @@ def price_items_to_api_items(items: List[Dict[str, Any]]) -> List[QuoteItem]:
             "unitPrice": unit,
             "quantity": qty,
             "currency": curr,
+            "discount": discount
         })
     return out
 
@@ -61,8 +63,9 @@ def summarize(items: List[QuoteItem]) -> QuoteSummary:
     curr = items[0]["currency"]
     subtotal = sum((it["unitPrice"] * it["quantity"]) for it in items)
     tax = 0.0
-    discount = 0.0
+    discount = items[0]["discount"]
     total = subtotal + tax - discount
+    
     return {"currency": curr, "subtotal": round(subtotal, 2), "tax": tax, "discount": discount, "total": round(total, 2)}
 
 
