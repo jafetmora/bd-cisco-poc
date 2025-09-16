@@ -28,13 +28,34 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
   const { state: authState, isAuthenticated } = useAuth();
 
   const applyQuoteUpdate = useCallback<QuoteContextValue["applyQuoteUpdate"]>(
-    (payload) => setQuoteSession(payload),
+    (payload) => {
+      if (payload.lastSentAt && payload.lastReceivedAt) {
+        const diffMs = payload.lastReceivedAt - payload.lastSentAt;
+        const diffSec = (diffMs / 1000).toFixed(3);
+        const sentDate =
+          new Date(payload.lastSentAt).toLocaleTimeString("en-US", {
+            hour12: false,
+          }) +
+          "." +
+          String(payload.lastSentAt % 1000).padStart(3, "0");
+        const receivedDate =
+          new Date(payload.lastReceivedAt).toLocaleTimeString("en-US", {
+            hour12: false,
+          }) +
+          "." +
+          String(payload.lastReceivedAt % 1000).padStart(3, "0");
+        console.log(
+          `[CHAT] Sent: ${sentDate} | Received: ${receivedDate} | Response time: ${diffSec}s`,
+        );
+      }
+      setQuoteSession(payload);
+    },
     [],
   );
 
   const sendQuoteUpdate = useCallback<QuoteContextValue["sendQuoteUpdate"]>(
     (payload) => {
-      setQuoteSession({ ...payload, thinking: true });
+      setQuoteSession({ ...payload, thinking: true, lastSentAt: Date.now() });
       socket.emit("QUOTE_UPDATED_CLIENT", payload);
     },
     [],
@@ -64,6 +85,8 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         scenarios: [],
         title: "New Session",
         thinking: false,
+        lastSentAt: null,
+        lastReceivedAt: null,
       };
       setQuoteSession(emptySession);
     } catch (e: unknown) {
@@ -75,9 +98,14 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const onSocketMessage = useCallback(
     (payload: QuoteSession) => {
-      applyQuoteUpdate({ ...payload, thinking: false });
+      applyQuoteUpdate({
+        ...payload,
+        thinking: false,
+        lastSentAt: quoteSession?.lastSentAt ?? null,
+        lastReceivedAt: Date.now(),
+      });
     },
-    [applyQuoteUpdate],
+    [applyQuoteUpdate, quoteSession],
   );
 
   useEffect(() => {
