@@ -68,6 +68,8 @@ export interface QuoteSession {
   scenarios: Scenario[];
   title: string;
   thinking: boolean;
+  lastSentAt: number | null;
+  lastReceivedAt: number | null;
 }
 
 export interface Quote {

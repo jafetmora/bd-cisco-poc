@@ -46,10 +46,24 @@ export default function Chat({
                 message={msg.content}
                 time={
                   msg.timestamp
-                    ? new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
+                    ? (() => {
+                        // Fix timestamp without timezone to treat as UTC
+                        let dateObj: Date;
+                        if (
+                          /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(
+                            msg.timestamp,
+                          )
+                        ) {
+                          // ISO without timezone, assume UTC
+                          dateObj = new Date(msg.timestamp + "Z");
+                        } else {
+                          dateObj = new Date(msg.timestamp);
+                        }
+                        return dateObj.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        });
+                      })()
                     : ""
                 }
                 align={msg.role === "assistant" ? "left" : "right"}
