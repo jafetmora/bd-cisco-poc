@@ -72,7 +72,7 @@ CATALOG_VERSION = "v2025-08-11"
 PRICING_RULES_VERSION = "v1"
 
 # -------------------- LLMs --------------------
-LLM_KW = dict(temperature=0, top_p=1, model_kwargs={"seed": 42})
+LLM_KW = dict(temperature=0.2, top_p=1, model_kwargs={"seed": 42})
 
 llm          = ChatOpenAI(model="gpt-4o-mini", **LLM_KW)
 llm_creative = ChatOpenAI(model="gpt-4o-mini", **LLM_KW)   # <- sem response_format
@@ -1456,7 +1456,7 @@ Analyze the user query below and the previous conversation above to extract the 
 - product_domain: The general product category (e.g., 'Wi-Fi', 'switch').
 - sku_map: A JSON object where keys are SKUs (part numbers) and values are quantities.
 - search_query: Generate a concise, keyword-rich query for a vector database search. This should summarize the core technical requirements.
-- query_refined: **This is the most important field.** Re-write the user's original query into a clear, complete, and unambiguous command for another AI agent. The format depends on the 'intent':
+- query_refined: **This is the most important field.** Re-write the user's original query into a clear, consile and unambiguous command for another AI agent. Focus on the product the consumer request. The format depends on the 'intent':
     - If intent is 'quote' or 'revision', formulate a direct command for a quote-building agent. Start with an action verb like "Generate a quote..." or "Revise the quote...". Include all extracted details (SKUs, quantities, client) to make the command self-contained. If The client already is working in a quote, you should consider this in the comand.
     - If intent is 'question', transform the user's (often informal) question into a precise, well-structured question for a technical expert agent. Add context where necessary.
 
@@ -1596,6 +1596,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
     client_context = state.get("client_context") or {}
     designs = state.get("solution_designs") or []
     product_catalog = state.get("product_context") or []
+    users_count = state.get("users_count") or {}
 
     # -------- helpers --------
     def _scenario_name(d) -> str:
@@ -1624,15 +1625,34 @@ def pricing_agent_node(state: AgentState) -> Dict:
             norm.append({"part_number": sku, "quantity": max(1, qty)})
         return norm
 
-    def _resolve_price(sku: str, qty: int) -> dict:
+    def _resolve_price(sku: str, qty: int, user: int) -> dict:
         """Try client-aware price; fallback to catalog base price."""
         try:
             pr = _compute_client_adjusted_price(sku, qty, client_context) or {}
         except TypeError:
             pr = _compute_client_adjusted_price(sku, qty, client_context) or {}
         if pr and pr.get("unit_price") is not None:
-            unit = float(pr.get("unit_price") or 0.0)
-            subtotal = float(pr.get("subtotal") or (unit * qty))
+            family = pr.get("family")
+            numbers_ports = pr.get("numbers_ports")
+
+
+            unit = float(pr.get("unit_price") or 0.0) 
+            #print("6666666666666666666666666666666666666666666666666666666")
+            #print(family)
+            #print(user)
+            #print("6666666666666666666666666666666666666666666666666666666")
+            #if not user:
+             #   user = 1
+
+            if family == 'Switches':
+                qty = math.ceil(user / int(numbers_ports))
+            else:
+                qty = math.ceil(user / 10)
+            qty = int(qty)
+
+
+            #subtotal = float(pr.get("subtotal") or (unit * qty))
+            subtotal = float((unit * qty))
             currency = pr.get("currency", "USD")
             raw_disc = pr.get("discount_pct", 0.0) or 0.0
             if qty >= 10:
@@ -1641,7 +1661,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
             disc = float(raw_disc if raw_disc <= 1 else raw_disc / 100.0)
             disc = subtotal * disc
             subtotal = subtotal - disc
-            return {"unit": unit, "subtotal": subtotal, "currency": currency, "discount_pct": disc}
+            return {"unit": unit, "subtotal": subtotal, "currency": currency, "discount_pct": disc, "qty": qty}
 
         # fallback to product_dict
         pdata = (product_dict.get(sku) or {})
@@ -1649,7 +1669,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
         unit = float(pmodel.get("base_price") or 0.0)
         subtotal = unit * qty
         currency = pmodel.get("currency", "USD")
-        return {"unit": unit, "subtotal": subtotal, "currency": currency, "discount_pct": 0.0}
+        return {"unit": unit, "subtotal": subtotal, "currency": currency, "discount_pct": 0.0, "qty": qty}
 
     def _desc_portfolio(sku: str) -> (str, str):
         pdata = (product_dict.get(sku) or {})
@@ -1695,12 +1715,12 @@ def pricing_agent_node(state: AgentState) -> Dict:
                 qty = max(1, int(c["quantity"]))
                 sku = resolve_sku(raw_sku) or raw_sku  # normalize/alias if needed
 
-                price = _resolve_price(sku, qty)
+                price = _resolve_price(sku, qty, users_count)
                 desc, portfolio = _desc_portfolio(sku)
                 line = {
                     "part_number": sku,
                     "description": desc,
-                    "quantity": qty,
+                    "quantity": price["qty"],
                     "unit_price": price["unit"],
                     "subtotal": price["subtotal"],
                     "currency": price["currency"],
@@ -1709,8 +1729,16 @@ def pricing_agent_node(state: AgentState) -> Dict:
                     "line_total_usd": price["subtotal"],
                 }
                 bucket.append(line)
+                for component in d.components:
+                    if component.part_number == raw_sku:
+                        component.quantity = price["qty"]
 
             pricing_results[d_name] = sorted(bucket, key=lambda x: x["part_number"].upper())
+            #designs['quantity'] = price["qty"]
+        #designs[0]['quantity'] = 100000000000
+        update_data = {
+            "solution_designs": designs,}
+        state.update(prune_nones(update_data))
 
         baseline_bucket = _pick_baseline_bucket(pricing_results)
         cart_lines = [{
@@ -1733,6 +1761,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
         #print(pricing_results)
 
         #print("7859273482749872987598432795843759734597439857 estoooooooooooooooooou aqui")
+
 
         return prune_nones({
             "pricing_results": pricing_results,
@@ -1776,7 +1805,7 @@ def pricing_agent_node(state: AgentState) -> Dict:
             continue
         qty = max(1, int(qty_map.get(_norm_key(full_sku), 1)))
 
-        price = _resolve_price(full_sku, qty)
+        price = _resolve_price(full_sku, qty, users_count)
         desc = product.get("commercial_name", full_sku)
         portfolio = (product_dict.get(full_sku, {}) or {}).get("portfolio")
 
@@ -2381,47 +2410,13 @@ def llm_designer_node(state: AgentState) -> dict:
 
             For EACH of the 3 scenarios, you MUST follow these steps in order:
 
-            1. **Select and Size Hardware:**
-               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
-               - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
+            1. **Select Hardware:**
+               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario. Don´t select more then one sku type, I mean more than one switch sku or more than one wirelles sku and so on.
 
 
             2. **Justify Your Choices:**
-               - Briefly explain why you chose those components for that scenario, considering price and performance.
+               - Briefly explain why you chose those components for that scenario, considering price and performance and how it meets the consumers needs. Never mentions the qty of each sku.
 
-            ---
-            **Sizing Calculation Rules:**
-
-            ### Sizing Calculation for Switches (Simple Method):
-            To determine the correct quantity of switches, you MUST use the following simple calculation.
-
-            1.  **Identify Inputs:** State the `{users_count}` from the request and the `Ports_per_Switch` from the product's `ports` field.
-            2.  **Calculate Quantity:** The number of switches is `ceil({users_count} / Ports_per_Switch)`. You MUST always round the result up to the next whole number.
-
-            **Crucial Example to follow:**
-            *For `{users_count}` = 500 and a 24-port switch:*
-
-            *Internal Thought Process:*
-            "I need to calculate the quantity for a 24-port switch for 500 users.
-            - The formula is `ceil(users_count / Ports_per_Switch)`.
-            - Calculation: `ceil(500 / 24)` = `ceil(20.83)`.
-            - Rounding up, the final quantity is **21 switches**.
-            I will now use the quantity of 21 in my quote."
-
-            ### For Wi-Fi Access Points (APs):
-            The calculation is an estimate based on user density.
-
-            1.  **Estimate Users per AP:** Infer this from the `Usage` field of the product. Use these heuristics:
-                - If `Usage` mentions "high-density", assume **25 users per AP**.
-                - If `Usage` mentions "medium-density" or is a general office use case, assume **45 users per AP**.
-                - If `Usage` mentions "low-density" (like a warehouse), assume **65 users per AP**.
-                - If unclear, default to **40 users per AP**.
-            2.  **Calculate Number of APs:** `Number_of_APs = ceil({users_count} / Estimated_Users_per_AP)`. **Always round up.**
-
-            *Example for `{users_count}` = 500 and a "medium-density" AP:*
-            - Estimated_Users_per_AP = 45
-            - Number_of_APs = ceil(500 / 45) = ceil(11.11) = 12 APs
-            ---
 
             **Core Selection Principles:**
 
@@ -2442,11 +2437,10 @@ def llm_designer_node(state: AgentState) -> dict:
                 -   Present the options you have logically. If only one product is a perfect match, present it as the "Recommended Option" and explain why it's the best fit for the user's request.
 
             BUSINESS RULES
-            1)  **Sizing Calculation:** You MUST carefully read the `{user_query}` to identify the required number of users. The total number of ports from all combined switches MUST be equal to or greater than that number of users.
-
-            3)  **Logical Progression:** Create a meaningful difference between the 3 scenarios even about the prices, but also related to the perfomance.
+            1)  **Logical Progression:** Create a meaningful difference between the 3 scenarios even about the prices, but also related to the perfomance.
+                -If you are using more than one SKU, the total unit price should have a progression between each scenario.
                 
-            4)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
+            2)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
 
             OUTPUT FORMAT (STRICT)
             - Respond with JSON only (no prose, no markdown fences).
@@ -2469,9 +2463,8 @@ def llm_designer_node(state: AgentState) -> dict:
             FINAL CHECKLIST:
             Before providing your final JSON output, you MUST verify the following:
             1.  Are there EXACTLY THREE scenarios ("Essential (Good)", "Standard (Better)", "Complete (Best)")? Your entire output is invalid if this is not met.
-            3.  Does EACH scenario respect the Sizing Calculation rule?
-            4.  Does EACH scenario avoid duplicate SKUs?
-            5.  Does EACH scenario has only sku found in AVAILABLE COMPONENTS?
+            2.  Does EACH scenario avoid duplicate SKUs?
+            3.  Does EACH scenario has only sku found in AVAILABLE COMPONENTS?
             Your final output MUST satisfy all points on this checklist.
 
                 """
@@ -2514,49 +2507,15 @@ def llm_designer_node(state: AgentState) -> dict:
     
     4.  **Verify:** Ensure the new SKU is from the CATALOG and that all other parts of the quote remain unchanged.
 
-    5. **Select and Size Hardware:** 
+    5. **Select Hardware:** 
             For EACH of the 3 scenarios, you MUST follow these steps in order:
 
-            1. **Select and Size Hardware:**
-               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario.
-               - You MUST apply the Sizing Calculation Rules below to determine the correct quantity of devices needed to support the `{users_count}`.
+            1. **Select Hardware:**
+               - First, select the primary hardware (switch or Wi-Fi AP) for the scenario. Don´t select more then one sku type, I mean more than one switch sku or more than one wirelles sku and so on.
 
             2. **Justify Your Choices:**
-               - Briefly explain why you chose those components for that scenario, considering price and performance.
+               - Briefly explain why you chose those components for that scenario, considering price and performance and how it meets the consumers needs. Never mentions the qty of each sku.
 
-            ---
-
-            ### Sizing Calculation Rules ##################
-            ### Sizing Calculation for Switches (Simple Method):
-            To determine the correct quantity of switches, you MUST use the following simple calculation.
-
-            1.  **Identify Inputs:** State the `{users_count}` from the request and the `Ports_per_Switch` from the product's `ports` field.
-            2.  **Calculate Quantity:** The number of switches is `ceil({users_count} / Ports_per_Switch)`. You MUST always round the result up to the next whole number.
-
-            **Crucial Example to follow:**
-            *For `{users_count}` = 500 and a 24-port switch:*
-
-            *Internal Thought Process:*
-            "I need to calculate the quantity for a 24-port switch for 500 users.
-            - The formula is `ceil(users_count / Ports_per_Switch)`.
-            - Calculation: `ceil(500 / 24)` = `ceil(20.83)`.
-            - Rounding up, the final quantity is **21 switches**.
-            I will now use the quantity of 21 in my quote."
-
-            ### For Wi-Fi Access Points (APs):
-            The calculation is an estimate based on user density.
-
-            1.  **Estimate Users per AP:** Infer this from the `Usage` field of the product. Use these heuristics:
-                - If `Usage` mentions "high-density", assume **25 users per AP**.
-                - If `Usage` mentions "medium-density" or is a general office use case, assume **45 users per AP**.
-                - If `Usage` mentions "low-density" (like a warehouse), assume **65 users per AP**.
-                - If unclear, default to **40 users per AP**.
-            2.  **Calculate Number of APs:** `Number_of_APs = ceil({users_count} / Estimated_Users_per_AP)`. **Always round up.**
-
-            *Example for `{users_count}` = 500 and a "medium-density" AP:*
-            - Estimated_Users_per_AP = 45
-            - Number_of_APs = ceil(500 / 45) = ceil(11.11) = 12 APs
-            ---
 
     **Core Selection Principles:**
 
@@ -2575,6 +2534,13 @@ def llm_designer_node(state: AgentState) -> dict:
 4.  **Handle Insufficient Options:**
     -   If, after prioritizing the user's keywords, you cannot find enough suitable products to create three distinct tiers, **do not invent irrelevant options**.
     -   Present the options you have logically. If only one product is a perfect match, present it as the "Recommended Option" and explain why it's the best fit for the user's request.
+
+
+    **BUSINESS RULES
+    1)  **Logical Progression:** Create a meaningful difference between the 3 scenarios even about the prices, but also related to the perfomance.
+        -If you are using more than one SKU, the total unit price should have a progression between each scenario.
+                
+    2)  **No Duplicates & Context is King:** You MUST NOT list the same SKU more than once in a single scenario. Use the "quantity" field. All SKUs MUST come from the AVAILABLE COMPONENTS JSON.
 
 
     === CRITICAL RULES ===

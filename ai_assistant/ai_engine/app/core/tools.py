@@ -136,6 +136,12 @@ def _compute_client_adjusted_price(part_number: str, quantity: int, client: Opti
         rec = PRODUCT_DICT.get(sku) or {}
         pmodel = rec.get("pricing_model") or {}
         currency = pmodel.get("currency", "USD")
+        family = rec.get("family")
+
+        if family == 'Switches':
+            numbers_ports = rec.get("ports")
+        else:
+            numbers_ports = None
 
         # Base: menor preço disponível nos price_rows; se não houver, usa base_price
         unit_list = float(pmodel.get("base_price") or 0.0)
@@ -202,6 +208,8 @@ def _compute_client_adjusted_price(part_number: str, quantity: int, client: Opti
             "currency": currency,
             "discount_pct": float(discount_pct),
             "subtotal": float(subtotal),
+            "family": family,
+            "numbers_ports": numbers_ports,
         }
     except Exception:
         # fallback seguro
