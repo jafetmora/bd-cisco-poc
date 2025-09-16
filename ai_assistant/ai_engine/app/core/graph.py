@@ -1641,8 +1641,8 @@ def pricing_agent_node(state: AgentState) -> Dict:
             #print(family)
             #print(user)
             #print("6666666666666666666666666666666666666666666666666666666")
-            #if not user:
-             #   user = 1
+            if not user:
+                user = 1
 
             if family == 'Switches':
                 qty = math.ceil(user / int(numbers_ports))
